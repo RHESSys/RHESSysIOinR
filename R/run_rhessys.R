@@ -17,3 +17,32 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
 
   system(tmp, ignore.stderr = T)
 }
+
+# ---------------------------------------------------------------------
+#
+
+run_awk = function(awk_file, par_value, def_file, def_output){
+
+  tmp = sprintf("awk -f %s par=%f < %s > %s", awk_file, par_value, def_file, def_output)
+  system(tmp, ignore.stderr = T)
+}
+
+# ---------------------------------------------------------------------
+#
+
+run_rhessys_awk = function(){
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+

@@ -39,38 +39,63 @@ calibration_output_processing = function(){
 # ---------------------------------------------------------------------
 #
 
-calibrate_rhessys = function(m, k, m_v, k_v, pa, po, gw1, gw2){
 
-  for (aa in seq_along(m)){
-    for (bb in seq_along(k)){
-      for (cc in seq_along(m_v)){
-        for (dd in seq_along(k_v)){
-          for (ee in seq_along(pa)){
-            for (ff in seq_along(po)){
-              for (gg in seq_along(gw1)){
-                for (hh in seq_along(gw2)){
-                  run_rhessys(rhessys_version = rhessys_version, tec_file = tec_file,
-                              world_file = world_file, world_hdr_file = world_hdr_file,
-                              flow_file = flow_file, start_date = start_date,
-                              end_date = end_date, output_file = output_file,
-                              output_filename = output_filename,
-                              m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po,
-                              gw1 = gw1, gw2 = gw2, comm_line_options = comm_line_options)
+m = seq(1:3)
+k = seq(1:3)
+m_v = 1.792761
+k_v = 1.566492
+pa = 7.896941
+po = 1.179359
+gw1 = 0.168035
+gw2 = 0.178753
+par1 = 10
+par2 = 100
+par3 = 1000
 
-                  # Calibration output processing function
-
-
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-
+calibrate_rhessys = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
+  parameters = expand.grid(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
+  print(parameters)
 }
+
+
+calibrate_rhessys(m, k, m_v, k_v, pa, po, gw1, gw2, par2, par1)
+
+
+
+##########
+
+
+
+
+calibrate_rhessys = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
+
+  parameters = expand.grid(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
+
+  # Need for loop instead of apply since calls to RHESSys cannot be done at once.
+  for (aa in seq_along(parameters[1,])){
+
+    # Awk script functions
+
+    run_rhessys(rhessys_version = rhessys_version, tec_file = tec_file,
+                world_file = world_file, world_hdr_file = world_hdr_file,
+                flow_file = flow_file, start_date = start_date,
+                end_date = end_date, output_file = output_file,
+                output_filename = output_filename,
+                m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po,
+                gw1 = gw1, gw2 = gw2, comm_line_options = comm_line_options)
+
+    # Calibration output processing function
+
+
+  }
+}
+
+
+
+
+
+
+
 
 
 
