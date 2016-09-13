@@ -11,7 +11,7 @@ parameters_mc = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
 }
 
 # ---------------------------------------------------------------------
-# Created gridded parameter sets
+# Create parameter sets from grid search
 
 parameters_grid = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
   parameters = expand.grid(m=m, k=k, m_v=m_v, k_v=k_v, pa=pa, po=po, gw1=gw1, gw2=gw2, ...)
@@ -19,24 +19,21 @@ parameters_grid = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
 }
 
 # ---------------------------------------------------------------------
-#
 
-run_awk = function(par_value, awk_file, input_file, output_file){
+awk_command = function(par_value, awk_file, input_file, output_file){
 
   tmp = sprintf("awk -f %s par=%f < %s > %s", awk_file, par_value, input_file, output_file)
   system(tmp, ignore.stderr = T)
 }
 
 # ---------------------------------------------------------------------
-# Call single RHESSys run
 
-run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
+rhessys_command = function(rhessys_version, tec_file, world_file, world_hdr_file,
                        flow_file, start_date, end_date, output_file,
                        output_filename, comm_line_options,
                        m, k, m_v, k_v, pa, po, gw1, gw2){
 
-  tmp = sprintf("%s -t %s -w %s -whdr %s -r %s -st %s -ed %s -pre %s -s %f %f
-                -sv %f %f -svalt %f %f -gw %f %f %s",
+  tmp = sprintf("%s -t %s -w %s -whdr %s -r %s -st %s -ed %s -pre %s -s %f %f -sv %f %f -svalt %f %f -gw %f %f %s",
                 rhessys_version, tec_file, world_file, world_hdr_file, flow_file,
                 start_date, end_date, paste(output_file,"/",output_filename,sep=""),
                 m, k, m_v, k_v, pa, po, gw1, gw2, comm_line_options)
@@ -45,12 +42,21 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
 }
 
 # ---------------------------------------------------------------------
-#
 
-run_rhessys_simulation = function(rhessys_version, tec_file, world_file, world_hdr_file,
-                                  flow_file, start_date, end_date, output_file,
-                                  output_filename, comm_line_options, parameter_type,
-                                  m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames, ...){
+output_selection = function(){
+
+
+
+
+}
+
+
+# ---------------------------------------------------------------------
+
+run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
+                       flow_file, start_date, end_date, output_file,
+                       output_filename, comm_line_options, parameter_type,
+                       m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames=NA, ...){
 
   # Processes parameters
   if (parameter_type == "MC"){
@@ -58,22 +64,19 @@ run_rhessys_simulation = function(rhessys_version, tec_file, world_file, world_h
   } else {
     parameters = parameters_grid(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
   }
-  print(parameters)
 
   # Need 'for' loop instead of apply function since calls to RHESSys cannot be done simultaneously
   for (aa in seq_along(parameters[,1])){
 
     # Evaluate each awk
-    for (bb in seq_along(awk_filenames)){
-      print(parameters[aa, 8+bb])
-      print(awk_filenames[[bb]][[1]])
-      print(awk_filenames[[bb]][[2]])
-      print(awk_filenames[[bb]][[3]])
-      run_awk(parameters[aa, 8+bb], awk_file = awk_filenames[[bb]][[1]],
-              input_file = awk_filenames[[bb]][[2]], output_file = awk_filenames[[bb]][[3]])
+    if (is.na(awk_filenames)==F){
+      for (bb in seq_along(awk_filenames)){
+        awk_command(parameters[aa, 8+bb], awk_file = awk_filenames[[bb]][[1]],
+                input_file = awk_filenames[[bb]][[2]], output_file = awk_filenames[[bb]][[3]])
+      }
     }
 
-    run_rhessys(rhessys_version = rhessys_version, tec_file = tec_file,
+    rhessys_command(rhessys_version = rhessys_version, tec_file = tec_file,
                 world_file = world_file, world_hdr_file = world_hdr_file,
                 flow_file = flow_file, start_date = start_date,
                 end_date = end_date, output_file = output_file,
@@ -133,18 +136,6 @@ run_rhessys_simulation = function(rhessys_version, tec_file, world_file, world_h
 
 #awk_files = get_awk_filenames(awk1, awk2)
 #print(awk_files)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

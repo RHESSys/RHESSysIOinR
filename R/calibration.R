@@ -4,92 +4,37 @@
 # ---------------------------------------------------------------------
 #
 
-calibration_output_processing = function(){
+#calibration_output_processing = function(){
 
-  system("pwd;
-         pwd")
+#  system("pwd;
+#         pwd")
 
-  make_calibration_dir = sprintf("mkdir %s", paste(output_file,"/allsim",sep=""))
-  system(make_calibration_dir)
+#  make_calibration_dir = sprintf("mkdir %s", paste(output_file,"/allsim",sep=""))
+#  system(make_calibration_dir)
 
-  mkdir ../out/cal4/allsim
-  echo   > ../out/cal4/allsim/par1
-  echo   > ../out/cal4/allsim/lai1
-  echo   > ../out/cal4/allsim/lai_c1
-  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/change.statevar.cf.awk par=0.500000 < ../worldfiles/world.p301_patch_2canopy > ../worldfiles/world.tmp1
-  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/change.statevar.gf.awk par=0.000000 < ../worldfiles/world.tmp1 > ../worldfiles/world.tmp2
-  rhessys5.20.fire_off -t ../tecfiles/tec.p301_sim -w ../worldfiles/world.tmp2 -whdr ../worldfiles/world.p301_patch_2canopy.hdr   -r ../flowtables/flow.patch  -st 1941 10 1 1 -ed 2000 10 1 1 -pre ../out/cal4/sims/sen1   -s 1.792761 1.566492 -sv 1.792761 1.566492 -svalt 7.896941 1.179359 -gw 0.168035 0.178753 -b -c -p -g
-  cd ../out/cal4/allsim
-  \rm tpar1
-  echo 1.792761 1.566492 7.896941 1.179359 0.168035 0.178753 0.500000 0.000000 > tpar1
-  cat par1 tpar1 > newpar1
-  mv newpar1 par1
-  \rm tlai1
-  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/extlai.awk < ../sims/sen1_basin.daily > tlai1
-  paste lai1 tlai1 > newlai1
-  mv newlai1 lai1
-  \rm tlai_c1
-  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/extlai_c.awk < ../sims/sen1_stratum.daily > tlai_c1
-  paste lai_c1 tlai_c1 > newlai_c1
-  mv newlai_c1 lai_c1
-  cd ../../../scripts
+#  mkdir ../out/cal4/allsim
+#  echo   > ../out/cal4/allsim/par1
+#  echo   > ../out/cal4/allsim/lai1
+#  echo   > ../out/cal4/allsim/lai_c1
+#  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/change.statevar.cf.awk par=0.500000 < ../worldfiles/world.p301_patch_2canopy > ../worldfiles/world.tmp1
+#  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/change.statevar.gf.awk par=0.000000 < ../worldfiles/world.tmp1 > ../worldfiles/world.tmp2
+#  rhessys5.20.fire_off -t ../tecfiles/tec.p301_sim -w ../worldfiles/world.tmp2 -whdr ../worldfiles/world.p301_patch_2canopy.hdr   -r ../flowtables/flow.patch  -st 1941 10 1 1 -ed 2000 10 1 1 -pre ../out/cal4/sims/sen1   -s 1.792761 1.566492 -sv 1.792761 1.566492 -svalt 7.896941 1.179359 -gw 0.168035 0.178753 -b -c -p -g
+#  cd ../out/cal4/allsim
+#  \rm tpar1
+#  echo 1.792761 1.566492 7.896941 1.179359 0.168035 0.178753 0.500000 0.000000 > tpar1
+#  cat par1 tpar1 > newpar1
+#  mv newpar1 par1
+#  \rm tlai1
+#  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/extlai.awk < ../sims/sen1_basin.daily > tlai1
+#  paste lai1 tlai1 > newlai1
+#  mv newlai1 lai1
+#  \rm tlai_c1
+#  awk -f /users/ryanrbart/work_dir/modeling/rhessys/projects/fire_effects_model/awks/extlai_c.awk < ../sims/sen1_stratum.daily > tlai_c1
+#  paste lai_c1 tlai_c1 > newlai_c1
+#  mv newlai_c1 lai_c1
+#  cd ../../../scripts
 
-}
-
-# ---------------------------------------------------------------------
-#
-
-
-m = seq(1:3)
-k = seq(1:3)
-m_v = 1.792761
-k_v = 1.566492
-pa = 7.896941
-po = 1.179359
-gw1 = 0.168035
-gw2 = 0.178753
-par1 = 10
-par2 = 100
-par3 = 1000
-
-calibrate_rhessys = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
-  parameters = expand.grid(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
-  print(parameters)
-}
-
-
-calibrate_rhessys(m, k, m_v, k_v, pa, po, gw1, gw2, par2, par1)
-
-
-
-##########
-
-
-
-
-calibrate_rhessys = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
-
-  parameters = expand.grid(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
-
-  # Need for loop instead of apply since calls to RHESSys cannot be done at once.
-  for (aa in seq_along(parameters[1,])){
-
-    # Awk script functions
-
-    run_rhessys(rhessys_version = rhessys_version, tec_file = tec_file,
-                world_file = world_file, world_hdr_file = world_hdr_file,
-                flow_file = flow_file, start_date = start_date,
-                end_date = end_date, output_file = output_file,
-                output_filename = output_filename,
-                m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po,
-                gw1 = gw1, gw2 = gw2, comm_line_options = comm_line_options)
-
-    # Calibration output processing function
-
-
-  }
-}
-
+#}
 
 
 
