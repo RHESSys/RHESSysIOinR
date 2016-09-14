@@ -43,11 +43,23 @@ rhessys_command = function(rhessys_version, tec_file, world_file, world_hdr_file
 
 # ---------------------------------------------------------------------
 
-output_selection = function(){
+select_results = function(output_file, output_selection){
 
+  setwd(paste(output_file, "/allsim", sep=""))
 
-
-
+  if (is.na(output_selection[1])==F){
+    for (cc in seq_along(output_selection)){
+      tmp = sprintf("\rm t%s", output_selection[[cc]][[1]])
+      system(tmp, ignore.stderr = T)
+      tmp = sprintf("awk -f %s < %s > %s", output_selection[[cc]][[2]],output_selection[[cc]][[3]],output_selection[[cc]][[4]])
+      system(tmp, ignore.stderr = T)
+      tmp = sprintf("paste %s t%s > new%s", output_selection[[cc]][[1]], output_selection[[cc]][[1]], output_selection[[cc]][[1]])
+      system(tmp, ignore.stderr = T)
+      tmp = sprintf("mv new%s %s", output_selection[[cc]][[1]], output_selection[[cc]][[1]])
+      system(tmp, ignore.stderr = T)
+    }
+  }
+  setwd("../../../")
 }
 
 
@@ -56,7 +68,8 @@ output_selection = function(){
 run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                        flow_file, start_date, end_date, output_file,
                        output_filename, comm_line_options, parameter_type,
-                       m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames=NA, ...){
+                       m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames=NA,
+                       output_selection, ...){
 
   # Processes parameters
   if (parameter_type == "MC"){
@@ -67,9 +80,10 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
 
   # Need 'for' loop instead of apply function since calls to RHESSys cannot be done simultaneously
   for (aa in seq_along(parameters[,1])){
+    print(paste("----------------", aa ,"----------------"))
 
     # Evaluate each awk
-    if (is.na(awk_filenames)==F){
+    if (is.na(awk_filenames[1])==F){
       for (bb in seq_along(awk_filenames)){
         awk_command(parameters[aa, 8+bb], awk_file = awk_filenames[[bb]][[1]],
                 input_file = awk_filenames[[bb]][[2]], output_file = awk_filenames[[bb]][[3]])
@@ -82,8 +96,15 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                 end_date = end_date, output_file = output_file,
                 output_filename = output_filename, comm_line_options = comm_line_options,
                 m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
+
+    # Process RHESSys output
+    select_results(output_file=output_file, output_selection=output_selection)
+
   }
 }
+
+
+
 
 
 
