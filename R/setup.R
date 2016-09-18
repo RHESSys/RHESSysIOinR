@@ -1,9 +1,7 @@
-# Functions for producing RHESSys folders/files
-# Note that many RHESSys files are produced via GRASS
-# Ryan Bart September 2016
+#' Functions for producing RHESSys folders
+#'
+#' Description. Note that many RHESSys files are produced via GRASS
 
-# ---------------------------------------------------------------------
-# Set up folders for RHESSys
 
 make_rhessys_folders <- function(extra_folders=NA){
   # Code currently only works with one extra folder input
@@ -19,13 +17,7 @@ make_rhessys_folders <- function(extra_folders=NA){
   }
 }
 
-# ---------------------------------------------------------------------
-# Create awk script
 
-create_awk = function(){
-
-
-}
 
 
 
