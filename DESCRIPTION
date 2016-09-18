@@ -5,7 +5,10 @@ Version: 0.0.0.9000
 Date: 2016-09-11
 Author: Ryan R. Bart
 Maintainer: Ryan R. Bart <ryanrbart@ucsb.edu>
-Description: This package contains functions for the setup of RHESSys files, calibration and simulation of RHESSys, and the analysis of RHESSys output.
+Description: This package contains functions for the setup of RHESSys files,
+    calibration and simulation of RHESSys, and the analysis of RHESSys output.
 License: GPL (>= 2)
 LazyData: TRUE
-Imports: hydroGOF
+Imports:
+    hydroGOF
+RoxygenNote: 5.0.1

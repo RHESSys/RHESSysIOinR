@@ -1,10 +1,10 @@
-#'
+#' Selects
 #'
 #'
 
-select_results = function(output_file, output_selection){
+select_results = function(output_folder, output_selection){
 
-  setwd(paste(output_file, "/allsim", sep=""))
+  setwd(paste(output_folder, "/allsim", sep=""))
 
   if (is.na(output_selection[1])==F){
     for (cc in seq_along(output_selection)){
