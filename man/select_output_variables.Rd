@@ -2,11 +2,25 @@
 % Please edit documentation in R/select_output_variables.R
 \name{select_output_variables}
 \alias{select_output_variables}
-\title{Selects}
+\title{Selects RHESSys output variables}
 \usage{
-select_output_variables(output_folder, output_variables)
+select_output_variables(output_variables)
+}
+\arguments{
+\item{output_variables}{A list containing information on each output variable
+to be selected. Each variable needs to be contained in an additional list
+in the  containing variable of interest, location/name of awk file (relative to
+output_file location), and the location/name of rhessys output file with variable
+of interest.}
+
+\item{variable}{??}
+
+\item{awk_file}{??}
+
+\item{results_file}{??}
 }
 \description{
-Selects
+This function does etc, etc... Requires that an awk file be created that indicates
+the columns that correspond to the variable(s) of interest. See \code{create_awk}
 }
 

@@ -39,3 +39,4 @@ rhessys_command = function(rhessys_version, tec_file, world_file, world_hdr_file
 
   system(tmp, ignore.stderr = T)
 }
+
