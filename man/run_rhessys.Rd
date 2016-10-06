@@ -2,14 +2,14 @@
 % Please edit documentation in R/run_rhessys.R
 \name{run_rhessys}
 \alias{run_rhessys}
-\title{Run RHESSys model simulations}
+\title{Run multiple RHESSys model simulations}
 \usage{
 run_rhessys(rhessys_version, tec_file, world_file, world_hdr_file, flow_file,
   start_date, end_date, output_folder, output_filename, command_options,
-  parameter_type, m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames = NA,
-  output_selection, ...)
+  parameter_type = c("GRID", "MC"), m, k, m_v, k_v, pa, po, gw1, gw2,
+  awk_filenames = NULL, output_variables, ...)
 }
 \description{
-Run RHESSys model simulations
+\code{run_rhessys} permits the running of multiple rhessys simulations
 }
 

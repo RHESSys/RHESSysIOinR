@@ -9,11 +9,10 @@ rhessys_command(rhessys_version, tec_file, world_file, world_hdr_file,
   command_options, m, k, m_v, k_v, pa, po, gw1, gw2)
 }
 \arguments{
-\item{rhessys_version}{???}
+\item{rhessys_version}{path and file of compiled version of RHESSys.}
 
-\item{tec_file}{???}
-
-\item{world_file}{???}
+\item{world_file}{path and file of world_file. World_file is produced using
+grass-to-world}
 
 \item{world_hdr_file}{???}
 
@@ -49,6 +48,7 @@ rhessys_command(rhessys_version, tec_file, world_file, world_hdr_file,
 \code{rhessys_command} calls rhessys on the command line.
 }
 \details{
-Requires that supporting files be developed prior to running RHESSys. These include ...
+Requires that supporting files be developed prior to running RHESSys. These
+include ...
 }
 

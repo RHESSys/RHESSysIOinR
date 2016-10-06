@@ -2,9 +2,10 @@
 
 export(awk_command)
 export(create_awk)
+export(get_parameter_sets)
 export(make_rhessys_folders)
 export(parameters_grid)
 export(parameters_mc)
 export(rhessys_command)
 export(run_rhessys)
-export(select_results)
+export(select_output_variables)
