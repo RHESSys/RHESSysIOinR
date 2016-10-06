@@ -9,7 +9,11 @@
 #'
 
 
+#' @export
 parameters_mc = function(m, k, m_v, k_v, pa, po, gw1, gw2, ...){
+
+  # Add flags for when all parameters are not equal length
+
   parameters = cbind(m, k, m_v, k_v, pa, po, gw1, gw2, ...)
   return(parameters)
 }

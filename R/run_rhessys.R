@@ -1,12 +1,13 @@
-#' Run RHESSys model simulations
+#' Run multiple RHESSys model simulations
 #'
-#'
+#' \code{run_rhessys} permits the running of multiple rhessys simulations
 
+#' @export
 run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                        flow_file, start_date, end_date, output_folder,
                        output_filename, command_options, parameter_type,
                        m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames=NA,
-                       output_selection, ...){
+                       output_variables, ...){
 
   # Processes parameters
   if (parameter_type == "MC"){
@@ -35,7 +36,7 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                 m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
 
     # Process RHESSys output
-    select_results(output_folder=output_folder, output_selection=output_selection)
+    select_output_variables(output_folder=output_folder, output_variables=output_variables)
 
   }
 }

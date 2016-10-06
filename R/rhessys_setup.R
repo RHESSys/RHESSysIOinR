@@ -3,6 +3,7 @@
 #' Description. Note that many RHESSys files are produced via GRASS
 
 
+#' @export
 make_rhessys_folders <- function(extra_folders=NA){
   # Code currently only works with one extra folder input
 
