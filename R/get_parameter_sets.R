@@ -13,7 +13,7 @@ get_parameter_sets <- function(m, k, m_v, k_v, pa, po, gw1, gw2, parameter_sub_l
 
   # Make a list of supplied parameter values
   if (is.null(parameter_sub_list[1]) == F){
-    parameter_values = c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_sub_list, function(x) x[[1]]))
+    parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_sub_list, function(x) x[[1]]))
   }
 
   if (method == "all_combinations"){

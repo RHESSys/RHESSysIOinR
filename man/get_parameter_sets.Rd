@@ -4,7 +4,8 @@
 \alias{get_parameter_sets}
 \title{Create parameter sets}
 \usage{
-get_parameter_sets(m, k, m_v, k_v, pa, po, gw1, gw2, awk_filenames, method, ...)
+get_parameter_sets(m, k, m_v, k_v, pa, po, gw1, gw2, parameter_sub_list, method,
+  runs, ...)
 }
 \description{
 Combines vectors of parameter inputs into data frame of parameter sets that

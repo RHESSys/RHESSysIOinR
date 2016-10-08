@@ -6,8 +6,9 @@
 \usage{
 run_rhessys(rhessys_version, tec_file, world_file, world_hdr_file, flow_file,
   start_date, end_date, output_folder, output_filename, command_options,
-  parameter_type = c("GRID", "MC"), m, k, m_v, k_v, pa, po, gw1, gw2,
-  parameter_sub_list = NULL, output_variables = NULL, ...)
+  parameter_type = c("all_combinations", "monte_carlo", "exact_values"), m, k,
+  m_v, k_v, pa, po, gw1, gw2, parameter_sub_list = NULL,
+  output_variables = NULL, ...)
 }
 \description{
 \code{run_rhessys} permits the running of multiple rhessys simulations

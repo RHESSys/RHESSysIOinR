@@ -17,6 +17,8 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
   parameter_sets <- get_parameter_sets(m, k, m_v, k_v, pa, po, gw1, gw2,
                                        parameter_sub_list = parameter_sub_list,
                                        method = parameter_type)
+  parameter_sets_l <- length(parameter_sets[,1])
+  write.csv(parameter_sets, paste(output_folder, "/", output_filename, "_parameter_sets.csv", sep=""))
 
   for (aa in seq_len(parameter_sets_l)){
     print(paste("-------------- Run", aa ,"of", parameter_sets_l, "--------------"))
@@ -40,7 +42,7 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                 m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
 
     # Process RHESSys output
-    if (is.null(output_variables[1])==F){
+    if (is.null(output_variables[1]) == F){
       setwd(paste(output_folder, "/allsim", sep=""))
       select_output_variables(output_variables = output_variables)
       setwd("../../../")

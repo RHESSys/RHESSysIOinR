@@ -13,15 +13,15 @@
 #' @param results_file ??
 
 #' @export
-select_output_variables = function(output_variables){
+select_output_variables <- function(output_variables){
   for (cc in seq_along(output_variables)){
-    tmp = sprintf("\rm t%s", output_variables[[cc]][[1]])
+    tmp <- sprintf("\rm t%s", output_variables[[cc]][[1]])
     system(tmp, ignore.stderr = T)
-    tmp = sprintf("awk -f %s < %s > t%s", output_variables[[cc]][[2]],output_variables[[cc]][[3]],output_variables[[cc]][[1]])
+    tmp <- sprintf("awk -f %s < %s > t%s", output_variables[[cc]][[2]],output_variables[[cc]][[3]],output_variables[[cc]][[1]])
     system(tmp, ignore.stderr = T)
-    tmp = sprintf("paste %s t%s > new%s", output_variables[[cc]][[1]], output_variables[[cc]][[1]], output_variables[[cc]][[1]])
+    tmp <- sprintf("paste %s t%s > new%s", output_variables[[cc]][[1]], output_variables[[cc]][[1]], output_variables[[cc]][[1]])
     system(tmp, ignore.stderr = T)
-    tmp = sprintf("mv new%s %s", output_variables[[cc]][[1]], output_variables[[cc]][[1]])
+    tmp <- sprintf("mv new%s %s", output_variables[[cc]][[1]], output_variables[[cc]][[1]])
     system(tmp, ignore.stderr = T)
   }
 }
