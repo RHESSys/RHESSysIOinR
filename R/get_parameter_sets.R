@@ -23,7 +23,7 @@ get_parameter_sets <- function(m, k, m_v, k_v, pa, po, gw1, gw2, parameter_sub_l
   if (method == "monte_carlo"){
     # Pull random values from min/max of range supplied\
     # Need to pass total number of samples to be used.
-
+    print("Currently not implemented")
     # parameter_sets <- cbind(parameter_values)
   }
 
