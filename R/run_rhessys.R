@@ -20,6 +20,14 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
   parameter_sets_l <- length(parameter_sets[,1])
   write.csv(parameter_sets, paste(output_folder, "/", output_filename, "_parameter_sets.csv", sep=""))
 
+  # Need to null out output variables
+
+  for (ee in seq_along(output_variables)){
+    tmp = sprintf("rm %s/allsim/%s", output_folder, output_variables[[ee]][[1]])
+    print(tmp)
+    system(tmp, ignore.stderr = T)
+  }
+
   for (aa in seq_len(parameter_sets_l)){
     print(paste("-------------- Run", aa ,"of", parameter_sets_l, "--------------"))
 
