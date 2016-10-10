@@ -10,4 +10,5 @@ Description: This package contains functions for the setup of RHESSys files,
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
+    hydroGOF
 RoxygenNote: 5.0.1
