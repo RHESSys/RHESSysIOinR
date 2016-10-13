@@ -21,7 +21,6 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
   write.csv(parameter_sets, paste(output_folder, "/", output_filename, "_parameter_sets.csv", sep=""))
 
   # Need to null out output variables
-
   for (ee in seq_along(output_variables)){
     tmp = sprintf("rm %s/allsim/%s", output_folder, output_variables[[ee]][[1]])
     print(tmp)
@@ -47,13 +46,16 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                 flow_file = flow_file, start_date = start_date,
                 end_date = end_date, output_folder = output_folder,
                 output_filename = output_filename, command_options = command_options,
-                m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
+                m = parameter_sets[aa,1], k = parameter_sets[aa,2],
+                m_v = parameter_sets[aa,3], k_v = parameter_sets[aa,4],
+                pa = parameter_sets[aa,5], po = parameter_sets[aa,6],
+                gw1 = parameter_sets[aa,7], gw2 = parameter_sets[aa,8])
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
       setwd(paste(output_folder, "/allsim", sep=""))
       select_output_variables(output_variables = output_variables)
-      setwd("../../../")
+      setwd("../../../../")
     }
   }
 }

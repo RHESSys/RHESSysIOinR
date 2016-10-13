@@ -36,7 +36,6 @@ rhessys_command <- function(rhessys_version, tec_file, world_file, world_hdr_fil
                 rhessys_version, tec_file, world_file, world_hdr_file, flow_file,
                 start_date, end_date, paste(output_folder,"/",output_filename,sep=""),
                 m, k, m_v, k_v, pa, po, gw1, gw2, command_options)
-
-  system(tmp, ignore.stderr = T)
+  system(tmp)
 }
 
