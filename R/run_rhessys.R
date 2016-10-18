@@ -25,6 +25,9 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
     tmp = sprintf("rm %s/allsim/%s", output_folder, output_variables[[ee]][[1]])
     print(tmp)
     system(tmp, ignore.stderr = T)
+    tmp = sprintf("echo > %s/allsim/%s", output_folder, output_variables[[ee]][[1]])
+    print(tmp)
+    system(tmp, ignore.stderr = T)
   }
 
   for (aa in seq_len(parameter_sets_l)){
