@@ -11,6 +11,8 @@ rhessys_command(rhessys_version, tec_file, world_file, world_hdr_file,
 \arguments{
 \item{rhessys_version}{path and file of compiled version of RHESSys.}
 
+\item{tec_file}{???}
+
 \item{world_file}{path and file of world_file. World_file is produced using
 grass-to-world}
 

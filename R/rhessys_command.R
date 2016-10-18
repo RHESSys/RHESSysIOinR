@@ -6,7 +6,7 @@
 #' include ...
 #'
 #' @param rhessys_version path and file of compiled version of RHESSys.
-#' @param tec_file
+#' @param tec_file ???
 #' @param world_file path and file of world_file. World_file is produced using
 #'   grass-to-world
 #' @param world_hdr_file ???

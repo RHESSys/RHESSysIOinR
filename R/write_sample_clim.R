@@ -7,18 +7,17 @@
 #' @param prefix String giving the prefix to be used for output file names (e.g
 #'   "../out/seqname")
 #' @param clim Original climate data to be sampled from, this must have the
-#'   following columns; year, month, day, date, wy, rain, tmax, and tmin. Rain must
-#'   be in mm, tmax and tmin in C. There must be a value for every day in each
-#'   water year and it must be in sequential order. Columns can be in any order,
-#'   a file created by read_RHESSys_met will work.
+#'   following columns; year, month, day, date, wy, rain, tmax, and tmin. Rain
+#'   must be in mm, tmax and tmin in C. There must be a value for every day in
+#'   each water year and it must be in sequential order. Columns can be in any
+#'   order, a file created by read_RHESSys_met will work.
 #' @param samplewyrs is the vector of water years to be sampled from the
 #'   original climate, in the order you want them to occur. A water year can be
 #'   used more than once. samplewyrs must be included in the call to the
 #'   function.
-#' @param reps Creates a sequence where your samplewyrs will be repeated.
-#'   If samplewyrs=c(2004,2000) and rep=4, the sequence you will get is made
-#'   from 2004,2000,2004,2000,2004,2000,2004,2000. Reps is optional and
-#'   default to 1.
+#' @param reps Creates a sequence where your samplewyrs will be repeated. If
+#'   samplewyrs=c(2004,2000) and rep=4, the sequence you will get is made from
+#'   2004,2000,2004,2000,2004,2000,2004,2000. Reps is optional and default to 1.
 #' @param startwyr is the water year to be used for the first day of the newly
 #'   generated sequence thus, if startwyr=1998, the new sequence will start on
 #'   10/1/1998. startwyr is optional. If startwyr is not listed the program will
