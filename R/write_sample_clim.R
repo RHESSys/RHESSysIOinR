@@ -74,9 +74,9 @@ write_sample_clim = function(prefix, clim, samplewyrs, reps=1, startwyr=0) {
 
   newclim = newclim[1:endr,]
   newclim$date = seq(from=firstdate$date, length=length(newclim$date), by=1)
-  newclim$year = as.integer(as.character(years(newclim$date)))
+  newclim$year = as.integer(as.character(chron::years(newclim$date)))
   newclim$month = as.numeric(substr(as.character(newclim$date), 6,7))
-  newclim$day = as.numeric(days(newclim$date))
+  newclim$day = as.numeric(chron::days(newclim$date))
   header = sprintf("%d %d %d %d", firstdate$year[1], firstdate$month[1], firstdate$day[1], 1)
   nme = sprintf("%s.rain",prefix)
   write(header, file=nme)
@@ -88,5 +88,6 @@ write_sample_clim = function(prefix, clim, samplewyrs, reps=1, startwyr=0) {
   write(header, file=nme)
   write.table(newclim$tmin, file=nme, row.names=F, col.names=F, append=T, quote=F)
 
-  newclim
+  print(paste("New climate sequence is ", length(unique(newclim$wy))," wateryears (WY ", min(newclim$wy), " to ", max(newclim$wy), ")",sep=""))
+  return(newclim)
 }
