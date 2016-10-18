@@ -24,9 +24,9 @@ read_rhessys_met = function (prename)
   tmp2 = sprintf("%s/%s/%s", tmp[2], tmp[3], tmp[1])
   clim$date = chron::seq.dates(from = tmp2, length = length(clim$tmin))
   rm(tmp, tmp2, tname)
-  clim$year = as.numeric(as.character(years(clim$date)))
+  clim$year = as.numeric(as.character(chron::years(clim$date)))
   clim$month = as.numeric(months(clim$date))
-  clim$day = as.numeric(days(clim$date))
+  clim$day = as.numeric(chron::days(clim$date))
   clim$wy = ifelse((clim$month >= 10), clim$year + 1, clim$year)
   clim
 }
