@@ -16,6 +16,7 @@ change_parameters(par_value, awk_file, input_file, output_folder)
 \item{output_folder}{??}
 }
 \description{
-This function calls an awk file for substituting parameter values in RHESSys
+This function calls an awk file for substituting parameter values in RHESSys.
+May also be used for substituting variables in worldfiles.
 }
 
