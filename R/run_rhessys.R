@@ -36,7 +36,7 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
     # Call awk script to substitute non-standard parameters (and variables)
     if (is.null(parameter_sub_list[1]) == F){
       for (bb in seq_along(parameter_sub_list)){
-        substitute_parameters(par_value = parameter_sets[aa, 8+bb],
+        change_parameters(par_value = parameter_sets[aa, 8+bb],
                               awk_file = parameter_sub_list[[bb]][[2]],
                               input_file = parameter_sub_list[[bb]][[3]],
                               output_folder = parameter_sub_list[[bb]][[4]])

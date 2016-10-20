@@ -8,17 +8,17 @@
 #' @param num_canopies Number of canopy (stratum) per patch
 #'
 #' @export
-separate_canopies <- function(variable, dates, num_canopies = 2){
+separate_canopy_output <- function(variable, dates, num_canopies = 2){
 
   select_rows <- function(x,y,z) y[seq(x,length(y),z)]
   variable_by_canopy <- sapply(seq_len(num_canopies), select_rows, y=variable, z=num_canopies, simplify=FALSE)
   dates_by_canopy <- sapply(seq_len(num_canopies), select_rows, y=dates, z=num_canopies, simplify = FALSE)
   names_by_canopy <- sapply(seq_len(num_canopies), function(x,y) rep(x,length(y)), variable_by_canopy[[1]], simplify = FALSE)
 
-  tmp = lapply(seq_len(num_canopies), function(x,w,y,z) data.frame(var=w[[x]],dates=y[[x]],names=z[[x]]), w=variable_by_canopy, y=dates_by_canopy, z=names_by_canopy)
-  canopies_df = Reduce(rbind, tmp)
+  tmp <- lapply(seq_len(num_canopies), function(x,w,y,z) data.frame(var=w[[x]],dates=y[[x]],names=z[[x]]), w=variable_by_canopy, y=dates_by_canopy, z=names_by_canopy)
+  canopy_df <- Reduce(rbind, tmp)
 
-  return(canopies_df)
+  return(canopy_df)
 }
 
 
