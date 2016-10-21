@@ -13,15 +13,15 @@
 #' @param results_file ??
 
 #' @export
-select_output_variables <- function(output_variables){
+select_output_variables <- function(output_variables, output_folder){
   for (cc in seq_along(output_variables)){
-    tmp <- sprintf("\rm t%s", output_variables[[cc]][[1]])
+    tmp <- sprintf("rm %sallsim/t%s", output_folder, output_variables[[cc]][[1]])
     system(tmp)
-    tmp <- sprintf("awk -f %s < %s > t%s", output_variables[[cc]][[2]],output_variables[[cc]][[3]],output_variables[[cc]][[1]])
+    tmp <- sprintf("awk -f %s < %s%s > %sallsim/t%s", output_variables[[cc]][[2]], output_folder, output_variables[[cc]][[3]], output_folder, output_variables[[cc]][[1]])
     system(tmp)
-    tmp <- sprintf("paste %s t%s > new%s", output_variables[[cc]][[1]], output_variables[[cc]][[1]], output_variables[[cc]][[1]])
+    tmp <- sprintf("paste %sallsim/%s %sallsim/t%s > %sallsim/new%s", output_folder, output_variables[[cc]][[1]], output_folder, output_variables[[cc]][[1]], output_folder, output_variables[[cc]][[1]])
     system(tmp)
-    tmp <- sprintf("mv new%s %s", output_variables[[cc]][[1]], output_variables[[cc]][[1]])
+    tmp <- sprintf("mv %sallsim/new%s %sallsim/%s", output_folder, output_variables[[cc]][[1]], output_folder, output_variables[[cc]][[1]])
     system(tmp)
   }
 }

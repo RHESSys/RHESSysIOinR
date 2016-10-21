@@ -4,7 +4,7 @@
 \alias{select_output_variables}
 \title{Selects RHESSys output variables}
 \usage{
-select_output_variables(output_variables)
+select_output_variables(output_variables, output_folder)
 }
 \arguments{
 \item{output_variables}{A list containing information on each output variable
