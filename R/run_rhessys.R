@@ -20,19 +20,10 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
   parameter_sets_l <- length(parameter_sets[,1])
   write.csv(parameter_sets, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""))
 
-  # Need to null out output variables
-  for (ee in seq_along(output_variables)){
-    tmp = sprintf("rm %sallsim/%s", output_folder, output_variables[[ee]][[1]])
-    print(tmp)
-    system(tmp)
-    tmp = sprintf("echo > %sallsim/%s", output_folder, output_variables[[ee]][[1]])
-    print(tmp)
-    system(tmp)
-  }
-
   # Write tec file
   if (is.null(tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = tec_data)
 
+  # Step through each parameter set
   for (aa in seq_len(parameter_sets_l)){
     print(paste("-------------- Run", aa ,"of", parameter_sets_l, "--------------"))
 
@@ -59,6 +50,9 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
+      if (aa == 1){
+        initialize_output_variables(output_variables = output_variables, output_folder = output_folder)
+      }
       select_output_variables(output_variables = output_variables, output_folder = output_folder)
     }
   }
