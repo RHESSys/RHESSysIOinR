@@ -9,11 +9,11 @@
 #' accompanied by extra filenames for awk command. See \code{run_rhessys()} inputs.
 #'
 #' @export
-get_parameter_sets <- function(m, k, m_v, k_v, pa, po, gw1, gw2, parameter_sub_list=NULL, method, runs, ...){
+get_parameter_sets <- function(m, k, m_v, k_v, pa, po, gw1, gw2, parameter_change_list=NULL, method, runs, ...){
 
   # Make a list of supplied parameter values
-  if (is.null(parameter_sub_list[1]) == F){
-    parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_sub_list, function(x) x[[1]]))
+  if (is.null(parameter_change_list[1]) == F){
+    parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_change_list, function(x) x[[1]]))
   } else {
     parameter_values <- list(m, k, m_v, k_v, pa, po, gw1, gw2)
   }
