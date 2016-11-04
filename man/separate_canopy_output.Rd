@@ -2,14 +2,12 @@
 % Please edit documentation in R/separate_canopy_output.R
 \name{separate_canopy_output}
 \alias{separate_canopy_output}
-\title{Separate Canopy Output by Canopy}
+\title{Separate Canopy Output by Layers}
 \usage{
-separate_canopy_output(variable, dates, num_canopies = 2)
+separate_canopy_output(data, num_canopies = 2)
 }
 \arguments{
-\item{variable}{Variable of interest from canopy output.}
-
-\item{dates}{Date column from canopy output}
+\item{data}{Data frame with variables that need to be separated.}
 
 \item{num_canopies}{Number of canopy (stratum) per patch}
 }
