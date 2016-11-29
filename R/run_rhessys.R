@@ -10,18 +10,23 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                        output_filename, command_options,
                        parameter_type = c("all_combinations", "monte_carlo","exact_values"),
                        m, k, m_v, k_v, pa, po, gw1, gw2, parameter_change_list = NULL,
-                       tec_data = NULL, output_variables = NULL, ...){
+                       tec_data = NULL, dated_seq_file = NULL, dated_seq_data = NULL,
+                       output_variables = NULL, ...){
 
   # Process parameters
   parameter_type <- match.arg(parameter_type)
   parameter_sets <- get_parameter_sets(m, k, m_v, k_v, pa, po, gw1, gw2,
                                        parameter_change_list = parameter_change_list,
+                                       dated_seq_data = dated_seq_data,
                                        method = parameter_type)
   parameter_sets_l <- length(parameter_sets[,1])
   write.csv(parameter_sets, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""))
 
   # Write tec file
   if (is.null(tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = tec_data)
+
+  # Write dated sequence file
+  if (is.null(dated_seq_data) == FALSE) make_dated_seq_file(dated_seq_file = dated_seq_file, dated_seq_data = dated_seq_data)
 
   # Step through each parameter set
   for (aa in seq_len(parameter_sets_l)){
