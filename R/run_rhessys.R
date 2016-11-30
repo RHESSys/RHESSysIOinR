@@ -55,15 +55,15 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
     if (is.null(dated_seq_data) == FALSE) make_dated_seq_file(dated_seq_file = dated_seq_file, dated_seq_data = dated_seq_data[[parameter_sets$dated_seq_data[aa]]])
 
     # Call RHESSys
-    rhessys_command(rhessys_version = rhessys_version, tec_file = tec_file,
-                world_file = world_file, world_hdr_file = world_hdr_file,
-                flow_file = flow_file, start_date = start_date,
-                end_date = end_date, output_folder = output_folder,
-                output_filename = output_filename, command_options = command_options,
-                m = parameter_sets[aa,1], k = parameter_sets[aa,2],
-                m_v = parameter_sets[aa,3], k_v = parameter_sets[aa,4],
-                pa = parameter_sets[aa,5], po = parameter_sets[aa,6],
-                gw1 = parameter_sets[aa,7], gw2 = parameter_sets[aa,8])
+    rhessys_command(rhessys_version = parameter_sets$rhessys_version[aa], tec_file = parameter_sets$tec_file[aa],
+                world_file = parameter_sets$world_file[aa], world_hdr_file = parameter_sets$world_hdr_file[aa],
+                flow_file = parameter_sets$flow_file[aa], start_date = parameter_sets$start_date[aa],
+                end_date = parameter_sets$end_date[aa], output_folder = parameter_sets$output_folder[aa],
+                output_filename = parameter_sets$output_filename[aa], command_options = parameter_sets$command_options[aa],
+                m = parameter_sets$m[aa], k = parameter_sets$k[aa],
+                m_v = parameter_sets$m_v[aa], k_v = parameter_sets$k_v[aa],
+                pa = parameter_sets$pa[aa], po = parameter_sets$po[aa],
+                gw1 = parameter_sets$gw1[aa], gw2 = parameter_sets$gw2[aa])
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){

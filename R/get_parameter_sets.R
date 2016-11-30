@@ -84,7 +84,7 @@ get_parameter_sets <- function(rhessys_version, tec_file, world_file, world_hdr_
 
   if (method == "all_combinations"){
 
-    parameter_sets <- expand.grid(c(input_values, dated_seq_seq, parameter_values, parameter_change_values))
+    parameter_sets <- expand.grid(c(input_values, parameter_values, dated_seq_seq, parameter_change_values))
   }
 
   if (method == "monte_carlo"){
