@@ -27,7 +27,13 @@ run_rhessys = function(rhessys_version, tec_file, world_file, world_hdr_file,
                                        method = parameter_type)
   parameter_sets_l <- length(parameter_sets[,1])
   total_variables <- length(parameter_sets)
-  write.csv(parameter_sets, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""))
+
+  # Export parameter sets
+  parameter_output <- parameter_sets
+  if (is.null(dated_seq_data) == FALSE){
+    parameter_output$dated_seq_data <- sapply(parameter_sets$dated_seq_data, function(x) dated_seq_data[[x]][[5]])
+  }
+  write.csv(parameter_output, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""), row.names = FALSE)
 
   # Write tec file
   if (is.null(tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = tec_data)
