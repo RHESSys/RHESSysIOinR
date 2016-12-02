@@ -11,6 +11,9 @@ License: GPL (>= 2)
 LazyData: TRUE
 Imports:
     hydroGOF,
-    chron
+    chron,
+    dplyr,
+    tidyr,
+    lubridate
 RoxygenNote: 5.0.1
 Suggests: testthat
