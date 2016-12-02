@@ -4,26 +4,29 @@
 #' function imports and manipulates data so that it is 'tidy' and easily imported
 #' into ggplot.
 #'
+#' In general, user should not combine data output with a different number of layers
+#'
 #' @param var_names Vector of the variables to be imported into R
 #' @param path Path to the directory containing data
 #' @param initial_date Initial date for the data e.g. ymd("1941-10-1")
 #' @param z Optional parameters for including in analysis
 #'
 #' @export
-readin_rhessys_output2 <- function(var_names, path, initial_date, parameter_file = NULL){
+readin_rhessys_output2 <- function(var_names, path, initial_date, parameter_file = NULL, num_canopies = 1){
 
   # Read in 'allsim' output into list
   a <- var_names %>%
     sapply(., function(., path) file.path(path, .), path=path) %>%
-    lapply(., read.table, header = FALSE)
+    lapply(., read.table, header = FALSE, skip = 2)
 
   # Inputs for processing
-  dates <- seq(initial_date, initial_date + lubridate::days(length(happy[[1]]$V1)) - 1, by = "day")
+  dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]]$V1)/num_canopies) - 1, by = "day"), times = num_canopies)
 
   # Process data to tidy data frame (part 1)
   b <- a %>%
-    lapply(., function(., dates) cbind(dates, .), dates=dates) %>%       # Add dates column to data frames
-    lapply(., function(.) tidyr::gather(., run, value, -dates))          # Rearrange data frame
+    lapply(., separate_canopy_output, num_canopies = num_canopies) %>%       # Add variable to signify if output has multiple layers
+    lapply(., function(., dates) cbind(dates, .), dates=dates) %>%           # Add dates column to data frames
+    lapply(., function(.) tidyr::gather(., run, value, c(-dates,-names)))    # Rearrange data frame
 
   # Process data to tidy data frame (part 2)
   var_names_list <- lapply(as.list(var_names), function(x) data.frame(var = rep(x,length(b[[1]]$value))))
