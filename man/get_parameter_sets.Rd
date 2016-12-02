@@ -4,8 +4,10 @@
 \alias{get_parameter_sets}
 \title{Create parameter sets}
 \usage{
-get_parameter_sets(m, k, m_v, k_v, pa, po, gw1, gw2,
-  parameter_change_list = NULL, method, runs, ...)
+get_parameter_sets(rhessys_version, tec_file, world_file, world_hdr_file,
+  flow_file, start_date, end_date, output_folder, output_filename,
+  command_options, m, k, m_v, k_v, pa, po, gw1, gw2,
+  parameter_change_list = NULL, dated_seq_data = NULL, method, runs, ...)
 }
 \description{
 Combines vectors of parameter inputs into data frame of parameter sets that
