@@ -6,10 +6,11 @@
 #'
 #' In general, user should not combine data output with a different number of layers
 #'
-#' @param var_names Vector of the variables to be imported into R
+#' @param var_names Vector of the variables names that are to be imported into R
 #' @param path Path to the directory containing data
-#' @param initial_date Initial date for the data e.g. ymd("1941-10-1")
-#' @param z Optional parameters for including in analysis
+#' @param initial_date Initial date for the data e.g. ymd("1941-10-01")
+#' @param parameter_file Optional file containing parameters to be included in analysis (e.g. RHESSys output x_parameter_sets.txt)
+#' @param num_canopies Number of layers in data. Generally a value of 1 expect when using two canopies.
 #'
 #' @export
 readin_rhessys_output2 <- function(var_names, path, initial_date, parameter_file = NULL, num_canopies = 1){

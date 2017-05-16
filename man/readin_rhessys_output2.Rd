@@ -4,20 +4,26 @@
 \alias{readin_rhessys_output2}
 \title{Extracts output from a multiple RHESSys runs into R}
 \usage{
-readin_rhessys_output2(var_names, path, initial_date, parameter_file = NULL)
+readin_rhessys_output2(var_names, path, initial_date, parameter_file = NULL,
+  num_canopies = 1)
 }
 \arguments{
-\item{var_names}{Vector of the variables to be imported into R}
+\item{var_names}{Vector of the variables names that are to be imported into R}
 
 \item{path}{Path to the directory containing data}
 
-\item{initial_date}{Initial date for the data e.g. ymd("1941-10-1")}
+\item{initial_date}{Initial date for the data e.g. ymd("1941-10-01")}
 
-\item{z}{Optional parameters for including in analysis}
+\item{parameter_file}{Optional file containing parameters to be included in analysis (e.g. RHESSys output x_parameter_sets.txt)}
+
+\item{num_canopies}{Number of layers in data. Generally a value of 1 expect when using two canopies.}
 }
 \description{
 Imports multiple-run RHESSys output that has been consolidated by variable. This
 function imports and manipulates data so that it is 'tidy' and easily imported
 into ggplot.
+}
+\details{
+In general, user should not combine data output with a different number of layers
 }
 
