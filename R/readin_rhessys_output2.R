@@ -40,6 +40,7 @@ readin_rhessys_output2 <- function(var_names, path, initial_date, parameter_file
     parameter_output <- parameter_file %>%
       read.csv(., header = TRUE) %>%
       cbind(run = sapply(seq_len(length(.[,1])),function (x) paste("V",as.character(x),sep="")),.)
+    parameter_output$run <- as.character(parameter_output$run)
     done <- dplyr::left_join(c, parameter_output, by = "run")
   } else {
     done <- c
