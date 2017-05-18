@@ -13,7 +13,7 @@ separate_canopy_output <- function(data, num_canopies = 2){
   variables_by_canopy <- sapply(seq_len(num_canopies), select_rows, y=data, z=num_canopies, simplify=FALSE)
   names_by_canopy <- sapply(seq_len(num_canopies), function(x,y) rep(x,nrow(y)), y=variables_by_canopy[[1]], simplify = FALSE)
 
-  tmp <- lapply(seq_len(num_canopies), function(x,y,z) cbind(y[[x]],names=z[[x]]), y=variables_by_canopy, z=names_by_canopy)
+  tmp <- lapply(seq_len(num_canopies), function(x,y,z) cbind(y[[x]],canopy_layer=z[[x]]), y=variables_by_canopy, z=names_by_canopy)
   canopy_df <- Reduce(rbind, tmp)
 
   return(canopy_df)

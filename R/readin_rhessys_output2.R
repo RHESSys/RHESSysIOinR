@@ -27,10 +27,10 @@ readin_rhessys_output2 <- function(var_names, path, initial_date, parameter_file
   b <- a %>%
     lapply(., separate_canopy_output, num_canopies = num_canopies) %>%       # Add variable to signify if output has multiple layers
     lapply(., function(., dates) cbind(dates, .), dates=dates) %>%           # Add dates column to data frames
-    lapply(., function(.) tidyr::gather(., run, value, c(-dates,-names)))    # Rearrange data frame
+    lapply(., function(.) tidyr::gather(., run, value, c(-dates,-canopy_layer)))    # Rearrange data frame
 
   # Process data to tidy data frame (part 2)
-  var_names_list <- lapply(as.list(var_names), function(x) data.frame(var = rep(x,length(b[[1]]$value))))
+  var_names_list <- lapply(as.list(var_names), function(x) data.frame(var_type = rep(x,length(b[[1]]$value))))
   c <- b %>%
     Map(function(., y) cbind(y, .), ., var_names_list) %>%               # Add column signifying output variable
     Reduce(rbind, .)                                                     # rbind the data frames together
