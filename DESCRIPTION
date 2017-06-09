@@ -1,4 +1,4 @@
-Package: rhessysR
+Package: RHESSysIOinR
 Type: Package
 Title: Tools for Running RHESSys from R
 Version: 0.0.0.9001
