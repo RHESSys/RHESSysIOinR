@@ -69,9 +69,10 @@ create_hdr_file <- function(hdr_input_list, core_par_input_list, def_par_input_l
 
   # Cycle through each type of def file types
   for (aa in seq_along(def_file_types)){
+    hdr_input_selected <- hdr_input_list[[def_file_types[aa]]]
 
     # Check if reference to def file type exists in hdr_input_list
-    if (is.null(hdr_input_list[[def_file_types[aa]]]) == TRUE){
+    if (is.null(hdr_input_selected) == TRUE){
       print(paste("These is no", def_file_types[aa], "hdr file", sep=""))
     } else {
 
@@ -80,75 +81,55 @@ create_hdr_file <- function(hdr_input_list, core_par_input_list, def_par_input_l
       def_file_input_unique <- unique(unlist(lapply(def_par_input_list, function(x) x[2])))
 
       # Step through multiple def file types (if present)
-      for (bb in hdr_input_list[[def_file_types[aa]]]){
-
+      for (bb in hdr_input_selected){
 
         # Check to see if def file type requires changes in parameter values.
-        if (hdr_input_list[[def_file_types[aa]]][bb] %in% def_file_input_unique){
+        if (hdr_input_selected[bb] %in% def_file_input_unique){
 
-          # For column titles
-          def_file_input_path <- unlist(lapply(def_par_input_list, function(x) x[2]))
+          # Select columns (parameters) that are associated with the selected def file
+          def_par_input_names <- unlist(lapply(def_par_input_list, function(x) x[3]))
+          def_par_selected <- def_par_input_names[def_file_input_path==hdr_input_selected[bb]]
+          dots <- lapply(def_par_selected, as.symbol)
 
-          # Select columns that are to be ...
-          def_file_input_par_types <- unlist(lapply(def_par_input_list, function(x) x[3]))
-          par_file_selected <- def_file_input_par_types[def_file_input_path==hdr_input_list[[def_file_types[aa]]][bb]]
+          # Establish IDs to identify def files with different parameter sets
+          par_change_by_def_file <- dplyr::select_(master_par_change_df, .dots=dots)
+          par_change_by_def_file$group_id <- group_indices_(par_change_by_def_file, .dots=dots)
+
+          # Attach group ID to master_par_change_df
+          hdr_input_selected[bb] <- par_change_by_def_file$group_id
+          master_par_change_df = cbind(master_par_change_df,  "placeholder_name" = par_change_by_def_file$group_id)
+          names(master_par_change_df)[names(master_par_change_df) == "placeholder_name"] <- hdr_input_selected[bb]
 
 
-          print("if yes, process def files here.")
+          # -------------
+          # Generate def files
 
+          # Determine the number of unique parameter sets (group #'s) for each def file
+          par_change_by_def_file_condensed <- par_change_by_def_file %>%
+            group_by(group_id) %>%
+            dplyr::filter(row_number()==1)
+
+          # Step through each unique parameter set and make def file
+          for (cc in seq_along(par_change_by_def_file_condensed$group_id)){
+
+
+            make_def_files(par_change_by_def_file_condensed)
+
+          }
         }
 
         # print out lines of hdr file
 
-        # Attach def file names to master_par_change_df
-
-      }
-
-
-
-
-      # ----
-      # Process the division and consolidation
-      # How many unique def files are their for each def type?
-      def_file_input_unique <- unique(unlist(lapply(def_par_input_list, function(x) x[2])))
-
-      def_file_input_types <- unlist(lapply(def_par_list, function(x) x[2]))  # !!!This has same name as earlier variable!!!
-      par_types <- unlist(lapply(def_par_list, function(x) x[3]))
-
-      par_file_selected <- par_types[def_file_input_types==def_unique[aa]]
-
-
-      dots <- lapply(par_file_selected, as.symbol)
-      par_change_df_by_def_file <- dplyr::select_(par_change_df, .dots=dots)
-
-      par_change_df_by_def_file$group_id <- par_change_df_by_def_file %>%
-        group_indices_(.dots=dots)
-      happy <- par_change_df_by_def_file %>%
-        group_by(group_id) %>%
-        dplyr::filter(row_number()==1)
-
-      print(happy)
-      # ----
-
-      # Column bind par_change_df_by_def_file$group_id to par_change_df
-
-      # Call make def_file file
-      for (bb in happy$group_id){
-        process_def_parameters()
-
-      }
+      } # End for bb loop
 
     } # end else
 
+  } # End for aa loop
 
-
-
+  # Cycle through each base station file
+  for (xx in seq_along(base_file_types)){
 
   }
-
-
-
-
 
 
 # ----
@@ -163,7 +144,7 @@ create_hdr_file <- function(hdr_input_list, core_par_input_list, def_par_input_l
     #read_table(def_file)
     #write.table(def_file)
 
-  }
+
 
   # This will then be divided up by def file by collasping data and changed individually?
 
