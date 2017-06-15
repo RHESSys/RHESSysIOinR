@@ -30,16 +30,18 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   # Output def file
 
   path <- dirname(def_file)
-  name_no_ext <- file_path_sans_ext(basename(def_file))
-  ext <- file_ext(def_file)
+  name_no_ext <- tools::file_path_sans_ext(basename(def_file))
+  ext <- tools::file_ext(def_file)
 
   # Create new directory
   path_new <- file.path(path, name_no_ext)
   if(dir.exists(path_new) == FALSE){dir.create(path_new)}
 
   # Write new file
-  name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".txt",sep=""))
-  write.table(def_table, file = name_out, row.names = FALSE, col.names = FALSE, quote=FALSE, sep="       ")
+  file_name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".txt",sep=""))
+  write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote=FALSE, sep="       ")
+
+  return(file_name_out)
 }
 
 
