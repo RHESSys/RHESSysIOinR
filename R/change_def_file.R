@@ -12,6 +12,7 @@
 #' @export
 change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
 
+  # ---------------------------------------------------------------------
   # Read in def file
   def_table <- read.table(def_file, header = FALSE, stringsAsFactors = FALSE)
 
@@ -23,8 +24,6 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   for (dd in seq_along(sub_pos)){
     def_table[sub_pos[dd],1] = par_sets[1,dd]
   }
-
-  #print(def_table)
 
   # ---------------------------------------------------------------------
   # Output def file
@@ -40,8 +39,5 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   # Write new file
   file_name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".txt",sep=""))
   write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote=FALSE, sep="       ")
-
-  return(file_name_out)
 }
-
 
