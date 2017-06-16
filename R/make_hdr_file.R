@@ -1,7 +1,13 @@
-
-
-
-
+#' Produces components of a hdr file
+#'
+#' This function generates the lines in a hdr file associated with a single def file.
+#'
+#' @param master_table Data frame of a single row with references to def file number
+#' @param path_initial Path to the non-differiated def file
+#' @param num_files
+#' @param default_file
+#'
+#' @export
 make_hdr_file <- function(master_table, path_initial, num_files, default_file){
 
   # Function for assembling path lines for each hdr input
