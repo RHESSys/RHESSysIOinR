@@ -12,18 +12,6 @@
 #' @export
 process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_input_list, parameter_method, world_hdr_prefix, world_file){
 
-  # Process each hdr input list
-  def_file_types <- purrr::discard(names(hdr_input_list), names(hdr_input_list)=="base_stations")
-  base_file_types <- purrr::keep(names(hdr_input_list), names(hdr_input_list)=="base_stations")
-
-  # Process each def file input list
-  def_file_input_path <- unlist(lapply(def_par_input_list, function(x) x[2]))
-  def_file_input_unique <- unique(def_file_input_path)
-  def_file_input_par <- unlist(lapply(def_par_input_list, function(x) x[3]))
-
-  # Process each clim.base file
-
-
   # ---------------------------------------------------------------------
   # Produce par_change_master_df according to appropriate method
 
@@ -74,6 +62,15 @@ process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_i
 
   # ---------------------------------------------------------------------
   #
+
+  # Process each hdr input list
+  def_file_types <- purrr::discard(names(hdr_input_list), names(hdr_input_list)=="base_stations")
+  base_file_types <- purrr::keep(names(hdr_input_list), names(hdr_input_list)=="base_stations")
+
+  # Process each def file input list
+  def_file_input_path <- unlist(lapply(def_par_input_list, function(x) x[2]))
+  def_file_input_unique <- unique(def_file_input_path)
+  def_file_input_par <- unlist(lapply(def_par_input_list, function(x) x[3]))
 
   # Cycle through each type of def file
   for (aa in seq_along(def_file_types)){
@@ -133,12 +130,17 @@ process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_i
 
   # ---------------------------------------------------------------------
   # Cycle through each base station file
+
+  # Process each clim.base file path
+
   for (gg in seq_along(base_file_types)){
     print("Placeholder added")
     master_par_change_df <- cbind(master_par_change_df,  "placeholder_name" = rep(0, length(master_par_change_df[,1])))
     names(master_par_change_df)[names(master_par_change_df) == "placeholder_name"] <- hdr_input_list$base_stations
 
   }
+
+
 
   # ---------------------------------------------------------------------
   # Generate hdr file according to master_par_change_df
