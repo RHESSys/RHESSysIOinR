@@ -6,7 +6,7 @@
 #' Also, future iterations should will need to combine outputs from separate simulations (from parallelization)
 #' into a single evaluated simulation.
 #'
-#' @param sim_variables
+#' @param sim_variables ????
 #' @param obs_variables \code{obs} must have an equal number of values as \code{sim}.
 #'
 #' @export
@@ -15,6 +15,7 @@ evaluation <- function(sim_variables, obs_variables, obj_function_selection, inp
 
   parameter_type <- match.arg(evaluation_criteria)
 
+  # Remove lapply?
   sim = lapply(as.data.frame(read.csv(paste(input_folder,"/allsim/",sim_variables, sep=""))))
   obs = lapply(as.data.frame(read.csv(paste(input_folder,"/",obs_variables,sep=""))))
 

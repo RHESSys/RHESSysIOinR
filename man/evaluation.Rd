@@ -9,6 +9,8 @@ evaluation(sim_variables, obs_variables, obj_function_selection, input_folder,
   "composite", "pareto"))
 }
 \arguments{
+\item{sim_variables}{????}
+
 \item{obs_variables}{\code{obs} must have an equal number of values as \code{sim}.}
 }
 \description{

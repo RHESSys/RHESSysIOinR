@@ -4,13 +4,18 @@
 \alias{process_hdr_def_file}
 \title{Produces a hdr file in RHESSys}
 \usage{
-process_hdr_def_file(hdr_input_list, core_par_input_list, def_par_input_list,
-  dated_seq_input_list)
+process_hdr_def_file(hdr_input_list, def_par_input_list, dated_seq_input_list,
+  parameter_method, world_hdr_prefix, world_file)
 }
 \description{
 The hdr file in RHESSys determines which definition and climate files are to be used for a given run.
 }
 \details{
 This function produces hdr file and associated files that are called by hdr file; def files and clim.base files.
+
+Loose ends
+Non-unique parameters
+Needs to work properly when various components are NULL
+Base station code
 }
 

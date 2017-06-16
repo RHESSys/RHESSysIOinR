@@ -29,32 +29,6 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
 
 
 
-  # Generate def files and associated hdr file for all unique parameter sets
-  # Add 'group number' to all-options list
-  # group_cols <- unlist(sapply(parameter_change_list,function(x) x[3]))
-  # dots <- lapply(group_cols, as.symbol) # https://stackoverflow.com/questions/21208801/
-  # parameter_sets$group_num = parameter_sets %>%
-  #   group_indices_(.dots=dots) # https://stackoverflow.com/questions/23026145/
-  #
-  # # Produce data-frame with identifier for unique def and hdr sets.
-  # group_cols2 <- c(group_cols, "group_num")
-  # dots <- lapply(group_cols2, as.symbol)
-  # parameter_sets_groups <- parameter_sets %>%
-  #   dplyr::select_(.dots=dots) %>%
-  #   group_by(group_num) %>%
-  #   dplyr::filter(row_number()==1) # https://stackoverflow.com/questions/22959635/
-  #
-  # # Generate def files
-  # parameter_change_list_l = length(parameter_change_list)
-  # change_parameters(par_value = parameter_sets[aa, total_variables-parameter_change_list_l+bb],
-  #                   awk_file = parameter_change_list[[bb]][[2]],
-  #                   input_file = parameter_change_list[[bb]][[3]],
-  #                   output_folder = parameter_change_list[[bb]][[4]])
-  #
-  #
-  # parameter_sets[group_cols]
-
-
   # -----
   # Process core parameters
   core_par <- process_core_parameters(core_par_list = core_par_list, parameter_method = parameter_method)
@@ -84,7 +58,6 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
     parameter_output$dated_seq_data <- sapply(parameter_sets$dated_seq_data, function(x) dated_seq_data[[x]][[5]])
   }
   write.csv(parameter_output, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""), row.names = FALSE)
-
 
 
 
