@@ -12,80 +12,28 @@
 #' @export
 process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_input_list, parameter_method, world_hdr_prefix, world_file){
 
-  # ---------------------------------------------------------------------
-  # Produce par_change_master_df according to appropriate method
-
-  if (parameter_method == "all_combinations"){
-
-    # Process combinations
-    if (is.null(dated_seq_input_list[1]) == F){
-      dated_seq_change_values <- list(dated_seq_input_list = seq_along(dated_seq_input_list))
-    } else {
-      dated_seq_change_values <- NULL
-    }
-
-    if (is.null(def_par_input_list[1]) == F){
-      names(def_par_input_list) <- lapply(def_par_input_list, function(x) x[[3]]) # Assigning parameter names to list
-      def_par_change_values <- sapply(def_par_input_list, function(x) x[[1]], simplify = FALSE, USE.NAMES = TRUE) # Isolate parameter values
-    } else {
-      def_par_change_values <- NULL
-    }
-
-    master_par_change_df <- expand.grid(c(dated_seq_change_values, def_par_change_values))
-
-    # Make unique column names
-
-   }
-
-  # ---------------------------------------------------------------------
-  if (parameter_method == "monte_carlo"){}
-
-
-
-  # ---------------------------------------------------------------------
-  if (parameter_method == "lhc"){   # latin hypercube
-
-  }
-
-  # ---------------------------------------------------------------------
-  if (parameter_method == "specific_values"){
-
-  }
-
-
-  # ---------------------------------------------------------------------
-  if (parameter_method == "data_frame"){
-
-  }
-
-
-
-  # ---------------------------------------------------------------------
-  #
-
   # Process each hdr input list
   def_file_types <- purrr::discard(names(hdr_input_list), names(hdr_input_list)=="base_stations")
   base_file_types <- purrr::keep(names(hdr_input_list), names(hdr_input_list)=="base_stations")
 
   # Process each def file input list
-  def_file_input_path <- unlist(lapply(def_par_input_list, function(x) x[2]))
+  def_file_input_path <- unlist(lapply(def_par_input_list, function(x) x[1]))
   def_file_input_unique <- unique(def_file_input_path)
-  def_file_input_par <- unlist(lapply(def_par_input_list, function(x) x[3]))
+  def_file_input_par <- unlist(lapply(def_par_input_list, function(x) x[2]))
 
   # Cycle through each type of def file
   for (aa in seq_along(def_file_types)){
 
     hdr_input_selected <- hdr_input_list[[def_file_types[aa]]]
 
-    # Step through def filea with more than one type (if present)
+    # Step through def files with more than one type (if present)
     for (bb in seq_along(hdr_input_selected)){
 
       # Check to see if def file type requires changes in parameter values.
       if (hdr_input_selected[bb] %in% def_file_input_unique){
 
         # Select columns (parameters) that are associated with the selected def file
-        def_par_input_names <- unlist(lapply(def_par_input_list, function(x) x[3]))
-        def_par_selected <- def_par_input_names[def_file_input_path==hdr_input_selected[bb]]
+        def_par_selected <- def_file_input_par[def_file_input_path==hdr_input_selected[bb]]
         dots <- lapply(def_par_selected, as.symbol)
 
         # Establish IDs to identify def files with different parameter sets
@@ -137,7 +85,8 @@ process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_i
     print("Placeholder added")
     master_par_change_df <- cbind(master_par_change_df,  "placeholder_name" = rep(0, length(master_par_change_df[,1])))
     names(master_par_change_df)[names(master_par_change_df) == "placeholder_name"] <- hdr_input_list$base_stations
-
+    # Call change_clim_base_file.R
+    # Produce make_dated_seq_file.R files
   }
 
 
