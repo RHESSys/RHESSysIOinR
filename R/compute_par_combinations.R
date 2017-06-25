@@ -13,7 +13,8 @@
 #'
 #'   Details of latin hypercube method...
 #'
-#'   Details of specific values method...
+#'   Details of specific values method... This option is analogous to importing
+#'   a dataframe of parameter sets, but specifies values by parameter in a list.
 #'
 #' @export
 compute_par_combinations <- function(par_input_list, parameter_method){
@@ -38,7 +39,7 @@ compute_par_combinations <- function(par_input_list, parameter_method){
     max_par <- sapply(seq_len(k), function(x,y) y[[x]][2], y=par_input_list)
     n <- par_input_list[[1]][3]
 
-    # Create the parameter data frame
+    # Create parameter data frame
     out <- mapply(function(x, y, z) runif(min=x, max=y, n=z), x=min_par, y=max_par, MoreArgs = list(z=n))
     out <- as.data.frame(out)
     colnames(out) <- names(par_input_list)
@@ -69,9 +70,13 @@ compute_par_combinations <- function(par_input_list, parameter_method){
   # ---------------------------------------------------------------------
   if (parameter_method == "specific_values"){
 
+    # Data checks
+    stopifnot(sapply(seq_len(k), function(x,y) length(y[[x]])==length(y[[1]]), y=par_input_list)) # Check that total n is equal for all parameters.
 
-
+    # Create parameter data frame
+    out <- as.data.frame(do.call(cbind, par_input_list))
   }
 
  return(out)
 }
+
