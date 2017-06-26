@@ -10,7 +10,7 @@
 #' Base station code
 #'
 #' @export
-process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_input_list, parameter_method, world_hdr_prefix, world_file){
+generate_input_files <- function(hdr_input_list, def_par_input_list, dated_seq_input_list, parameter_method, world_hdr_prefix, world_file){
 
   # Process each hdr input list
   def_file_types <- purrr::discard(names(hdr_input_list), names(hdr_input_list)=="base_stations")
@@ -154,6 +154,14 @@ process_hdr_def_file <- function(hdr_input_list, def_par_input_list, dated_seq_i
   # Attach hdr # to master list
   hdr_file_names <- sapply(seq_along(master_hdr_df[,1]), function(x,y,z) file.path(y, paste(z,"_", x,".hdr",sep="")), y=world_hdr_path, z=world_hdr_prefix)
   master_par_change_df <- cbind(master_par_change_df, hdr_file_names)
+
+
+  # ---------------------------------------------------------------------
+  # Make tec_file
+
+
+
+
 
   return(master_par_change_df)
 }

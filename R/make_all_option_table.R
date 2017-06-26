@@ -9,7 +9,7 @@
 #' accompanied by extra filenames for awk command. See \code{run_rhessys()} inputs.
 #'
 #' @export
-get_parameter_sets <- function(rhessys_version, tec_file, world_file, world_hdr_file,
+make_all_option_table <- function(rhessys_version, tec_file, world_file, world_hdr_file,
                                flow_file, start_date, end_date, output_folder,
                                output_filename, command_options,
                                m, k, m_v, k_v, pa, po, gw1, gw2,
