@@ -10,7 +10,7 @@
 #' @export
 make_hdr_file <- function(master_table, path_initial, num_files, default_file){
 
-  # Function for assembling path lines for each hdr input
+  # Function for assembling paths for each hdr input
   def_file_df <- function(def, default_file = "default_file"){
     output <- lapply(def, function(x) c(x, default_file)) %>%
       do.call(rbind, .)
@@ -20,7 +20,7 @@ make_hdr_file <- function(master_table, path_initial, num_files, default_file){
 
   hdr_out <- data.frame(c1 = length(path_initial), c2 = num_files, stringsAsFactors=FALSE)
 
-  path_def_basin = vector()
+  path_def_basin <- vector()
   for (zz in seq_along(path_initial)){
 
     # Def file paths and names

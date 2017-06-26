@@ -18,53 +18,29 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
 
   parameter_method <- match.arg(parameter_method)
 
-
-  # ---------------------------------------------------------------------
-  # Process parameters
-
-
-
-  # Generate hdr file and def files
-  process_hdr_def_file(hdr_input_list=hdr_input_list, def_par_input_list=def_par_input_list, dated_seq_input_list=dated_seq_input_list, parameter_method=parameter_method, world_hdr_prefix=world_hdr_prefix, world_file=world_file)
-
-
-
-  # -----
-  # Process core parameters
-  core_par <- process_core_parameters(core_par_list = core_par_list, parameter_method = parameter_method)
-
+  # Check that there are either parameters to be computed or a data frame, but not both.
 
 
   # ---------------------------------------------------------------------
-  # Generate all-options table
-
-  parameter_sets <- get_parameter_sets(rhessys_version = rhessys_version, tec_file = tec_file,
-                                       world_file = world_file, world_hdr_file = world_hdr_file,
-                                       flow_file = flow_file, start_date = start_date,
-                                       end_date = end_date, output_folder = output_folder,
-                                       output_filename = output_filename, command_options = command_options,
-                                       m = m, k = k, m_v = m_v, k_v = k_v,
-                                       pa = pa, po = po, gw1 = gw1, gw2 = gw2,
-                                       parameter_change_list = parameter_change_list,
-                                       dated_seq_data = dated_seq_data,
-                                       method = parameter_type)
-  parameter_sets_l <- length(parameter_sets[,1])
-  total_variables <- length(parameter_sets)
+  # Generate option sets
+  generate_input_sets()
 
 
-  # Export parameter sets
-  parameter_output <- parameter_sets
-  if (is.null(dated_seq_data) == FALSE){
-    parameter_output$dated_seq_data <- sapply(parameter_sets$dated_seq_data, function(x) dated_seq_data[[x]][[5]])
-  }
-  write.csv(parameter_output, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""), row.names = FALSE)
+  #Sort through output
+
+
+  # ---------------------------------------------------------------------
+  # Generate RHESSys input files
+  generate_input_files(hdr_input_list=hdr_input_list, def_par_input_list=def_par_input_list, dated_seq_input_list=dated_seq_input_list, parameter_method=parameter_method, world_hdr_prefix=world_hdr_prefix, world_file=world_file)
+
+
 
 
 
   # ---------------------------------------------------------------------
-  # Write tec file
+  # Write tec file (possibly move to generate_input_files)
 
-  if (is.null(tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = tec_data)
+  if (is.null(input_tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = input_tec_data)
 
 
   # ---------------------------------------------------------------------
@@ -72,23 +48,6 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
   # Step through each parameter set
   for (aa in seq_len(parameter_sets_l)){
     print(paste("-------------- Run", aa ,"of", parameter_sets_l, "--------------"))
-
-    # Call awk script to substitute non-standard parameters (and variables)
-    if (is.null(parameter_change_list[1]) == F){
-      parameter_change_list_l = length(parameter_change_list)
-      for (bb in seq_along(parameter_change_list)){
-#        change_parameters(par_value = parameter_sets[aa, total_variables-parameter_change_list_l+bb],
-#                              awk_file = parameter_change_list[[bb]][[2]],
-#                              input_file = parameter_change_list[[bb]][[3]],
-#                              output_folder = parameter_change_list[[bb]][[4]])
-      }
-    }
-
-    # Write dated sequence file
-    # Currently only applies to dated sequences with a single date.
-    # make_dated_seq_file can handle multi-dates, but run_rhessys is not set up
-    # to feed it multiple dates.
-    if (is.null(dated_seq_data) == FALSE) make_dated_seq_file(dated_seq_file = dated_seq_file, dated_seq_data = dated_seq_data[[parameter_sets$dated_seq_data[aa]]])
 
     # Call RHESSys
     rhessys_command(rhessys_version = parameter_sets$rhessys_version[aa], tec_file = parameter_sets$tec_file[aa],
