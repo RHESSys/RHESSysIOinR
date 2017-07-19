@@ -1,4 +1,4 @@
-#' Create parameter sets
+#' Create all-options table
 #'
 #'
 #' Combines vectors of parameter inputs into data frame of parameter sets that
@@ -9,98 +9,92 @@
 #' accompanied by extra filenames for awk command. See \code{run_rhessys()} inputs.
 #'
 #' @export
-make_all_option_table <- function(rhessys_version, tec_file, world_file, world_hdr_file,
-                               flow_file, start_date, end_date, output_folder,
-                               output_filename, command_options,
-                               m, k, m_v, k_v, pa, po, gw1, gw2,
-                               parameter_change_list=NULL, dated_seq_data=NULL,
-                               method, runs, ...){
+make_all_option_table <- function(parameter_method,
+                                  input_rhessys,
+                                  option_sets_def_par,
+                                  option_sets_standard_par,
+                                  option_sets_dated_seq,
+                                  ...){
 
-  # This should be reconfigured so that every input into run_rhessys is treated as a variable.
-  # This would permit every input to be looped over and would provide a definitive record of all
-  # inputs into each model run. RHESSys_command could then be sourced from this output data frame.
+  # ---------------------------------------------------------------------
+  # Add def files
 
-  # The previous objective is made challenging since variables like make_dated_seq and can both
-  # multiple inputs (equivavlent to different parameter values) or a single input with muliple
-  # dated-sequences.
+  # Create hybrid parameter names for def parameters (avoids potential duplicate names if multiple canopies are used)
+  col_names_def <- mapply(function(x,y) paste(x, ":", names(y), sep=""),
+                          x=names(option_sets_def_par),
+                          y=option_sets_def_par,
+                          SIMPLIFY = FALSE)
 
-  # For non-parameters, basically just need to prepopulate a data-frame with all possibilities,
-  # with a signifier of row number for non-parameters.
+  # Attach hybrid parameter names to option sets
+  option_sets_def_par_full_name <- mapply(function(x,y) setNames(x,y),
+                                          x=option_sets_def_par,
+                                          y=col_names_def,
+                                          SIMPLIFY = FALSE)
 
-#   rhessys_version_seq <- seq_along(rhessys_version)
-#   tec_file_seq <- seq_along(tec_file)
-#   world_file_seq <- seq_along(world_file)
-#   world_hdr_file_seq <- seq_along(world_hdr_file)
-#   flow_file_seq <- seq_along(flow_file)
-#   start_date_seq <- seq_along(start_date)
-#   end_date_seq <- seq_along(end_date)
-#   output_folder_seq <- seq_along(output_folder)
-#   output_filename_seq <- seq_along(output_filename)
-#   command_options_seq <- seq_along(command_options)
+  if (parameter_method == "all_combinations"){
 
-  # Make a list of supplied parameter values
-#   if (is.null(parameter_change_list[1]) == F & is.null(dated_seq_data[1,]) == F){
-#     print(apply(dated_seq_data, 1, function(x) x[5]))
-#     parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_change_list, function(x) x[[1]]), lapply(dated_seq_data, function(x) x[[5]]))
-#   } else if (is.null(parameter_change_list[1]) == F){
-#     parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), lapply(parameter_change_list, function(x) x[[1]]))
-#   } else if (is.null(dated_seq_data[1]) == F){
-#     parameter_values <- c(list(m, k, m_v, k_v, pa, po, gw1, gw2), apply(dated_seq_data, 1, function(x) x[5]))
-#   } else {
-#     parameter_values <- list(m, k, m_v, k_v, pa, po, gw1, gw2)
-#   }
+    # Generate a single dataframe for def files
+    tmp1 <- option_sets_def_par_full_name %>%   # Isolate the group_id for each def file
+      lapply(.,function(x) dplyr::select(x,ends_with("group_id")))
+    tmp2 <- expand.grid(purrr::flatten(tmp1))   # Create all combinations of def parameters
+    tmp3 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=option_sets_def_par_full_name, z=names(purrr::flatten(tmp1)), MoreArgs=list(x=tmp2), SIMPLIFY = FALSE) # Rejoin the variables to the appropriate group_id
+    all_option_def <- do.call(dplyr::bind_cols, tmp3)
+    all_option_def <- bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
 
-  #delete:   list(as.vector(apply(dated_seq_data, 1, function(x) x[5])))
-
-
-  input_values <- list(rhessys_version = rhessys_version,
-                             tec_file = tec_file,
-                             world_file = world_file,
-                             world_hdr_file = world_hdr_file,
-                             flow_file = flow_file,
-                             start_date = start_date,
-                             end_date = end_date,
-                             output_folder = output_folder,
-                             output_filename = output_filename,
-                             command_options = command_options)
-
-  parameter_values <- list(m = m, k = k, m_v = m_v, k_v = k_v,
-                           pa = pa, po = po, gw1 = gw1, gw2 = gw2)
-
-  if (is.null(dated_seq_data[1]) == F){
-    dated_seq_seq = list(dated_seq_data = seq_along(dated_seq_data))
-  } else {
-    dated_seq_seq = NULL
   }
 
-  if (is.null(parameter_change_list[1]) == F){
-    names(parameter_change_list) <- lapply(parameter_change_list,function(x) x[[2]])
-    parameter_change_values <- sapply(parameter_change_list, function(x) x[[1]],simplify = FALSE,USE.NAMES = TRUE)
-  } else {
-    parameter_change_values = NULL
+  if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
+
+    # Generate a single dataframe for def files
+    all_option_def <- do.call(bind_cols,option_sets_def_par_full_name)
+    all_option_def <- bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
+
   }
 
+  # ---------------------------------------------------------------------
+  # Add standard parameters
 
+  if (parameter_method == "all_combinations"){
 
-  if (method == "all_combinations"){
-
-    parameter_sets <- expand.grid(c(input_values, parameter_values, dated_seq_seq, parameter_change_values))
+    # Generate a single dataframe for def files
+    tmp1 <- option_sets_standard_par %>%
+      dplyr::select(ends_with("group_id"))
+    tmp2 <- all_option_def %>%
+      dplyr::select(ends_with("def_id"))
+    tmp3 <- expand.grid(c(tmp1,tmp2))   # Create all combinations of def and standard parameters
+    tmp4 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=list(option_sets_standard_par, all_option_def) , z=names(tmp3), MoreArgs=list(x=tmp3), SIMPLIFY = FALSE)  # Rejoin the variables to the appropriate group_id
+    all_option_par <- do.call(dplyr::bind_cols, tmp4)
+    all_option_par <- dplyr::bind_cols(all_option_par, data.frame(par_id=seq_along(all_option_par[[1]]))) # Add unique par identifier
   }
 
-  if (method == "monte_carlo"){
-    # Pull random values from min/max of range supplied\
-    # Need to pass total number of samples to be used.
-    print("Currently not implemented")
-    # parameter_sets <- cbind(parameter_values)
+  if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
+
+    # Generate a single dataframe
+    all_option_par <- dplyr::bind_cols(all_option_def, option_sets_standard_par)
+    all_option_par <- dplyr::bind_cols(all_option_par, data.frame(par_id=seq_along(all_option_par[[1]]))) # Add unique par identifier
   }
 
-  if (method == "exact_values"){
-    # Add flags for when all parameters are not equal length
+  # ---------------------------------------------------------------------
+  # Add dated sequences
 
-    parameter_sets <- as.data.frame(parameter_values)
-  }
+  # **** Pending ****
 
-  return(parameter_sets)
+  # ---------------------------------------------------------------------
+  # Add tec files
+
+  # **** Pending ****
+
+  # ---------------------------------------------------------------------
+  # Add rhessys inputs
+
+  # Create expanded grid for rhessys_input
+  tmp1 <- all_option_par %>%
+    dplyr::select(ends_with("par_id"))
+  tmp2 <- expand.grid(c(input_rhessys, tmp1))
+  option_sets_all <- dplyr::full_join(tmp2,all_option_par,by="par_id")
+
+  # ---------------------------------------------------------------------
+  return(option_sets_all)
 }
 
 
