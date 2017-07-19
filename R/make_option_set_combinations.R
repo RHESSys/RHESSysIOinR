@@ -7,14 +7,14 @@
 #'   parameter should be provided as name of each list component.
 #' @param parameter_method Parameter designating the method to use.
 #'
-#'   Details of all_combinations method...
+#' Details of all_combinations method...
 #'
-#'   Details of monte-carlo method...
+#' Details of monte-carlo method...
 #'
-#'   Details of latin hypercube method...
+#' Details of latin hypercube method...
 #'
-#'   Details of specific values method... This option is analogous to importing
-#'   a dataframe of parameter sets, but specifies values by parameter in a list.
+#' Details of specific values method... This option is analogous to importing
+#' a dataframe of parameter sets, but specifies values by parameter in a list.
 #'
 #' @export
 make_option_set_combinations <- function(input_list, parameter_method){
@@ -30,11 +30,11 @@ make_option_set_combinations <- function(input_list, parameter_method){
   if (parameter_method == "monte_carlo"){
 
     # Data checks
+    k <- length(input_list)
     stopifnot(sapply(seq_len(k), function(x,y) length(y[[x]])==3, y=input_list)) # Check that there are 3 values for each parameter (presumably a min, max and n)
     stopifnot(sapply(seq_len(k), function(x,y) y[[x]][3]==y[[1]][3], y=input_list)) # Check that total n is equal for all parameters.
 
     # Inputs
-    k <- length(input_list)
     min_par <- sapply(seq_len(k), function(x,y) y[[x]][1], y=input_list)
     max_par <- sapply(seq_len(k), function(x,y) y[[x]][2], y=input_list)
     n <- input_list[[1]][3]
@@ -49,11 +49,11 @@ make_option_set_combinations <- function(input_list, parameter_method){
   if (parameter_method == "lhc"){   # latin hypercube
 
     # Data checks
+    k <- length(input_list)
     stopifnot(sapply(seq_len(k), function(x,y) length(y[[x]])==3, y=input_list)) # Check that there are 3 values for each parameter (presumably a min, max and n)
     stopifnot(sapply(seq_len(k), function(x,y) y[[x]][3]==y[[1]][3], y=input_list)) # Check that total n is equal for all parameters.
 
     # Inputs for Latin Hypercube
-    k <- length(input_list)
     min_par <- sapply(seq_len(k), function(x,y) y[[x]][1], y=input_list)
     max_par <- sapply(seq_len(k), function(x,y) y[[x]][2], y=input_list)
     n <- input_list[[1]][3]
@@ -71,6 +71,7 @@ make_option_set_combinations <- function(input_list, parameter_method){
   if (parameter_method == "specific_values"){
 
     # Data checks
+    k <- length(input_list)
     stopifnot(sapply(seq_len(k), function(x,y) length(y[[x]])==length(y[[1]]), y=input_list)) # Check that total n is equal for all parameters.
 
     # Create parameter data frame
