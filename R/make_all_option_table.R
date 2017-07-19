@@ -58,7 +58,7 @@ make_all_option_table <- function(parameter_method,
 
     # Generate a single dataframe for def files
     tmp1 <- option_sets_standard_par %>%
-      dplyr::select(ends_with("group_id"))
+      dplyr::select(ends_with("stan_id"))
     tmp2 <- all_option_def %>%
       dplyr::select(ends_with("def_id"))
     tmp3 <- expand.grid(c(tmp1,tmp2))   # Create all combinations of def and standard parameters
@@ -92,10 +92,9 @@ make_all_option_table <- function(parameter_method,
     dplyr::select(ends_with("par_id"))
   tmp2 <- expand.grid(c(input_rhessys, tmp1))
   option_sets_all <- dplyr::full_join(tmp2,all_option_par,by="par_id")
+  option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(all_id=seq_along(option_sets_all[[1]]))) # Add unique all-option identifier
 
   # ---------------------------------------------------------------------
   return(option_sets_all)
 }
-
-
 
