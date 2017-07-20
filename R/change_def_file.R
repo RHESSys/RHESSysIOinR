@@ -37,7 +37,7 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   if(dir.exists(path_new) == FALSE){dir.create(path_new)}
 
   # Write new file
-  file_name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".txt",sep=""))
+  file_name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".def",sep=""))
   write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote=FALSE, sep="       ")
 }
 

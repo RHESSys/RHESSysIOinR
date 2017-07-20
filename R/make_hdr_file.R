@@ -37,7 +37,7 @@ make_hdr_file <- function(master_table, path_initial, num_files, default_file){
       path_def_basin[zz] <- path_initial
     } else {
       # Reference new def file
-      path_def_basin[zz] <- file.path(def_path_new, paste(name_no_ext,"_",file_name_ext,".txt",sep=""))
+      path_def_basin[zz] <- file.path(def_path_new, paste(name_no_ext,"_",file_name_ext,".def",sep=""))
     }
   }
 
