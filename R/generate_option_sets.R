@@ -3,24 +3,19 @@
 #'
 #'
 #' Loose ends
-#' Non-unique parameters
 #' Needs to work properly when various components are NULL
 #' Base station code
 #'
-#' Output: option_sets_def_par, option_sets_standard_par, option_sets_all
 #'
 #' @export
 generate_option_sets <- function(parameter_method,
+                                 input_hdr_list,
                                  input_rhessys,
                                  input_preexisting_table,
                                  input_def_list,
                                  input_standard_par_list,
                                  input_dated_seq_file,
                                  input_tec_data){
-
-  # Output of this function
-  # An all-options table for inputting into to model
-  # Individual def-file tables for making def files.
 
   # ---------------------------------------------------------------------
   # Process parameters
@@ -71,7 +66,7 @@ generate_option_sets <- function(parameter_method,
 
       # Attach group ID to option_sets_standard_par
       tmp <- seq_along(option_sets_standard_par[[1]])
-      option_sets_standard_par <- bind_cols(option_sets_standard_par, group_id = tmp)
+      option_sets_standard_par <- bind_cols(option_sets_standard_par, stan_id = tmp)
 
       } else {
       option_sets_standard_par <- NULL
@@ -96,6 +91,16 @@ generate_option_sets <- function(parameter_method,
   }
 
   # ---------------------------------------------------------------------
+  # Make a table from which hdr files will be derived
+
+  input_hdr_list
+  # Select out the def files from master_par_change_df
+  master_hdr_df <- master_par_change_df[unlist(input_hdr_list)]
+  # ****Can't put this here cause def, stand, and base files have not been combined yet****
+  # ****Remove this section****
+
+
+  # ---------------------------------------------------------------------
   # Process tec file(s)
 
   # Currently not implemented. This code would permit for the use of different
@@ -104,15 +109,24 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Generate all-option table
 
-  option_sets_all <- make_all_option_table(parameter_method,
+  option_sets <- make_all_option_table(parameter_method,
                         input_rhessys,
+                        input_hdr_list,
                         option_sets_def_par,
                         option_sets_standard_par,
                         option_sets_dated_seq)
 
+  option_sets_all <- option_sets$option_sets_all
+  option_sets_hdr <- option_sets$option_sets_hdr
 
   # ---------------------------------------------------------------------
   # Export option sets (this should move to generate_input_files.r?)
+
+  # Output types
+  # Everything (check)
+  # Inputs for rhessys_command
+  # Parameters for transferring to simulation
+
 
   # parameter_output <- option_sets_all
   #

@@ -11,6 +11,7 @@
 #' @export
 make_all_option_table <- function(parameter_method,
                                   input_rhessys,
+                                  input_hdr_list,
                                   option_sets_def_par,
                                   option_sets_standard_par,
                                   option_sets_dated_seq,
@@ -40,7 +41,6 @@ make_all_option_table <- function(parameter_method,
     tmp3 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=option_sets_def_par_full_name, z=names(purrr::flatten(tmp1)), MoreArgs=list(x=tmp2), SIMPLIFY = FALSE) # Rejoin the variables to the appropriate group_id
     all_option_def <- do.call(dplyr::bind_cols, tmp3)
     all_option_def <- bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
-
   }
 
   if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
@@ -48,7 +48,6 @@ make_all_option_table <- function(parameter_method,
     # Generate a single dataframe for def files
     all_option_def <- do.call(bind_cols,option_sets_def_par_full_name)
     all_option_def <- bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
-
   }
 
   # ---------------------------------------------------------------------
@@ -80,6 +79,32 @@ make_all_option_table <- function(parameter_method,
   # **** Pending ****
 
   # ---------------------------------------------------------------------
+  # Make a table from which hdr files will be derived (These are the group_id columns)
+
+  # After dated sequences are added, change input file from all_option_par to the one produced from dated sequences
+  # Actually, since stan parameters should not be included in hdr file, should reorder dated seq after def, then do this process.
+
+  def_file_types <- purrr::discard(names(input_hdr_list), names(input_hdr_list)=="base_stations")
+  base_file_types <- purrr::keep(names(input_hdr_list), names(input_hdr_list)=="base_stations")
+  # Still need to separate base station file
+
+
+  input_hdr <- purrr::flatten(input_hdr_list)
+  for (aa in seq_along(input_hdr)){
+    input_hdr[aa]
+    if (input_hdr[aa] %in% names(option_sets_def_par)){    # Did a def file from the hdr input have parameter changes?
+      #print("nothing to see here")
+    } else {
+      # Attach column to master_par_change_df for unchanging def files
+      all_option_par <- cbind(all_option_par,  "placeholder_name" = rep(0, length(all_option_par[,1])))
+      names(all_option_par)[names(all_option_par) == "placeholder_name"] <- paste(input_hdr[aa], ":group_id", sep="")
+    }
+  }
+
+  # Make hdr table
+  option_sets_hdr <- dplyr::select(all_option_par,ends_with("group_id"))
+
+  # ---------------------------------------------------------------------
   # Add tec files
 
   # **** Pending ****
@@ -95,6 +120,7 @@ make_all_option_table <- function(parameter_method,
   option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(all_id=seq_along(option_sets_all[[1]]))) # Add unique all-option identifier
 
   # ---------------------------------------------------------------------
-  return(option_sets_all)
+  return(list(option_sets_all = option_sets_all,
+              option_sets_hdr = option_sets_hdr))
 }
 

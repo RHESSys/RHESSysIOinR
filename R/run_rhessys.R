@@ -28,6 +28,7 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
 
   option_sets <- generate_option_sets(parameter_method=parameter_method,
                                       input_rhessys=input_rhessys,
+                                      input_hdr_list=input_hdr_list,
                                       input_preexisting_table=input_preexisting_table,
                                       input_def_list=input_def_list,
                                       input_standard_par_list=input_standard_par_list,
