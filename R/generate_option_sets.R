@@ -85,39 +85,48 @@ generate_option_sets <- function(parameter_method,
   # Process dated sequence file(s)
 
   if (is.null(input_dated_seq_list[1]) == F){
+    # ****Currently not implemented****
     # Implement input_dated_seq_list code here
+    option_sets_dated_seq <- NULL
   } else {
     option_sets_dated_seq <- NULL
   }
 
   # ---------------------------------------------------------------------
-  # Make a table from which hdr files will be derived
-
-  input_hdr_list
-  # Select out the def files from master_par_change_df
-  master_hdr_df <- master_par_change_df[unlist(input_hdr_list)]
-  # ****Can't put this here cause def, stand, and base files have not been combined yet****
-  # ****Remove this section****
-
-
-  # ---------------------------------------------------------------------
   # Process tec file(s)
 
-  # Currently not implemented. This code would permit for the use of different
-  # tec files
+  # ****Currently not implemented****
+  # Code should permit the use of different tec files
 
   # ---------------------------------------------------------------------
   # Generate all-option table
 
-  option_sets <- make_all_option_table(parameter_method,
-                        input_rhessys,
-                        input_hdr_list,
-                        option_sets_def_par,
-                        option_sets_standard_par,
-                        option_sets_dated_seq)
+  option_sets_all <- make_all_option_table(parameter_method,
+                                           input_rhessys,
+                                           input_hdr_list,
+                                           option_sets_def_par,
+                                           option_sets_standard_par,
+                                           option_sets_dated_seq)
 
-  option_sets_all <- option_sets$option_sets_all
-  option_sets_hdr <- option_sets$option_sets_hdr
+  # ---------------------------------------------------------------------
+  # Generate hdr table
+
+  option_sets_hdr <- dplyr::select(option_sets_all,ends_with("group_id"))    # Step 1
+
+  dplyr::group_indices(option_sets_all) # Add hdr group_id to option_sets_all
+
+  option_sets_hdr <- dplyr::distinct(option_sets_hdr) # Step 2
+  names(option_sets_hdr) <- do.call(rbind, strsplit(names(option_sets_hdr), ":"))[,1] # Step 3
+
+
+
+  # ---------------------------------------------------------------------
+  # Generate input table for rhessys_command
+
+
+
+
+
 
   # ---------------------------------------------------------------------
   # Export option sets (this should move to generate_input_files.r?)
@@ -140,5 +149,6 @@ generate_option_sets <- function(parameter_method,
   return(list(option_sets_def_par = option_sets_def_par,
               option_sets_standard_par = option_sets_standard_par,
               option_sets_dated_seq = option_sets_dated_seq,
-              option_sets_all = option_sets_all))
+              option_sets_all = option_sets_all,
+              option_sets_hdr = option_sets_hdr))
 }
