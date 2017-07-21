@@ -35,45 +35,27 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
                                       input_dated_seq_file=input_dated_seq_file,
                                       input_tec_data=input_tec_data)
 
-  # Disaggregate output
-  option_sets$option_sets_def_par
-
 
   # ---------------------------------------------------------------------
   # Generate RHESSys input files
 
-
-  generate_input_files(hdr_input_list=hdr_input_list,
-                       option_sets_def = option_sets$option_sets_def_par,
-                       def_par_input_list=def_par_input_list,
-                       dated_seq_input_list=dated_seq_input_list,
-                       parameter_method=parameter_method,
-                       world_hdr_prefix=world_hdr_prefix,
-                       world_file=world_file)
+  generate_input_files(input_hdr_list = input_hdr_list,
+                       option_sets_def_par = option_sets$option_sets_def_par,
+                       option_sets_hdr = option_sets$option_sets_hdr,
+                       world_hdr_prefix = world_hdr_prefix,
+                       world_file = world_file)
 
 
 
   # ---------------------------------------------------------------------
-  # Generate all-option table
-
-  option_sets_all <- generate_all_option_sets(parameter_method,
-                                              input_rhessys,
-                                              option_sets_def_par,
-                                              option_sets_standard_par,
-                                              option_sets_dated_seq)
-
-  parameter_sets_l <- length(parameter_sets[,1])
-  total_variables <- length(parameter_sets)
-
-
-
-  # ---------------------------------------------------------------------
-  # Write tec file (possibly move to generate_input_files)
+  # Write tec file (***possibly move to generate_input_files***)
 
   if (is.null(input_tec_data) == FALSE) make_tec_file(tec_file = tec_file, tec_data = input_tec_data)
 
 
   # ---------------------------------------------------------------------
+
+  option_sets_all <- option_sets$option_sets_all
 
   # Step through each parameter set
   for (aa in seq_len(parameter_sets_l)){

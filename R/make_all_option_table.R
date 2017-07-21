@@ -14,8 +14,7 @@ make_all_option_table <- function(parameter_method,
                                   input_hdr_list,
                                   option_sets_def_par,
                                   option_sets_standard_par,
-                                  option_sets_dated_seq,
-                                  ...){
+                                  option_sets_dated_seq){
 
   # ---------------------------------------------------------------------
   # Add def files
@@ -50,6 +49,18 @@ make_all_option_table <- function(parameter_method,
     all_option_def <- bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
   }
 
+  # Add columns for unchanging def files (These columns are needed when making hdr files)
+  input_hdr_list_def <- purrr::flatten(purrr::discard(input_hdr_list, names(input_hdr_list)=="base_stations"))
+  for (aa in seq_along(input_hdr_list_def)){
+    if (input_hdr_list_def[aa] %in% names(option_sets_def_par)){    # Did a def file from the hdr input have parameter changes?
+      # Do nothing!
+    } else {
+      # Attach column to all_option_def for unchanging def files
+      all_option_def <- cbind(all_option_def,  "placeholder_name" = rep(0, length(all_option_def[,1])))
+      names(all_option_def)[names(all_option_def) == "placeholder_name"] <- paste(input_hdr_list_def[aa], ":group_id", sep="")
+    }
+  }
+
   # ---------------------------------------------------------------------
   # Add standard parameters
 
@@ -74,53 +85,47 @@ make_all_option_table <- function(parameter_method,
   }
 
   # ---------------------------------------------------------------------
-  # Add dated sequences
+  # Add base files (dated sequences)
 
   # **** Pending ****
+  all_option_base <- all_option_par
 
-  # ---------------------------------------------------------------------
-  # Make a table from which hdr files will be derived (These are the group_id columns)
-
-  # After dated sequences are added, change input file from all_option_par to the one produced from dated sequences
-  # Actually, since stan parameters should not be included in hdr file, should reorder dated seq after def, then do this process.
-
-  def_file_types <- purrr::discard(names(input_hdr_list), names(input_hdr_list)=="base_stations")
-  base_file_types <- purrr::keep(names(input_hdr_list), names(input_hdr_list)=="base_stations")
-  # Still need to separate base station file
-
-
-  input_hdr <- purrr::flatten(input_hdr_list)
-  for (aa in seq_along(input_hdr)){
-    input_hdr[aa]
-    if (input_hdr[aa] %in% names(option_sets_def_par)){    # Did a def file from the hdr input have parameter changes?
-      #print("nothing to see here")
-    } else {
-      # Attach column to master_par_change_df for unchanging def files
-      all_option_par <- cbind(all_option_par,  "placeholder_name" = rep(0, length(all_option_par[,1])))
-      names(all_option_par)[names(all_option_par) == "placeholder_name"] <- paste(input_hdr[aa], ":group_id", sep="")
-    }
+  # Add columns for unchanging base station file (These columns are needed when making hdr files)
+  input_hdr_list_base <- purrr::keep(input_hdr_list, names(input_hdr_list)=="base_stations")
+  if (input_hdr_list_base %in% names(option_sets_dated_seq)){    # Did the base file from the hdr input have dated sequences?
+    # Do nothing!
+  } else {
+    # Attach column to all_option_base for unchanging base files
+    all_option_base <- cbind(all_option_base,  "placeholder_name" = rep(0, length(all_option_base[,1])))
+    names(all_option_base)[names(all_option_base) == "placeholder_name"] <- paste(input_hdr_list_base, ":group_id", sep="")
   }
 
-  # Make hdr table
-  option_sets_hdr <- dplyr::select(all_option_par,ends_with("group_id"))
-
   # ---------------------------------------------------------------------
-  # Add tec files
+  # Add tec files options
 
   # **** Pending ****
+  all_option_tec <- all_option_base
 
   # ---------------------------------------------------------------------
   # Add rhessys inputs
 
   # Create expanded grid for rhessys_input
-  tmp1 <- all_option_par %>%
+  tmp1 <- all_option_tec %>%
     dplyr::select(ends_with("par_id"))
   tmp2 <- expand.grid(c(input_rhessys, tmp1))
-  option_sets_all <- dplyr::full_join(tmp2,all_option_par,by="par_id")
+  option_sets_all <- dplyr::full_join(tmp2,all_option_tec,by="par_id")
   option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(all_id=seq_along(option_sets_all[[1]]))) # Add unique all-option identifier
 
   # ---------------------------------------------------------------------
-  return(list(option_sets_all = option_sets_all,
-              option_sets_hdr = option_sets_hdr))
+  # Add hdr_id to option_sets_all
+
+  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"))  # Select group id's
+  dots <- lapply(names(group_ids), as.symbol)
+  hdr_id <- dplyr::group_indices_(group_ids, .dots=dots)
+  option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(hdr_id=hdr_id)) # Add unique hdr identifier
+
+  # ---------------------------------------------------------------------
+
+  return(option_sets_all)
 }
 
