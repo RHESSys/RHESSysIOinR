@@ -10,9 +10,11 @@
 #' Base station code
 #'
 #' @export
-generate_input_files <- function(input_hdr_list,
+generate_input_files <- function(input_rhessys,
+                                 input_hdr_list,
                                  option_sets_def_par,
                                  option_sets_hdr,
+                                 input_tec_data,
                                  world_hdr_prefix,
                                  world_file){
 
@@ -112,9 +114,14 @@ generate_input_files <- function(input_hdr_list,
 
 
   # ---------------------------------------------------------------------
-  # Make tec_file
+  # Write tec file
 
+  if (is.null(input_tec_data) == FALSE){
+    make_tec_file(tec_file = tec_file, tec_data = input_tec_data)
+    print(paste("Tec file has been written"))
+  }
 
+  # ---------------------------------------------------------------------
 
   #return()
 }

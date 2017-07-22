@@ -14,8 +14,7 @@ generate_option_sets <- function(parameter_method,
                                  input_preexisting_table,
                                  input_def_list,
                                  input_standard_par_list,
-                                 input_dated_seq_file,
-                                 input_tec_data){
+                                 input_dated_seq_file){
 
   # ---------------------------------------------------------------------
   # Process parameters
@@ -80,7 +79,6 @@ generate_option_sets <- function(parameter_method,
 
   }
 
-
   # ---------------------------------------------------------------------
   # Process dated sequence file(s)
 
@@ -96,7 +94,7 @@ generate_option_sets <- function(parameter_method,
   # Process tec file(s)
 
   # ****Currently not implemented****
-  # Code should permit the use of different tec files
+  # Code should permit the use of multiple tec files
 
   # ---------------------------------------------------------------------
   # Generate all-option table
