@@ -8,8 +8,12 @@
 #' @param default_file
 #'
 #' @export
-make_hdr_file <- function(master_table, path_initial, num_files, default_file){
+make_hdr_file <- function(master_table,
+                          path_initial,
+                          num_files,
+                          default_file){
 
+  # ---------------------------------------------------------------------
   # Function for assembling paths for each hdr input
   def_file_df <- function(def, default_file = "default_file"){
     output <- lapply(def, function(x) c(x, default_file)) %>%
@@ -17,6 +21,8 @@ make_hdr_file <- function(master_table, path_initial, num_files, default_file){
     colnames(output) <- c("c1", "c2")
     return(output)
   }
+
+  # ---------------------------------------------------------------------
 
   hdr_out <- data.frame(c1 = length(path_initial), c2 = num_files, stringsAsFactors=FALSE)
 

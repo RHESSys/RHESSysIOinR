@@ -17,7 +17,8 @@
 #' a dataframe of parameter sets, but specifies values by parameter in a list.
 #'
 #' @export
-make_option_set_combinations <- function(input_list, parameter_method){
+make_option_set_combinations <- function(input_list,
+                                         parameter_method){
 
   # ---------------------------------------------------------------------
   if (parameter_method == "all_combinations"){
@@ -77,6 +78,8 @@ make_option_set_combinations <- function(input_list, parameter_method){
     # Create parameter data frame
     out <- as.data.frame(do.call(cbind, input_list))
   }
+
+  # ---------------------------------------------------------------------
 
  return(out)
 }

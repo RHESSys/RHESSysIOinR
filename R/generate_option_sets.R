@@ -109,7 +109,7 @@ generate_option_sets <- function(parameter_method,
                                            option_sets_dated_seq)
 
   # ---------------------------------------------------------------------
-  # # Make table used for generating hdr files
+  # Make table used for generating hdr files
 
   group_ids <- dplyr::select(option_sets_all,ends_with("group_id"), hdr_id) # Select group id's
   option_sets_hdr <- dplyr::distinct(group_ids)                             # Reduce group_ids into distict sets

@@ -10,7 +10,11 @@
 #' Base station code
 #'
 #' @export
-generate_input_files <- function(input_hdr_list, option_sets_def_par, option_sets_hdr, world_hdr_prefix, world_file){
+generate_input_files <- function(input_hdr_list,
+                                 option_sets_def_par,
+                                 option_sets_hdr,
+                                 world_hdr_prefix,
+                                 world_file){
 
   # ---------------------------------------------------------------------
   # Generate def files
