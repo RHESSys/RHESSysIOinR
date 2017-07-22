@@ -116,9 +116,33 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Generate input table for rhessys_command
 
+  ls(option_sets_all)
+  # Missing: hdr, output file, parameters
+  # Add above columns to option_sets_all file, then select.
+
+  # Generate hdr path
+  tmp_path <- file.path(dirname(as.character(option_sets_all$world_file)), option_sets_all$world_hdr_prefix)
+  option_sets_all$world_hdr_file <- file.path(tmp_path, paste(option_sets_all$world_hdr_prefix,"_", hdr_id,".hdr",sep=""))
+
+  # Generate output file
+  option_sets_all$output_file <- file.path(option_sets_all$output_folder,option_sets_all$output_filename)
+
+  # Generate input_parameters
+  # input_parameters <-
 
 
 
+
+  option_sets_rhessys <- dplyr::select(option_sets_all,
+                                       rhessys_version,
+                                       world_file,
+                                       world_hdr_file,
+                                       tec_file,
+                                       flow_file,
+                                       start_date,
+                                       end_date,
+                                       output_file,
+                                       command_options)
 
 
   # ---------------------------------------------------------------------
