@@ -30,17 +30,17 @@ rhessys_command <- function(rhessys_version,
                             input_parameters,
                             command_options){
 
-  tmp = sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s %s",
-                rhessys_version,
-                world_file,
-                world_hdr_file,
-                tec_file,
-                flow_file,
-                start_date,
-                end_date,
-                output_file,
-                input_parameters,
-                command_options)
+  tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s %s",
+                 rhessys_version,
+                 world_file,
+                 world_hdr_file,
+                 tec_file,
+                 flow_file,
+                 start_date,
+                 end_date,
+                 output_file,
+                 input_parameters,
+                 command_options)
 
   system(tmp)
 }

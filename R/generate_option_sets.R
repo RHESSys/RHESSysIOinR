@@ -116,10 +116,6 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Generate input table for rhessys_command
 
-  ls(option_sets_all)
-  # Missing: hdr, output file, parameters
-  # Add above columns to option_sets_all file, then select.
-
   # Generate hdr path
   tmp_path <- file.path(dirname(as.character(option_sets_all$world_file)), option_sets_all$world_hdr_prefix)
   option_sets_all$world_hdr_file <- file.path(tmp_path, paste(option_sets_all$world_hdr_prefix,"_", hdr_id,".hdr",sep=""))
@@ -128,11 +124,20 @@ generate_option_sets <- function(parameter_method,
   option_sets_all$output_file <- file.path(option_sets_all$output_folder,option_sets_all$output_filename)
 
   # Generate input_parameters
-  # input_parameters <-
+  option_sets_all$input_parameters <- sprintf("-s %f %f -sv %f %f -svalt %f %f -gw %f %f",
+                                              option_sets_all$m,
+                                              option_sets_all$k,
+                                              option_sets_all$m_v,
+                                              option_sets_all$k_v,
+                                              option_sets_all$pa,
+                                              option_sets_all$po,
+                                              option_sets_all$gw1,
+                                              option_sets_all$gw2)
+  # ***Input_parameters needs to be redone generically so that any combination
+  # of standard parameters can be included in model***
 
 
-
-
+  # Produce dataframe for inputting into rhessys
   option_sets_rhessys <- dplyr::select(option_sets_all,
                                        rhessys_version,
                                        world_file,
@@ -142,6 +147,7 @@ generate_option_sets <- function(parameter_method,
                                        start_date,
                                        end_date,
                                        output_file,
+                                       input_parameters,
                                        command_options)
 
 
@@ -167,5 +173,6 @@ generate_option_sets <- function(parameter_method,
               option_sets_standard_par = option_sets_standard_par,
               option_sets_dated_seq = option_sets_dated_seq,
               option_sets_all = option_sets_all,
-              option_sets_hdr = option_sets_hdr))
+              option_sets_hdr = option_sets_hdr,
+              option_sets_rhessys = option_sets_rhessys))
 }
