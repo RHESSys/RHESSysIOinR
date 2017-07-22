@@ -117,7 +117,7 @@ generate_input_files <- function(input_rhessys,
   # Write tec file
 
   if (is.null(input_tec_data) == FALSE){
-    make_tec_file(tec_file = tec_file, tec_data = input_tec_data)
+    make_tec_file(tec_file = input_rhessys$tec_file, tec_data = input_tec_data)
     print(paste("Tec file has been written"))
   }
 
