@@ -46,22 +46,25 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
 
   # ---------------------------------------------------------------------
 
-  option_sets_all <- option_sets$option_sets_all
+  option_sets_rhessys <- option_sets$option_sets_rhessys
+  option_sets_rhessys_rows <- nrow(option_sets_rhessys)
 
   # Step through each parameter set
-  for (aa in seq_len(parameter_sets_l)){
-    print(paste("-------------- Run", aa ,"of", parameter_sets_l, "--------------"))
+  for (aa in seq_len(option_sets_rhessys_rows)){
+    print(paste("-------------- Run", aa ,"of", option_sets_rhessys_rows, "--------------"))
 
     # Call RHESSys
-    rhessys_command(rhessys_version = parameter_sets$rhessys_version[aa], tec_file = parameter_sets$tec_file[aa],
-                world_file = parameter_sets$world_file[aa], world_hdr_file = parameter_sets$world_hdr_file[aa],
-                flow_file = parameter_sets$flow_file[aa], start_date = parameter_sets$start_date[aa],
-                end_date = parameter_sets$end_date[aa], output_folder = parameter_sets$output_folder[aa],
-                output_filename = parameter_sets$output_filename[aa], command_options = parameter_sets$command_options[aa],
-                m = parameter_sets$m[aa], k = parameter_sets$k[aa],
-                m_v = parameter_sets$m_v[aa], k_v = parameter_sets$k_v[aa],
-                pa = parameter_sets$pa[aa], po = parameter_sets$po[aa],
-                gw1 = parameter_sets$gw1[aa], gw2 = parameter_sets$gw2[aa])
+    rhessys_command(rhessys_version = option_sets_rhessys$rhessys_version[aa],
+                    world_file = option_sets_rhessys$world_file[aa],
+                    world_hdr_file = option_sets_rhessys$world_hdr_file[aa],
+                    tec_file = option_sets_rhessys$tec_file[aa],
+                    flow_file = option_sets_rhessys$flow_file[aa],
+                    start_date = option_sets_rhessys$start_date[aa],
+                    end_date = option_sets_rhessys$end_date[aa],
+                    output_file = option_sets_rhessys$output_file[aa],
+                    input_parameters = option_sets_rhessys$input_parameters[aa],
+                    command_options = option_sets_rhessys$command_options[aa])
+
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){

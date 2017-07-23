@@ -118,7 +118,7 @@ generate_option_sets <- function(parameter_method,
 
   # Generate hdr path
   tmp_path <- file.path(dirname(as.character(option_sets_all$world_file)), option_sets_all$world_hdr_prefix)
-  option_sets_all$world_hdr_file <- file.path(tmp_path, paste(option_sets_all$world_hdr_prefix,"_", hdr_id,".hdr",sep=""))
+  option_sets_all$world_hdr_file <- file.path(tmp_path, paste(option_sets_all$world_hdr_prefix,"_", option_sets_all$hdr_id,".hdr",sep=""))
 
   # Generate output file
   option_sets_all$output_file <- file.path(option_sets_all$output_folder,option_sets_all$output_filename)
