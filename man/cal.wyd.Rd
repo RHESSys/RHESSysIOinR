@@ -12,4 +12,3 @@ cal.wyd(x)
 \description{
 Description...
 }
-

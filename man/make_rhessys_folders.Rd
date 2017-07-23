@@ -9,4 +9,3 @@ make_rhessys_folders(extra_folders = NA)
 \description{
 Description. Note that many RHESSys files are produced via GRASS
 }
-

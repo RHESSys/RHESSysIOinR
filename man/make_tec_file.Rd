@@ -16,4 +16,3 @@ command (e.g. "print_daily_on").}
 \description{
 Description...
 }
-

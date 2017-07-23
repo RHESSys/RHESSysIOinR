@@ -9,4 +9,3 @@ initialize_output_variables(output_variables, output_folder)
 \description{
 This function nulls outputs from previous runs and initializes new output variables.
 }
-

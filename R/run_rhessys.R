@@ -51,7 +51,7 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
 
   # Step through each parameter set
   for (aa in seq_len(option_sets_rhessys_rows)){
-    print(paste("-------------- Run", aa ,"of", option_sets_rhessys_rows, "--------------"))
+    print(paste("----------------- Run", aa ,"of", option_sets_rhessys_rows, "-----------------"))
 
     # Call RHESSys
     rhessys_command(rhessys_version = option_sets_rhessys$rhessys_version[aa],

@@ -12,6 +12,7 @@ run_rhessys(rhessys_version, tec_file, world_file, world_hdr_prefix, flow_file,
   output_variables = NULL, ...)
 }
 \description{
-\code{run_rhessys} permits the running of multiple rhessys simulations
+\code{run_rhessys} permits the calibration and simulation of the rhessys
+model. Multiple model runs can be run, either in series or in parallel (such
+as with cluster computing).
 }
-

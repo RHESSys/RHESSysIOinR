@@ -15,4 +15,3 @@ separate_canopy_output(data, num_canopies = 2)
 Function separates RHESSys canopy output by canopy and outputs a data frame that
 may be analyzed via \code{ggplot}.
 }
-

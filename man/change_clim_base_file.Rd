@@ -16,4 +16,3 @@ change_clim_base_file(clim_base_file, par_sets, file_name_ext = NULL)
 \description{
 This function does ...
 }
-

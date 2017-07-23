@@ -14,4 +14,3 @@ make_dated_seq_file(dated_seq_file, dated_seq_data)
 \description{
 Description...
 }
-

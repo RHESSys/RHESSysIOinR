@@ -4,19 +4,19 @@
 \alias{rhessys_command}
 \title{Executes single RHESSys run on command line}
 \usage{
-rhessys_command(rhessys_version, tec_file, world_file, world_hdr_file,
-  flow_file, start_date, end_date, output_folder, output_filename,
-  command_options, m, k, m_v, k_v, pa, po, gw1, gw2)
+rhessys_command(rhessys_version, world_file, world_hdr_file, tec_file,
+  flow_file, start_date, end_date, output_file, input_parameters,
+  command_options)
 }
 \arguments{
 \item{rhessys_version}{path and file of compiled version of RHESSys.}
-
-\item{tec_file}{???}
 
 \item{world_file}{path and file of world_file. World_file is produced using
 grass-to-world}
 
 \item{world_hdr_file}{???}
+
+\item{tec_file}{???}
 
 \item{flow_file}{???}
 
@@ -24,27 +24,11 @@ grass-to-world}
 
 \item{end_date}{???}
 
-\item{output_folder}{???}
+\item{output_file}{???}
 
-\item{output_filename}{???}
+\item{input_parameters}{???}
 
 \item{command_options}{???}
-
-\item{m}{???}
-
-\item{k}{???}
-
-\item{m_v}{???}
-
-\item{k_v}{???}
-
-\item{pa}{???}
-
-\item{po}{???}
-
-\item{gw1}{???}
-
-\item{gw2}{???}
 }
 \description{
 \code{rhessys_command} calls rhessys on the command line.
@@ -53,4 +37,3 @@ grass-to-world}
 Requires that supporting files be developed prior to running RHESSys. These
 include ...
 }
-

@@ -23,4 +23,3 @@ of interest.}
 This function does etc, etc... Requires that an awk file be created that indicates
 the columns that correspond to the variable(s) of interest. See \code{create_awk}
 }
-

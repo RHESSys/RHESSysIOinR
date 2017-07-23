@@ -27,4 +27,3 @@ readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
 \description{
 It does fanciness...
 }
-

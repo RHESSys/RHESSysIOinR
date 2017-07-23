@@ -16,4 +16,3 @@ make_hdr_file(master_table, path_initial, num_files, default_file)
 \description{
 This function generates the lines in a hdr file associated with a single def file.
 }
-
