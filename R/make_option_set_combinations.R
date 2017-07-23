@@ -60,7 +60,7 @@ make_option_set_combinations <- function(input_list,
     n <- input_list[[1]][3]
 
     # Transform a Latin hypercube
-    grid <- randomLHS(n, k) # Generate generic hypercube
+    grid <- lhs::randomLHS(n, k) # Generate generic hypercube
     out <- mapply(function(w, x, y, z) qunif(w[,x], min=y, max=z), x=seq_len(k), y=min_par, z=max_par, MoreArgs = list(w=grid))
     out <- as.data.frame(out)
     colnames(out) <- names(input_list)
