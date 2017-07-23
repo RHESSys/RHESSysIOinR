@@ -13,7 +13,7 @@
 #' @param num_canopies Number of layers in data. Generally a value of 1 expect when using two canopies.
 #'
 #' @export
-readin_rhessys_cal_output <- function(var_names, path, initial_date, parameter_file = NULL, num_canopies = 1){
+readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_file = NULL, num_canopies = 1){
 
   # Read in 'allsim' output into list
   a <- var_names %>%
