@@ -7,13 +7,15 @@
 #'
 #'
 #' @export
-run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
-                       flow_file, start_date, end_date, output_folder,
-                       output_filename, command_options,
-                       parameter_method = c("all_combinations", "monte_carlo", "exact_values"),
-                       m, k, m_v, k_v, pa, po, gw1, gw2, parameter_change_list = NULL,
-                       tec_data = NULL, dated_seq_file = NULL, dated_seq_data = NULL,
-                       output_variables = NULL, ...){
+run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_carlo", "exact_values"),
+                        input_rhessys,
+                        input_hdr_list,
+                        input_preexisting_table,
+                        input_def_list = input_def_list,
+                        input_standard_par_list,
+                        input_dated_seq_file,
+                        input_tec_data,
+                        output_variables){
 
   # ---------------------------------------------------------------------
   # Input checks
