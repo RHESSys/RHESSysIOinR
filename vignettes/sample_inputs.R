@@ -1,3 +1,10 @@
+# This eventually needs to morph into a vignette example of some sort.
+# Currently this is a testing input file for Ryan Bart
+
+library(RHESSysIOinR)
+
+# Note: Need to change directory!! This example uses fire_effects_model directory.
+
 # ---------------------------------------------------------------------
 # Model inputs
 
