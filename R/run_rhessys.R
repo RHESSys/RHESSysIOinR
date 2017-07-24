@@ -69,9 +69,9 @@ run_rhessys <- function(rhessys_version, tec_file, world_file, world_hdr_prefix,
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
       if (aa == 1){
-        initialize_output_variables(output_variables = output_variables, output_folder = output_folder)
+        initialize_output_variables(output_variables = output_variables, output_folder = input_rhessys$output_folder)
       }
-      select_output_variables(output_variables = output_variables, output_folder = output_folder)
+      select_output_variables(output_variables = output_variables, output_folder = input_rhessys$output_folder)
     }
   }
 }

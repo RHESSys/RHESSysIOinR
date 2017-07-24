@@ -58,9 +58,9 @@ generate_input_files <- function(input_rhessys,
 
   option_sets_hdr <- arrange(option_sets_hdr, hdr_id) # Arrange hdr_id in sequential order
 
-  # Create hdr output folder and path names
-  world_path <- dirname(world_file)
-  world_hdr_path <- file.path(world_path, world_hdr_prefix)
+  # Create hdr output folder
+  world_path <- dirname(input_rhessys$world_file)
+  world_hdr_path <- file.path(world_path, input_rhessys$world_hdr_prefix)
   if(dir.exists(world_hdr_path) == FALSE){dir.create(world_hdr_path)}
 
   # Cycle through each parameter set
@@ -107,7 +107,7 @@ generate_input_files <- function(input_rhessys,
     }
 
     # Write hdr file
-    world_hdr_name_out <- file.path(world_hdr_path, paste(world_hdr_prefix,"_",yy,".hdr",sep=""))
+    world_hdr_name_out <- file.path(world_hdr_path, paste(input_rhessys$world_hdr_prefix,"_",yy,".hdr",sep=""))
     write.table(world_hdr_out, file = world_hdr_name_out, col.names = FALSE, row.names=FALSE, quote = FALSE, sep="        ")
     print(paste("New hdr file written :", world_hdr_name_out))
   }
