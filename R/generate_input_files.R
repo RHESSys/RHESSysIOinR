@@ -18,6 +18,12 @@ generate_input_files <- function(input_rhessys,
                                  world_hdr_prefix,
                                  world_file){
 
+
+  # ---------------------------------------------------------------------
+  # Export parameter file
+
+  write.csv(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.csv", sep="")), row.names = FALSE)
+
   # ---------------------------------------------------------------------
   # Generate def files
 

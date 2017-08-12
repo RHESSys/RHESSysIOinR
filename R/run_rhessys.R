@@ -41,6 +41,7 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
   generate_input_files(input_rhessys = input_rhessys,
                        input_hdr_list = input_hdr_list,
                        option_sets_def_par = option_sets$option_sets_def_par,
+                       option_sets_par = option_sets$option_sets_par,
                        option_sets_hdr = option_sets$option_sets_hdr,
                        input_tec_data = input_tec_data,
                        world_hdr_prefix = world_hdr_prefix,

@@ -76,6 +76,9 @@ generate_option_sets <- function(parameter_method,
     # Code for importing parameter sets
 
     process_input_preexisting_table()
+    # Output should include
+    # option_sets_def_par
+    # option_sets_standard_par
 
   }
 
@@ -114,7 +117,7 @@ generate_option_sets <- function(parameter_method,
   names(option_sets_hdr) <- do.call(rbind, strsplit(names(option_sets_hdr), ":"))[,1] # Split variable names from group_id
 
   # ---------------------------------------------------------------------
-  # Generate input table for rhessys_command
+  # Generate table for rhessys_command
 
   # Generate hdr path
   tmp_path <- file.path(dirname(as.character(option_sets_all$world_file)), option_sets_all$world_hdr_prefix)
@@ -152,25 +155,33 @@ generate_option_sets <- function(parameter_method,
 
 
   # ---------------------------------------------------------------------
-  # Export option sets (this should move to generate_input_files.r?)
+  # Make table (option_sets_par) for exporting and use in subsequent simulations
 
-  # Output types
-  # Everything (check)
-  # Inputs for rhessys_command
-  # Parameters for transferring to simulation
+  # Isolate variable names from option_sets_def_par
+  tmp1 <- mapply(function(x,y) paste(x, ":", names(y), sep=""),
+                          x=names(option_sets_def_par),
+                          y=option_sets_def_par,
+                          SIMPLIFY = FALSE)
+  tmp2 <- do.call(c, flatten(tmp1))
+  remove <- grep("group_id", tmp2)
+  names_def_par <- tmp2[-remove]
 
+  # Isolate variable names from option_sets_standard_par
+  names_standard_par <- option_sets_standard_par %>%
+    names() %>%
+    `[`(. != "stan_id")
 
-  # parameter_output <- option_sets_all
-  #
-  # if (is.null(dated_seq_data) == FALSE){
-  #   parameter_output$dated_seq_data <- sapply(parameter_sets$dated_seq_data, function(x) dated_seq_data[[x]][[5]])
-  # }
-  # write.csv(parameter_output, paste(output_folder, output_filename, "_parameter_sets.csv", sep=""), row.names = FALSE)
+  option_sets_par <- dplyr::select(option_sets_all,
+                                   names_def_par,
+                                   names_standard_par,
+                                   all_id)
 
+  # ---------------------------------------------------------------------
 
 
   return(list(option_sets_def_par = option_sets_def_par,
               option_sets_standard_par = option_sets_standard_par,
+              option_sets_par = option_sets_par,
               option_sets_dated_seq = option_sets_dated_seq,
               option_sets_all = option_sets_all,
               option_sets_hdr = option_sets_hdr,
