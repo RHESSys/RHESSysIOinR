@@ -75,11 +75,11 @@ generate_option_sets <- function(parameter_method,
     # ---------------------------------------------------------------------
     # Code for importing parameter sets
 
-    process_input_preexisting_table()
-    # Output should include
-    # option_sets_def_par
-    # option_sets_standard_par
+    # tmp <- process_input_preexisting_table(input_preexisting_table=input_preexisting_table,
+    #                                        parameter_method=parameter_method)
 
+    #option_sets_def_par <- tmp$option_sets_def_par
+    #option_sets_standard_par <- tmp$option_sets_standard_par
   }
 
   # ---------------------------------------------------------------------
