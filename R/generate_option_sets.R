@@ -75,11 +75,10 @@ generate_option_sets <- function(parameter_method,
     # ---------------------------------------------------------------------
     # Code for importing parameter sets
 
-    # tmp <- process_input_preexisting_table(input_preexisting_table=input_preexisting_table,
-    #                                        parameter_method=parameter_method)
+    tmp <- process_input_preexisting_table(input_preexisting_table=input_preexisting_table)
 
-    #option_sets_def_par <- tmp$option_sets_def_par
-    #option_sets_standard_par <- tmp$option_sets_standard_par
+    option_sets_def_par <- tmp$option_sets_def_par
+    option_sets_standard_par <- tmp$option_sets_standard_par
   }
 
   # ---------------------------------------------------------------------
@@ -139,7 +138,6 @@ generate_option_sets <- function(parameter_method,
   # ***Input_parameters needs to be redone generically so that any combination
   # of standard parameters can be included in model***
 
-
   # Produce dataframe for inputting into rhessys
   option_sets_rhessys <- dplyr::select(option_sets_all,
                                        rhessys_version,
@@ -152,7 +150,6 @@ generate_option_sets <- function(parameter_method,
                                        output_file,
                                        input_parameters,
                                        command_options)
-
 
   # ---------------------------------------------------------------------
   # Make table (option_sets_par) for exporting and use in subsequent simulations
@@ -178,7 +175,6 @@ generate_option_sets <- function(parameter_method,
 
   # ---------------------------------------------------------------------
 
-
   return(list(option_sets_def_par = option_sets_def_par,
               option_sets_standard_par = option_sets_standard_par,
               option_sets_par = option_sets_par,
@@ -187,3 +183,4 @@ generate_option_sets <- function(parameter_method,
               option_sets_hdr = option_sets_hdr,
               option_sets_rhessys = option_sets_rhessys))
 }
+

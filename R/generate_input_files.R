@@ -13,6 +13,7 @@
 generate_input_files <- function(input_rhessys,
                                  input_hdr_list,
                                  option_sets_def_par,
+                                 option_sets_par,
                                  option_sets_hdr,
                                  input_tec_data,
                                  world_hdr_prefix,
@@ -22,7 +23,7 @@ generate_input_files <- function(input_rhessys,
   # ---------------------------------------------------------------------
   # Export parameter file
 
-  write.csv(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.csv", sep="")), row.names = FALSE)
+  write.table(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.txt", sep="")), row.names = FALSE, quote=FALSE)
 
   # ---------------------------------------------------------------------
   # Generate def files

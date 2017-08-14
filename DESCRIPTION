@@ -17,7 +17,8 @@ Imports:
     lubridate,
     tools,
     purrr,
-    lhs
+    lhs,
+    readr
 RoxygenNote: 6.0.1
 Suggests: testthat,
     knitr,
