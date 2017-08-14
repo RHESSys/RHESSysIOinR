@@ -5,7 +5,8 @@
 \title{Produces a hdr file in RHESSys}
 \usage{
 generate_input_files(input_rhessys, input_hdr_list, option_sets_def_par,
-  option_sets_hdr, input_tec_data, world_hdr_prefix, world_file)
+  option_sets_par, option_sets_hdr, input_tec_data, world_hdr_prefix,
+  world_file)
 }
 \description{
 The hdr file in RHESSys determines which definition and climate files are to be used for a given run.

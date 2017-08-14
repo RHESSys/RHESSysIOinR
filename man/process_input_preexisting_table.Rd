@@ -2,10 +2,19 @@
 % Please edit documentation in R/process_input_preexisting_table.R
 \name{process_input_preexisting_table}
 \alias{process_input_preexisting_table}
-\title{Produces ...}
+\title{Processes parameters imported using a data frame.}
 \usage{
-process_input_preexisting_table(parameter_change_df_by_def, parameter_method)
+process_input_preexisting_table(input_preexisting_table)
+}
+\arguments{
+\item{input_preexisting_table}{path and file of table to be inputted. Columns
+in table represent parameters, rows indicate different parameter sets.
+Standard parameters include ... Parameters to be changed in def files must
+include as a name the path and file of def file, a ":", and the name of the
+parameter.}
 }
 \description{
-Produces ...
+This function is as alternative to developing parameter sets using
+monte-carlo, via latin hypercube, etc. Generally, this function will import
+selected parameter sets that were exported from previous RHESSys simulations
 }
