@@ -13,7 +13,8 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
                         input_preexisting_table,
                         input_def_list = input_def_list,
                         input_standard_par_list,
-                        input_dated_seq_file,
+                        input_clim_base_list,
+                        input_dated_seq_list,
                         input_tec_data,
                         output_variables){
 
@@ -26,13 +27,13 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
   # ---------------------------------------------------------------------
   # Generate option sets
 
-  option_sets <- generate_option_sets(parameter_method=parameter_method,
-                                      input_rhessys=input_rhessys,
-                                      input_hdr_list=input_hdr_list,
-                                      input_preexisting_table=input_preexisting_table,
-                                      input_def_list=input_def_list,
-                                      input_standard_par_list=input_standard_par_list,
-                                      input_dated_seq_file=input_dated_seq_file)
+  option_sets <- generate_option_sets(parameter_method = parameter_method,
+                                      input_rhessys = input_rhessys,
+                                      input_hdr_list = input_hdr_list,
+                                      input_preexisting_table = input_preexisting_table,
+                                      input_def_list = input_def_list,
+                                      input_standard_par_list = input_standard_par_list,
+                                      input_dated_seq_list = input_dated_seq_list)
 
 
   # ---------------------------------------------------------------------
@@ -40,10 +41,12 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
 
   generate_input_files(input_rhessys = input_rhessys,
                        input_hdr_list = input_hdr_list,
+                       input_clim_base_list = input_clim_base_list,
+                       input_tec_data = input_tec_data,
                        option_sets_def_par = option_sets$option_sets_def_par,
                        option_sets_par = option_sets$option_sets_par,
                        option_sets_hdr = option_sets$option_sets_hdr,
-                       input_tec_data = input_tec_data,
+                       option_sets_dated_seq = option_sets$option_sets_dated_seq,
                        world_hdr_prefix = world_hdr_prefix,
                        world_file = world_file)
 

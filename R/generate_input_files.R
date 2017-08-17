@@ -4,18 +4,16 @@
 #'
 #' This function produces hdr file and associated files that are called by hdr file; def files and clim.base files.
 #'
-#' Loose ends
-#' Non-unique parameters
-#' Needs to work properly when various components are NULL
-#' Base station code
 #'
 #' @export
 generate_input_files <- function(input_rhessys,
                                  input_hdr_list,
+                                 input_clim_base_list,
+                                 input_tec_data,
                                  option_sets_def_par,
                                  option_sets_par,
                                  option_sets_hdr,
-                                 input_tec_data,
+                                 option_sets_dated_seq,
                                  world_hdr_prefix,
                                  world_file){
 
@@ -49,15 +47,22 @@ generate_input_files <- function(input_rhessys,
 
   # Process each clim.base file path
 
+  # Delete?
   # base_file_types <- purrr::keep(names(input_hdr_list), names(input_hdr_list)=="base_stations")
-  #
-  # for (gg in seq_along(base_file_types)){
-  #   print("Placeholder added")
-  #   master_par_change_df <- cbind(master_par_change_df,  "placeholder_name" = rep(0, length(master_par_change_df[,1])))
-  #   names(master_par_change_df)[names(master_par_change_df) == "placeholder_name"] <- input_hdr_list$base_stations
-    # Call change_clim_base_file.R
-    # Produce make_dated_seq_file.R files
-  #}
+
+  # Step though each dated seq file (Note that clim files without dated sequence
+  # will have a option_sets_dated_seq$dated_id of length one and equal to 0)
+  for (aa in seq_along(option_sets_dated_seq$dated_id)){
+
+    # Step through each climate base station
+    for (bb in seq_along(input_clim_base_list)){
+
+      make_clim_base_file(input_clim_base = input_clim_base_list[[bb]],
+                          clim_base_path = input_hdr_list$base_stations[bb],
+                          input_dated_seq = input_dated_seq_list[[aa]],
+                          clim_dated_ext = option_sets_dated_seq$dated_id[aa])
+    }
+  }
 
 
   # ---------------------------------------------------------------------
