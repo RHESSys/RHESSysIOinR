@@ -85,41 +85,35 @@ make_all_option_table <- function(parameter_method,
   }
 
   # ---------------------------------------------------------------------
-  # Add base files (dated sequences)
+  # Add dated sequences
 
-  # **** Pending ****
-  all_option_base <- all_option_par
+  tmp1 <- all_option_par %>%
+    dplyr::select(ends_with("par_id"))
+  tmp2 <- expand.grid(c(option_sets_dated_seq, tmp1))
+  all_option_dated_seq <- dplyr::full_join(tmp2,all_option_par,by="par_id")
+  all_option_dated_seq <- dplyr::bind_cols(all_option_dated_seq, data.frame(par_dated_id=seq_along(all_option_dated_seq[[1]]))) # Add unique all-option identifier
 
-  # Add columns for unchanging base station file (These columns are needed when making hdr files)
-  input_hdr_list_base <- purrr::keep(input_hdr_list, names(input_hdr_list)=="base_stations")
-  if (input_hdr_list_base %in% names(option_sets_dated_seq)){    # Did the base file from the hdr input have dated sequences?
-    # Do nothing!
-  } else {
-    # Attach column to all_option_base for unchanging base files
-    all_option_base <- cbind(all_option_base,  "placeholder_name" = rep(0, length(all_option_base[,1])))
-    names(all_option_base)[names(all_option_base) == "placeholder_name"] <- paste(input_hdr_list_base, ":group_id", sep="")
-  }
 
   # ---------------------------------------------------------------------
   # Add tec files options
 
   # **** Pending ****
-  all_option_tec <- all_option_base
+  all_option_tec <- all_option_dated_seq
 
   # ---------------------------------------------------------------------
   # Add rhessys inputs
 
   # Create expanded grid for rhessys_input
   tmp1 <- all_option_tec %>%
-    dplyr::select(ends_with("par_id"))
+    dplyr::select(ends_with("par_dated_id"))
   tmp2 <- expand.grid(c(input_rhessys, tmp1))
-  option_sets_all <- dplyr::full_join(tmp2,all_option_tec,by="par_id")
+  option_sets_all <- dplyr::full_join(tmp2,all_option_tec,by="par_dated_id")
   option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(all_id=seq_along(option_sets_all[[1]]))) # Add unique all-option identifier
 
   # ---------------------------------------------------------------------
   # Add hdr_id to option_sets_all
 
-  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"))  # Select group id's
+  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"),dated_id)  # Select group id's
   dots <- lapply(names(group_ids), as.symbol)
   hdr_id <- dplyr::group_indices_(group_ids, .dots=dots)
   option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(hdr_id=hdr_id)) # Add unique hdr identifier

@@ -4,7 +4,6 @@
 #'
 #' Loose ends
 #' Needs to work properly when various components are NULL
-#' Base station code
 #'
 #'
 #' @export
@@ -14,7 +13,7 @@ generate_option_sets <- function(parameter_method,
                                  input_preexisting_table,
                                  input_def_list,
                                  input_standard_par_list,
-                                 input_dated_seq_file){
+                                 input_dated_seq_list){
 
   # ---------------------------------------------------------------------
   # Process parameters
@@ -85,9 +84,10 @@ generate_option_sets <- function(parameter_method,
   # Process dated sequence file(s)
 
   if (is.null(input_dated_seq_list[1]) == F){
-    # ****Currently not implemented****
-    # Implement input_dated_seq_list code here
-    option_sets_dated_seq <- NULL
+
+    # Attach group ID to option_sets_dated_seq
+    option_sets_dated_seq <- data.frame(dated_id = seq_along(input_dated_seq_list))
+
   } else {
     option_sets_dated_seq <- NULL
   }
@@ -111,7 +111,7 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Make table used for generating hdr files
 
-  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"), hdr_id) # Select group id's
+  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"), dated_id, hdr_id) # Select group id's
   option_sets_hdr <- dplyr::distinct(group_ids)                             # Reduce group_ids into distict sets
   names(option_sets_hdr) <- do.call(rbind, strsplit(names(option_sets_hdr), ":"))[,1] # Split variable names from group_id
 
