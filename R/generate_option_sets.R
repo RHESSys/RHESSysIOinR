@@ -2,9 +2,6 @@
 #'
 #'
 #'
-#' Loose ends
-#' Needs to work properly when various components are NULL
-#'
 #'
 #' @export
 generate_option_sets <- function(parameter_method,
@@ -84,12 +81,11 @@ generate_option_sets <- function(parameter_method,
   # Process dated sequence file(s)
 
   if (is.null(input_dated_seq_list[1]) == F){
-
     # Attach group ID to option_sets_dated_seq
     option_sets_dated_seq <- data.frame(dated_id = seq_along(input_dated_seq_list))
 
   } else {
-    option_sets_dated_seq <- NULL
+    option_sets_dated_seq <- data.frame(dated_id = 0)
   }
 
   # ---------------------------------------------------------------------
