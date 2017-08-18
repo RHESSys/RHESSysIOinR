@@ -7,7 +7,7 @@
 run_rhessys(parameter_method = c("all_combinations", "lhc", "monte_carlo",
   "exact_values"), input_rhessys, input_hdr_list, input_preexisting_table,
   input_def_list = input_def_list, input_standard_par_list,
-  input_dated_seq_file, input_tec_data, output_variables)
+  input_clim_base_list, input_dated_seq_list, input_tec_data, output_variables)
 }
 \description{
 \code{run_rhessys} permits the calibration and simulation of the rhessys

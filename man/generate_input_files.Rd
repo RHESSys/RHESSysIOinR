@@ -4,18 +4,13 @@
 \alias{generate_input_files}
 \title{Produces a hdr file in RHESSys}
 \usage{
-generate_input_files(input_rhessys, input_hdr_list, option_sets_def_par,
-  option_sets_par, option_sets_hdr, input_tec_data, world_hdr_prefix,
-  world_file)
+generate_input_files(input_rhessys, input_hdr_list, input_clim_base_list,
+  input_tec_data, option_sets_def_par, option_sets_par, option_sets_hdr,
+  option_sets_dated_seq, world_hdr_prefix, world_file)
 }
 \description{
 The hdr file in RHESSys determines which definition and climate files are to be used for a given run.
 }
 \details{
 This function produces hdr file and associated files that are called by hdr file; def files and clim.base files.
-
-Loose ends
-Non-unique parameters
-Needs to work properly when various components are NULL
-Base station code
 }

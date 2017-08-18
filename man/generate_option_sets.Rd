@@ -6,10 +6,8 @@
 \usage{
 generate_option_sets(parameter_method, input_hdr_list, input_rhessys,
   input_preexisting_table, input_def_list, input_standard_par_list,
-  input_dated_seq_file)
+  input_dated_seq_list)
 }
-\details{
-Loose ends
-Needs to work properly when various components are NULL
-Base station code
+\description{
+Produces data-frames for all parameter combinations and for each def file
 }
