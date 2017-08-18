@@ -26,28 +26,28 @@ make_hdr_file <- function(master_table,
 
   hdr_out <- data.frame(c1 = length(path_initial), c2 = num_files, stringsAsFactors=FALSE)
 
-  path_def_basin <- vector()
+  path_full <- vector()
   for (zz in seq_along(path_initial)){
 
     # Def file paths and names
-    def_path <- dirname(path_initial)[zz]
+    path_short <- dirname(path_initial)[zz]
     name_no_ext <- tools::file_path_sans_ext(basename(path_initial))[zz]
     ext <- tools::file_ext(path_initial)[zz]
-    def_path_new <- file.path(def_path, name_no_ext)
+    path_new <- file.path(path_short, name_no_ext)
 
-    file_name_ext <- master_table[path_initial][zz]
+    file_name_ext <- ifelse(ext =="def", master_table[path_initial][zz], master_table["dated_id"][zz])
 
     # Determine the type of def file used
     if (file_name_ext == 0){
       # Reference original def file
-      path_def_basin[zz] <- path_initial
+      path_full[zz] <- path_initial
     } else {
       # Reference new def file
-      path_def_basin[zz] <- file.path(def_path_new, paste(name_no_ext,"_",file_name_ext,".def",sep=""))
+      path_full[zz] <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".",ext,sep=""))
     }
   }
 
-  hdr_out <- rbind(hdr_out, def_file_df(path_def_basin, default_file))
+  hdr_out <- rbind(hdr_out, def_file_df(path_full, default_file))
 
  return(hdr_out)
 }

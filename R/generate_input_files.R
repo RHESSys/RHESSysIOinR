@@ -43,12 +43,7 @@ generate_input_files <- function(input_rhessys,
 
 
   # ---------------------------------------------------------------------
-  # Cycle through each base station file
-
-  # Process each clim.base file path
-
-  # Delete?
-  # base_file_types <- purrr::keep(names(input_hdr_list), names(input_hdr_list)=="base_stations")
+  # Cycle through each base station/dated sequence file
 
   # Step though each dated seq file (Note that clim files without dated sequence
   # will have a option_sets_dated_seq$dated_id of length one and equal to 0)
