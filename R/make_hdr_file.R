@@ -4,8 +4,8 @@
 #'
 #' @param master_table Data frame of a single row with references to def file number
 #' @param path_initial Path to the non-differiated def file
-#' @param num_files
-#' @param default_file
+#' @param num_files ???
+#' @param default_file ???
 #'
 #' @export
 make_hdr_file <- function(master_table,

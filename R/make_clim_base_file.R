@@ -24,13 +24,13 @@ make_clim_base_file <- function(input_clim_base,
     name_no_ext <- tools::file_path_sans_ext(basename(clim_base_path))
     ext <- tools::file_ext(clim_base_path)
     dated_name_ext <- paste(input_dated_seq$name, "_", clim_dated_ext, sep="")
-    dated_path_name_ext <- file.path(path,dated_name_ext)
+    path_new <- file.path(path, name_no_ext)
+    dated_path_name_ext <- file.path(path_new,dated_name_ext)
     dated_file_name <- paste(dated_name_ext, ".", input_dated_seq$type, sep="")
     dated_file_count <- length(unique(input_dated_seq$name))
     dated_file_type <- unique(input_dated_seq$type)
 
     # Create new directory
-    path_new <- file.path(path, name_no_ext)
     if(dir.exists(path_new) == FALSE){dir.create(path_new)}
 
     # Tack on dated sequence to climate base file

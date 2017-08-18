@@ -11,7 +11,9 @@ make_hdr_file(master_table, path_initial, num_files, default_file)
 
 \item{path_initial}{Path to the non-differiated def file}
 
-\item{default_file}{}
+\item{num_files}{???}
+
+\item{default_file}{???}
 }
 \description{
 This function generates the lines in a hdr file associated with a single def file.
