@@ -74,7 +74,7 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
-      select_output_variables_w_awk(output_variables = output_variables_awk,
+      select_output_variables_w_awk(output_variables = output_variables,
                                     output_folder = input_rhessys$output_folder,
                                     run = aa)
     }
