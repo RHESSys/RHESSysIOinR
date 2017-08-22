@@ -11,7 +11,7 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
                         input_rhessys,
                         input_hdr_list,
                         input_preexisting_table,
-                        input_def_list = input_def_list,
+                        input_def_list,
                         input_standard_par_list,
                         input_clim_base_list,
                         input_dated_seq_list,
@@ -74,10 +74,9 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
-      if (aa == 1){
-        initialize_output_variables(output_variables = output_variables, output_folder = input_rhessys$output_folder)
-      }
-      select_output_variables(output_variables = output_variables, output_folder = input_rhessys$output_folder)
+      select_output_variables_w_awk(output_variables = output_variables_awk,
+                                    output_folder = input_rhessys$output_folder,
+                                    run = aa)
     }
   }
 }
