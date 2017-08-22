@@ -51,6 +51,10 @@ generate_option_sets <- function(parameter_method,
 
     } else {
       option_sets_def_par <- NULL
+      # This section needs to change to a dummy data.frame with 0's. Could
+      # possibly move code from make_all_option_table that makes the unchanging
+      # def files to here. I would then have to generate an new def file whether
+      # parameters change or not
     }
 
     # ---------------------------------------------------------------------
@@ -63,8 +67,13 @@ generate_option_sets <- function(parameter_method,
       tmp <- seq_along(option_sets_standard_par[[1]])
       option_sets_standard_par <- bind_cols(option_sets_standard_par, stan_id = tmp)
 
+    } else {
+
+      if (is.null(option_sets_def_par)==FALSE){
+        option_sets_standard_par <- data.frame(stan_id = rep(0, nrow(option_sets_def_par[[1]])))
       } else {
-      option_sets_standard_par <- NULL
+        option_sets_standard_par <- data.frame(stan_id = 0)
+      }
     }
 
   } else {
