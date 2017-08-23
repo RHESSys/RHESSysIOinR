@@ -38,7 +38,7 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
   # Add all variables related to run (e.g. parameters, dated_seq)
   if (is.null(parameter_file) == FALSE){
     parameter_output <- parameter_file %>%
-      read.csv(., header = TRUE) %>%
+      read.table(., header = TRUE) %>%
       cbind(run = sapply(seq_len(length(.[,1])),function (x) paste("V",as.character(x),sep="")),.)
     parameter_output$run <- as.character(parameter_output$run)
     done <- dplyr::left_join(c, parameter_output, by = "run")
