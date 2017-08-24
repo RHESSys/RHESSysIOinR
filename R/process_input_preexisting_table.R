@@ -17,7 +17,7 @@ process_input_preexisting_table <- function(input_preexisting_table){
 
   # ---------------------------------------------------------------------
   # Read in parameter file
-  par_table <- read_table2(file.path(input_preexisting_table), col_names = TRUE)
+  par_table <- read_csv(file.path(input_preexisting_table), col_names = TRUE)
 
   # ---------------------------------------------------------------------
   # Process standard RHESSys parameters

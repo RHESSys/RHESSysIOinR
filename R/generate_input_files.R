@@ -10,6 +10,7 @@ generate_input_files <- function(input_rhessys,
                                  input_hdr_list,
                                  input_clim_base_list,
                                  input_tec_data,
+                                 option_sets_all,
                                  option_sets_def_par,
                                  option_sets_par,
                                  option_sets_hdr,
@@ -19,9 +20,10 @@ generate_input_files <- function(input_rhessys,
 
 
   # ---------------------------------------------------------------------
-  # Export parameter file
+  # Export parameter file and all-options file
 
-  write.table(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.txt", sep="")), row.names = FALSE, quote=FALSE)
+  write.csv(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.csv", sep="")), row.names = FALSE, quote=FALSE)
+  write.csv(option_sets_all, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_all_options.csv", sep="")), row.names = FALSE, quote=FALSE)
 
   # ---------------------------------------------------------------------
   # Generate def files
