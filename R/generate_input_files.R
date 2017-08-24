@@ -66,7 +66,7 @@ generate_input_files <- function(input_rhessys,
   option_sets_hdr <- arrange(option_sets_hdr, hdr_id) # Arrange hdr_id in sequential order
 
   # Create hdr output folder
-  world_path <- dirname(input_rhessys$world_file)
+  world_path <- dirname(input_rhessys$world_file)[1]
   world_hdr_path <- file.path(world_path, input_rhessys$world_hdr_prefix)
   if(dir.exists(world_hdr_path) == FALSE){dir.create(world_hdr_path)}
 
