@@ -16,7 +16,8 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
                         input_clim_base_list,
                         input_dated_seq_list,
                         input_tec_data,
-                        output_variables){
+                        output_variables,
+                        output_initiation = 1){
 
   # ---------------------------------------------------------------------
   # Input checks
@@ -77,9 +78,11 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
     if (is.null(output_variables[1]) == F){
       select_output_variables_w_awk(output_variables = output_variables,
                                     output_folder = input_rhessys$output_folder,
-                                    run = aa)
+                                    run = aa,
+                                    output_initiation = output_initiation)
     }
   }
+  return()
 }
 
 

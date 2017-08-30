@@ -10,9 +10,9 @@
 #' @param run Simulation number. Used to reset files in allsim at beginning of simulation
 
 #' @export
-select_output_variables_w_awk <- function(output_variables, output_folder, run){
+select_output_variables_w_awk <- function(output_variables, output_folder, run, output_initiation){
 
-  if (run == 1){
+  if (run == 1 && output_initiation == 1){
    for (dd in seq_len(nrow(output_variables))){
       system(sprintf("rm %s/allsim/%s", output_folder, output_variables$variable[dd]))
       system(sprintf("echo > %s/allsim/%s", output_folder, output_variables$variable[dd]))
