@@ -65,11 +65,13 @@ make_option_set_combinations <- function(input_list,
     out <- as.data.frame(out)
     colnames(out) <- names(input_list)
 
-    # See KScorrect package, qlunif, for potentially implementing uniform log-normal distribution
+    # See KScorrect package, qlunif, for potentially implementing uniform
+    # log-normal distribution. Would need new input_def_file parameter
+    # specifying normal or log normal, then have ifelse statement on line 64
   }
 
   # ---------------------------------------------------------------------
-  if (parameter_method == "specific_values"){
+  if (parameter_method == "exact_values"){
 
     # Data checks
     k <- length(input_list)

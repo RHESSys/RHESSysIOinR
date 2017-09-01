@@ -18,10 +18,10 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
   # Read in 'allsim' output into list
   a <- var_names %>%
     sapply(., function(., path) file.path(path, .), path=path) %>%
-    lapply(., read.table, header = FALSE, skip = 2)
+    lapply(., read_tsv, col_names = FALSE, skip = 2, col_types = cols(X1 = col_skip()))
 
   # Inputs for processing
-  dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]]$V1)/num_canopies) - 1, by = "day"), times = num_canopies)
+  dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]][[1]])/num_canopies) - 1, by = "day"), times = num_canopies)
 
   # Process data to tidy data frame (part 1)
   b <- a %>%
@@ -39,7 +39,7 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
   if (is.null(parameter_file) == FALSE){
     parameter_output <- parameter_file %>%
       read.csv(., header = TRUE) %>%
-      cbind(run = sapply(seq_len(length(.[,1])),function (x) paste("V",as.character(x),sep="")),.)
+      cbind(run = sapply(seq_len(length(.[,1])),function (x) paste("X",as.character(x+1),sep="")),.)
     parameter_output$run <- as.character(parameter_output$run)
     done <- dplyr::left_join(c, parameter_output, by = "run")
   } else {

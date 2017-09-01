@@ -19,9 +19,9 @@ input_rhessys$world_file <- "ws_p300/worldfiles/p300_30m_2can_patch_9445.world"
 input_rhessys$world_hdr_prefix <- "p300_30m_2can_patch_9445"
 input_rhessys$flow_file <- "ws_p300/flowtables/p300_30m_patch_9445.flow"
 input_rhessys$start_date <- "1941 10 1 1"
-input_rhessys$end_date <- "1943 10 1 1"
-input_rhessys$output_folder <- "ws_p300/out/1.1_p300_patch_simulation_test"
-input_rhessys$output_filename <- c("patch_sim")
+input_rhessys$end_date <- "1951 10 1 1"
+input_rhessys$output_folder <- "ws_p300/out/RHESSysIOinR_output"
+input_rhessys$output_filename <- "patch_sim"
 input_rhessys$command_options <- c("-b -g -c -p -tchange 0 0")
 
 # HDR (header) file
@@ -101,17 +101,17 @@ input_clim_base_list[[1]][[5]][2,] <- data.frame(c1=0, c2="number_non_critical_h
 
 # Make a list of dated sequence data.frames (file name, year, month, day, hour, value)
 # input_dated_seq_list <- NULL
-input_dated_seq_list = list()
-input_dated_seq_list[[1]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.1,stringsAsFactors=FALSE)
-input_dated_seq_list[[2]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.2,stringsAsFactors=FALSE)
-input_dated_seq_list[[3]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.3,stringsAsFactors=FALSE)
-input_dated_seq_list[[4]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.4,stringsAsFactors=FALSE)
-input_dated_seq_list[[5]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.5,stringsAsFactors=FALSE)
-input_dated_seq_list[[6]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.6,stringsAsFactors=FALSE)
-input_dated_seq_list[[7]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.7,stringsAsFactors=FALSE)
-input_dated_seq_list[[8]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.8,stringsAsFactors=FALSE)
-input_dated_seq_list[[9]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.9,stringsAsFactors=FALSE)
-input_dated_seq_list[[10]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=1.0,stringsAsFactors=FALSE)
+ input_dated_seq_list <- list()
+ input_dated_seq_list[[1]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.1,stringsAsFactors=FALSE)
+ input_dated_seq_list[[2]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.2,stringsAsFactors=FALSE)
+# input_dated_seq_list[[3]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.3,stringsAsFactors=FALSE)
+# input_dated_seq_list[[4]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.4,stringsAsFactors=FALSE)
+# input_dated_seq_list[[5]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.5,stringsAsFactors=FALSE)
+# input_dated_seq_list[[6]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.6,stringsAsFactors=FALSE)
+# input_dated_seq_list[[7]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.7,stringsAsFactors=FALSE)
+# input_dated_seq_list[[8]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.8,stringsAsFactors=FALSE)
+# input_dated_seq_list[[9]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=0.9,stringsAsFactors=FALSE)
+# input_dated_seq_list[[10]] <- data.frame(name="lowProv",type="pspread",year=1941,month=10,day=1,hour=1,value=1.0,stringsAsFactors=FALSE)
 
 # Standard sub-surface parameters
 # input_standard_par_list <- NULL
@@ -126,6 +126,7 @@ input_dated_seq_list[[10]] <- data.frame(name="lowProv",type="pspread",year=1941
 #   gw2 = c(0.178753)
 # )
 
+#input_standard_par_list <- NULL
 input_standard_par_list <- list(
   m = c(1,1000, 4),
   k = c(1, 10, 4),
@@ -152,26 +153,38 @@ input_tec_data[7,] <- data.frame(1982, 10, 1, 1, "output_current_state", strings
 input_tec_data[8,] <- data.frame(2002, 10, 1, 1, "output_current_state", stringsAsFactors=FALSE)
 input_tec_data[9,] <- data.frame(2022, 10, 1, 1, "output_current_state", stringsAsFactors=FALSE)
 
-# List of lists containing variable of interest, location/name of awk file (relative to output
+
+# Data frame containing variable of interest, location/name of awk file (relative to output
 # file location), and the location/name of rhessys output file with variable of interest.
-output_variables <- NULL
-# output_variables <- list()
-# output_variables[[1]] <- list("lai", "awks/output_var_bd_lai.awk","patch_sim_basin.daily")
-# output_variables[[2]] <- list("leafc", "awks/output_var_cdg_leafc.awk","patch_sim_grow_stratum.daily")
-# output_variables[[3]] <- list("stemc", "awks/output_var_cdg_stemc.awk","patch_sim_grow_stratum.daily")
-# output_variables[[4]] <- list("live_stemc", "awks/output_var_cdg_live_stemc.awk","patch_sim_grow_stratum.daily")
-# output_variables[[5]] <- list("dead_stemc", "awks/output_var_cdg_dead_stemc.awk","patch_sim_grow_stratum.daily")
-# output_variables[[6]] <- list("rootc", "awks/output_var_cdg_rootc.awk","patch_sim_grow_stratum.daily")
-#
-# output_variables[[7]] <- list("litrc", "awks/output_var_bd_litrc.awk","patch_sim_basin.daily")
-# output_variables[[8]] <- list("cwdc", "awks/output_var_cdg_cwdc.awk","patch_sim_grow_stratum.daily")
-# output_variables[[9]] <- list("soil1c", "awks/output_var_pdg_soil1c.awk","patch_sim_grow_patch.daily")
-#
-# output_variables[[10]] <- list("height", "awks/output_var_cd_height.awk","patch_sim_stratum.daily")
+# output_variables <- NULL
+output_variables <- data.frame(variable=character(),awk_path=character(),out_file=character(),stringsAsFactors=FALSE)
+output_variables[1,] <- data.frame("lai", "awks/output_var_bd_lai.awk","patch_sim_basin.daily",stringsAsFactors=FALSE)
+output_variables[2,] <- data.frame("leafc", "awks/output_var_cdg_leafc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+output_variables[3,] <- data.frame("stemc", "awks/output_var_cdg_stemc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+output_variables[4,] <- data.frame("live_stemc", "awks/output_var_cdg_live_stemc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+output_variables[5,] <- data.frame("dead_stemc", "awks/output_var_cdg_dead_stemc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+output_variables[6,] <- data.frame("rootc", "awks/output_var_cdg_rootc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+
+output_variables[7,] <- data.frame("litrc", "awks/output_var_bd_litrc.awk","patch_sim_basin.daily",stringsAsFactors=FALSE)
+output_variables[8,] <- data.frame("cwdc", "awks/output_var_cdg_cwdc.awk","patch_sim_grow_stratum.daily",stringsAsFactors=FALSE)
+output_variables[9,] <- data.frame("soil1c", "awks/output_var_pdg_soil1c.awk","patch_sim_grow_patch.daily",stringsAsFactors=FALSE)
+
+output_variables[10,] <- data.frame("height", "awks/output_var_cd_height.awk","patch_sim_stratum.daily",stringsAsFactors=FALSE)
+
+
+# Output variables for R version
+# output_variables <- NULL
+# output_variables <- data.frame(out_type=character(), variable=character(), stringsAsFactors=FALSE)
+# output_variables[1,] <- data.frame("bd", "lai", stringsAsFactors=FALSE)
+# output_variables[2,] <- data.frame("cdg", "leafc", stringsAsFactors=FALSE)
+# output_variables[3,] <- data.frame("cdg", "live_stemc", stringsAsFactors=FALSE)
+# output_variables[4,] <- data.frame("cdg", "dead_stemc", stringsAsFactors=FALSE)
 
 # ---------------------------------------------------------------------
 
-run_rhessys(parameter_method = parameter_method,
+
+system.time(
+  run_rhessys(parameter_method = parameter_method,
             input_rhessys = input_rhessys,
             input_hdr_list = input_hdr_list,
             input_preexisting_table = input_preexisting_table,
@@ -181,3 +194,7 @@ run_rhessys(parameter_method = parameter_method,
             input_dated_seq_list = input_dated_seq_list,
             input_tec_data = input_tec_data,
             output_variables = output_variables)
+)
+
+beep(1)
+
