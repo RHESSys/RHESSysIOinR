@@ -164,7 +164,7 @@ generate_option_sets <- function(parameter_method,
                           x=names(option_sets_def_par),
                           y=option_sets_def_par,
                           SIMPLIFY = FALSE)
-  tmp2 <- do.call(c, flatten(tmp1))
+  tmp2 <- do.call(c, purrr::flatten(tmp1))
   remove <- grep("group_id", tmp2)
   names_def_par <- tmp2[-remove]
 
