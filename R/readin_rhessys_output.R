@@ -62,9 +62,13 @@ readin_rhessys_output = function (pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
       bdg = read.table(nme, header = T)
       bdg = mkdate(bdg)
       porosity = bd$sat_def/bd$sat_def_z
-      bd$veg_awc = ifelse((bdg$root_depth < bd$sat_def_z),
-                          porosity * (bd$sat_def_z - bdg$root_depth) +
-                            bd$rz_storage, bd$rz_storage)
+      if (nrow(bd)==nrow(bdg)){
+        bd$veg_awc = ifelse((bdg$root_depth < bd$sat_def_z),
+                            porosity * (bd$sat_def_z - bdg$root_depth) +
+                              bd$rz_storage, bd$rz_storage)
+      } else {
+        print("bd and bdg have a mismatch number of rows. veg_awc not computed.")
+      }
       if (wy == 1) {
         bdg.wy = aggregate(bdg, by = list(bdg$wy), mean)
         bdg.wyd = aggregate(bdg, by = list(bdg$wyd),
