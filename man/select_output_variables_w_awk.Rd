@@ -4,7 +4,8 @@
 \alias{select_output_variables_w_awk}
 \title{Selects RHESSys output variables}
 \usage{
-select_output_variables_w_awk(output_variables, output_folder, run)
+select_output_variables_w_awk(output_variables, output_folder, run,
+  output_initiation)
 }
 \arguments{
 \item{output_variables}{A data frame containing containing variable of interest, location/name of awk file (relative to

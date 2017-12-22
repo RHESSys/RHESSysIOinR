@@ -5,7 +5,7 @@
 \title{Pulls output from a single RHESSys run into R}
 \usage{
 readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
-  wy = 1)
+  f = 0, wy = 1)
 }
 \arguments{
 \item{pre}{file}
@@ -21,6 +21,8 @@ readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
 \item{h}{basin}
 
 \item{g}{canopy}
+
+\item{f}{fire}
 
 \item{wy}{wateryear}
 }
