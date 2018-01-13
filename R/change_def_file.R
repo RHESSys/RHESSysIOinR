@@ -24,6 +24,7 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   for (dd in seq_along(sub_pos)){
     def_table[sub_pos[dd],1] = par_sets[1,dd]
   }
+  def_table <- format(def_table, scientific=FALSE);
 
   # ---------------------------------------------------------------------
   # Output def file
