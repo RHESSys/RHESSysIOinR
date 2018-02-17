@@ -18,7 +18,8 @@ Imports:
     tools,
     purrr,
     lhs,
-    readr
+    readr,
+    tibble
 RoxygenNote: 6.0.1
 Suggests: testthat,
     knitr,

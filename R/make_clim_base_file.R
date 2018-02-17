@@ -23,7 +23,7 @@ make_clim_base_file <- function(input_clim_base,
     path <- dirname(clim_base_path)
     name_no_ext <- tools::file_path_sans_ext(basename(clim_base_path))
     ext <- tools::file_ext(clim_base_path)
-    dated_name_ext <- paste(input_dated_seq$name, "_", clim_dated_ext, sep="")
+    dated_name_ext <- unique(paste(input_dated_seq$name, "_", clim_dated_ext, sep=""))
     path_new <- file.path(path, name_no_ext)
     dated_path_name_ext <- file.path(path_new,dated_name_ext)
     dated_file_name <- paste(dated_name_ext, ".", input_dated_seq$type, sep="")
@@ -44,8 +44,12 @@ make_clim_base_file <- function(input_clim_base,
 
     # Make and output dated sequence file
     dated_seq_file <- file.path(path_new, dated_file_name)
-    make_dated_seq(input_dated_seq = dplyr::select(input_dated_seq,-name,-type), dated_seq_file = dated_seq_file)
-
+    for (aa in seq_along(dated_file_type)){
+      tmp = input_dated_seq %>% 
+        dplyr::filter(type==dated_file_type[aa]) %>% 
+        dplyr::select(-name,-type)
+      make_dated_seq(input_dated_seq = tmp, dated_seq_file = dated_seq_file[aa])
+    }
   } else {
 
     # Output standard clim file

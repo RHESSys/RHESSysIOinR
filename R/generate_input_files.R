@@ -14,9 +14,7 @@ generate_input_files <- function(input_rhessys,
                                  option_sets_def_par,
                                  option_sets_par,
                                  option_sets_hdr,
-                                 option_sets_dated_seq,
-                                 world_hdr_prefix,
-                                 world_file){
+                                 option_sets_dated_seq){
 
 
   # ---------------------------------------------------------------------
@@ -36,7 +34,7 @@ generate_input_files <- function(input_rhessys,
       for (bb in seq_along(option_sets_def_par[[aa]]$group_id)){
 
         change_def_file(def_file = names(option_sets_def_par)[aa],
-                        par_sets = dplyr::select(option_sets_def_par[[aa]], -group_id)[bb,],
+                        par_sets = as_tibble(dplyr::select(option_sets_def_par[[aa]], -group_id))[bb,],
                         file_name_ext = as.character(option_sets_def_par[[aa]]$group_id[bb]))
       }
       print(paste("New def files written for file", names(option_sets_def_par)[aa]))

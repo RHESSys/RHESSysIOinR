@@ -48,9 +48,7 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
                        option_sets_def_par = option_sets$option_sets_def_par,
                        option_sets_par = option_sets$option_sets_par,
                        option_sets_hdr = option_sets$option_sets_hdr,
-                       option_sets_dated_seq = option_sets$option_sets_dated_seq,
-                       world_hdr_prefix = world_hdr_prefix,
-                       world_file = world_file)
+                       option_sets_dated_seq = option_sets$option_sets_dated_seq)
 
   # ---------------------------------------------------------------------
 
