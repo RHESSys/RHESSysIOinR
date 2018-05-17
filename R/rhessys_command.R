@@ -42,6 +42,12 @@ rhessys_command <- function(rhessys_version,
                  input_parameters,
                  command_options)
 
+
   system(tmp)
+
+  # Windows stuff - eventually add a if that automatically uses based on OS detected - need to test more first.
+  #tmp2 = noquote(paste("bash -c \"",tmp,"\"",sep=""))
+  #system(tmp2, intern = TRUE)
+
 }
 

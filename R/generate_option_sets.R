@@ -42,7 +42,7 @@ generate_option_sets <- function(parameter_method,
 
         # Attach group ID to option_sets_def_par
         tmp <- seq_along(option_sets_def_par[[bb]][[1]])
-        option_sets_def_par[[bb]] <- bind_cols(option_sets_def_par[[bb]], group_id = tmp)
+        option_sets_def_par[[bb]] <- dplyr::bind_cols(option_sets_def_par[[bb]], data.frame(group_id = tmp))
       }
 
       names(option_sets_def_par) <- input_def_file_unique
@@ -55,6 +55,7 @@ generate_option_sets <- function(parameter_method,
       # possibly move code from make_all_option_table that makes the unchanging
       # def files to here. I would then have to generate an new def file whether
       # parameters change or not
+
     }
 
     # ---------------------------------------------------------------------
@@ -65,7 +66,7 @@ generate_option_sets <- function(parameter_method,
 
       # Attach group ID to option_sets_standard_par
       tmp <- seq_along(option_sets_standard_par[[1]])
-      option_sets_standard_par <- bind_cols(option_sets_standard_par, stan_id = tmp)
+      option_sets_standard_par <- dplyr::bind_cols(option_sets_standard_par, data.frame(stan_id = tmp))
 
     } else {
 
@@ -116,7 +117,7 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Make table used for generating hdr files
 
-  group_ids <- dplyr::select(option_sets_all,ends_with("group_id"), dated_id, hdr_id) # Select group id's
+  group_ids <- dplyr::select(option_sets_all, dplyr::ends_with("group_id"), dated_id, hdr_id) # Select group id's
   option_sets_hdr <- dplyr::distinct(group_ids)                             # Reduce group_ids into distict sets
   names(option_sets_hdr) <- do.call(rbind, strsplit(names(option_sets_hdr), ":"))[,1] # Split variable names from group_id
 
@@ -173,10 +174,9 @@ generate_option_sets <- function(parameter_method,
     names() %>%
     `[`(. != "stan_id")
 
-  option_sets_par <- dplyr::select(option_sets_all,
-                                   names_def_par,
-                                   names_standard_par,
-                                   all_id)
+  #option_sets_par <- dplyr::select(option_sets_all,names_def_par,names_standard_par, all_id) # this is old and threw and error
+
+  option_sets_par <- dplyr::select(option_sets_all, dplyr::one_of(names_def_par,names_standard_par))
 
   # ---------------------------------------------------------------------
 

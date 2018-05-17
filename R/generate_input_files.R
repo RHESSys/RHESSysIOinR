@@ -34,7 +34,7 @@ generate_input_files <- function(input_rhessys,
       for (bb in seq_along(option_sets_def_par[[aa]]$group_id)){
 
         change_def_file(def_file = names(option_sets_def_par)[aa],
-                        par_sets = as_tibble(dplyr::select(option_sets_def_par[[aa]], -group_id))[bb,],
+                        par_sets = tibble::as_tibble(dplyr::select(option_sets_def_par[[aa]], -group_id))[bb,],
                         file_name_ext = as.character(option_sets_def_par[[aa]]$group_id[bb]))
       }
       print(paste("New def files written for file", names(option_sets_def_par)[aa]))
@@ -63,7 +63,7 @@ generate_input_files <- function(input_rhessys,
   # ---------------------------------------------------------------------
   # Generate hdr files
 
-  option_sets_hdr <- arrange(option_sets_hdr, hdr_id) # Arrange hdr_id in sequential order
+  option_sets_hdr <- dplyr::arrange(option_sets_hdr, hdr_id) # Arrange hdr_id in sequential order
 
   # Create hdr output folder
   world_path <- dirname(input_rhessys$world_file)[1]

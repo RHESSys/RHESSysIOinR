@@ -7,23 +7,47 @@
 #'
 #'
 #' @export
-run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_carlo", "exact_values"),
+run_rhessys <- function(parameter_method,
                         input_rhessys,
                         input_hdr_list,
-                        input_preexisting_table,
+                        input_preexisting_table = NULL,
                         input_def_list,
                         input_standard_par_list,
                         input_clim_base_list,
-                        input_dated_seq_list,
+                        input_dated_seq_list = NULL,
                         input_tec_data,
-                        output_variables,
+                        output_variables = NULL,
                         output_initiation = 1){
 
   # ---------------------------------------------------------------------
   # Input checks
   # ***Check that there are either parameters to be computed or a data frame, but not both***
 
-  parameter_method <- match.arg(parameter_method)
+  if(!parameter_method %in% c("all_combinations","lhc","monte_carlo","exact_values")){stop("Invalid parameter_method.")}
+
+  # Check input_rhessys inputs - mostly check if they exist
+  if(!file.exists(input_rhessys$rhessys_version)){stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
+  if(!file.exists(input_rhessys$tec_file)){stop(paste("Tec file",input_rhessys$tec_file,"does not exist."))}
+  if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
+  if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){warning(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."))}
+  if(!file.exists(input_rhessys$flow_file)){stop(paste("Flow table",input_rhessys$flow_file,"does not exist."))}
+  if(!dir.exists(input_rhessys$output_folder)){stop(paste("Output folder",input_rhessys$output_folder,"does not exist."))}
+  if(length(list.files(path = input_rhessys$output_folder,pattern = paste(input_rhessys$output_filename,"*",sep="")))>0){warning(paste("Files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder))}
+
+  # check start end date using clim input -- AFTER checking input_hdr_
+  # check command line args against list of them?
+
+  # Check input_hdr_list
+  if(!is.list(input_hdr_list)){stop("input_hdr_list argument is not a list")}
+
+  #input_hdr_list$basin_def <- c("ws_p300/defs/basin_p300.def")
+  #input_hdr_list$hillslope_def <- c("ws_p300/defs/hill_p300.def")
+  #input_hdr_list$zone_def <- c("ws_p300/defs/zone_p300.def")
+  #input_hdr_list$soil_def <- c("ws_p300/defs/patch_p300.def")
+  #input_hdr_list$landuse_def <- c("ws_p300/defs/lu_p300.def")
+  #input_hdr_list$stratum_def <- c("ws_p300/defs/veg_p300_conifer.def", "ws_p300/defs/veg_p300_shrub.def")
+  #input_hdr_list$base_stations <- c("ws_p300/clim/Grove_lowprov_clim_1942_2453.base")
+
 
   # ---------------------------------------------------------------------
   # Generate option sets

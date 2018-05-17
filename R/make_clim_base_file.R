@@ -14,7 +14,7 @@ make_clim_base_file <- function(input_clim_base,
                                 clim_dated_ext){
 
   # Create core part of climate base file
-  clim_base_core <- do.call(bind_rows, input_clim_base)
+  clim_base_core <- do.call(dplyr::bind_rows, input_clim_base)
 
   # Add (optional) dated sequence
   if (is.null(input_dated_seq)==FALSE){
@@ -36,7 +36,7 @@ make_clim_base_file <- function(input_clim_base,
     # Tack on dated sequence to climate base file
     c1 <- c(dated_path_name_ext, dated_file_count, dated_file_type)
     clim_base_dated <- data.frame(c1 = c1, c2 = rep("", length(c1)), stringsAsFactors=FALSE)
-    clim_base_file <- bind_rows(clim_base_core,clim_base_dated)
+    clim_base_file <- dplyr::bind_rows(clim_base_core,clim_base_dated)
 
     # Output clim base file
     file_name_out <- file.path(path_new, paste(name_no_ext,"_",clim_dated_ext,".",ext,sep=""))
@@ -45,8 +45,8 @@ make_clim_base_file <- function(input_clim_base,
     # Make and output dated sequence file
     dated_seq_file <- file.path(path_new, dated_file_name)
     for (aa in seq_along(dated_file_type)){
-      tmp = input_dated_seq %>% 
-        dplyr::filter(type==dated_file_type[aa]) %>% 
+      tmp = input_dated_seq %>%
+        dplyr::filter(type==dated_file_type[aa]) %>%
         dplyr::select(-name,-type)
       make_dated_seq(input_dated_seq = tmp, dated_seq_file = dated_seq_file[aa])
     }
