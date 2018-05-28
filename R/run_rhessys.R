@@ -44,6 +44,7 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
                        input_hdr_list = input_hdr_list,
                        input_clim_base_list = input_clim_base_list,
                        input_tec_data = input_tec_data,
+                       input_dated_seq_list = input_dated_seq_list,
                        option_sets_all = option_sets$option_sets_all,
                        option_sets_def_par = option_sets$option_sets_def_par,
                        option_sets_par = option_sets$option_sets_par,

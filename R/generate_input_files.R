@@ -10,6 +10,7 @@ generate_input_files <- function(input_rhessys,
                                  input_hdr_list,
                                  input_clim_base_list,
                                  input_tec_data,
+                                 input_dated_seq_list,
                                  option_sets_all,
                                  option_sets_def_par,
                                  option_sets_par,
@@ -106,6 +107,11 @@ generate_input_files <- function(input_rhessys,
     if (is.null(input_hdr_list$fire_def)==FALSE){
       hdr_fire_comp <- make_hdr_file(master_table=option_sets_hdr[yy,], path_initial=input_hdr_list$fire_def, num_files="num_fire_default_files", default_file="fire_default_file")
       world_hdr_out <- rbind(world_hdr_out, hdr_fire_comp)
+    }
+
+    if (is.null(input_hdr_list$spinup_def)==FALSE){
+      hdr_spinup_comp <- make_hdr_file(master_table=option_sets_hdr[yy,], path_initial=input_hdr_list$spinup_def, num_files="num_spinup_default_files", default_file="spinup_default_file")
+      world_hdr_out <- rbind(world_hdr_out, hdr_spinup_comp)
     }
 
     if (is.null(input_hdr_list$base_stations)==FALSE){
