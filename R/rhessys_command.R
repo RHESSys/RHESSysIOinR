@@ -43,11 +43,13 @@ rhessys_command <- function(rhessys_version,
                  command_options)
 
 
-  system(tmp)
+  # check OS and run via system correctly - windows requires the linux subsystem i think
 
-  # Windows stuff - eventually add a if that automatically uses based on OS detected - need to test more first.
-  #tmp2 = noquote(paste("bash -c \"",tmp,"\"",sep=""))
-  #system(tmp2, intern = TRUE)
+  if(.Platform$OS.type=="windows"){
+    tmp = noquote(paste("bash -c \"",tmp,"\"",sep=""))
+  }
+
+  system(tmp)
 
 }
 
