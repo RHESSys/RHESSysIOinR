@@ -11,6 +11,8 @@
 #' @param thin_type Type of thinning event.
 #' @param thin_mult Multiplier to use for thinning.
 #' @author Will Burke
+#'
+#' @export
 tec_repeat <- function(start,end,repeat_interval,tec_type,world,thin_mult=NULL,thin_type=NULL,random=NULL) {
 
   start_date = as.POSIXlt(paste(start[1],"/",start[2],"/",start[3],sep=""))
