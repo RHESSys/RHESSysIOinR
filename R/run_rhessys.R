@@ -8,6 +8,7 @@
 #'
 #' @export
 run_rhessys <- function(parameter_method,
+                        output_method,
                         input_rhessys,
                         input_hdr_list,
                         input_preexisting_table = NULL,
@@ -98,9 +99,14 @@ run_rhessys <- function(parameter_method,
 
     # Process RHESSys output
     if (is.null(output_variables[1]) == F){
+      if (output_method=="awk")
       select_output_variables_w_awk(output_variables = output_variables,
                                     output_folder = input_rhessys$output_folder,
                                     run = aa,
+                                    output_initiation = output_initiation)
+      else select_output_variables(output_variables = output_variables,
+                                    output_folder = input_rhessys$output_folder,
+                                    run=aa,
                                     output_initiation = output_initiation)
     }
   }
