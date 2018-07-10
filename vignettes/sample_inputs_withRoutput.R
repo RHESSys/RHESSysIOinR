@@ -1,10 +1,10 @@
 # This eventually needs to morph into a vignette example of some sort.
-# Currently this is a testing input file for Ryan Bart
 
 library(RHESSysIOinR)
 library(tidyverse)
 
-# Note: Need to change directory!! This example uses fire_effects_model directory.
+# Note: Need to change directory!! 
+setwd("/Users/naomitague/Box Sync/TagueProj/Coldstream")
 
 # ---------------------------------------------------------------------
 # Model inputs
@@ -15,10 +15,10 @@ input_preexisting_table <- NULL
 # Processing options
 parameter_method <- "lhc"
 output_method <- "R" # alternatively "awk"
-# RHESSys Inputs
 
+# RHESSys Inputs
 input_rhessys <- list()
-#input_rhessys$rhessys_version <- "/Users/christina/Desktop/LocalModel/rhessys_git/rhessys/rhessys5.20.1.thin" # "bin/rhessys5.20.fire_off"
+#input_rhessys$rhessys_version <- "/Users/christina/Desktop/LocalModel/rhessys_git/rhessys/rhessys5.20.1.thin" 
 input_rhessys$rhessys_version <- "/Users/naomitague/Desktop/model/RHESSys/rhessys/rhessys6.0"
 input_rhessys$tec_file <- "sim/tecfiles/tec.test"
 input_rhessys$world_file <- "sim/worldfiles/coldstream.3p.world.su100"
