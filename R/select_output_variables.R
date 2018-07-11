@@ -1,34 +1,31 @@
-#' Select RHESSys output variables
+#' Selects RHESSys output variables
 #'
-#' This function...
+#'  for now simply paralleling the approach used with awks but with R input
 #'
-#'
+#' @param output_variables A data frame containing containing variable of interest, location/name of awk file (relative to
+#' output_file location), and the location/name of rhessys output file with variable
+#' of interest.
+#' @param output_folder Folder where rhessys output is located (e.g. 'out')
+#' @param run Simulation number. Used to reset files in allsim at beginning of simulation
 #' @export
-select_rhessys_output <- function(output_prefix, output_variables, run){
+select_output_variables <- function(output_variables, output_folder,run,output_initiation){
 
-  # This function is under construction. The code below imports new RHESSys
-  # output and selects the appropriate variables of interest and binds them to a
-  # data.frame with results from previous runs. The data frame with all running
-  # simulation results should then be outputed (not yet implemented). This data
-  # frame needs to also be imported for each simulation (not yet implemented).
-  # Also need to incorporate unique output file names. The unique file name
-  # should be transferred to column name of running results for each output
-  # variable. Also need to deal with cluster and deciding which outputs get
-  # grouped. Also if rheesys output has unique output names (unlike with current
-  # code), will need to add routine in this function to delete raw output so
-  # that memory doesn't blowup.
+    if (run == 1 && output_initiation == 1){
+      for (dd in seq_len(nrow(output_variables))){
+        system(sprintf("rm %s/allsim/%s", output_folder, output_variables$variable[dd]))
+        system(sprintf("echo > %s/allsim/%s", output_folder, output_variables$variable[dd]))
+      }
+    }
 
-
-  happy <- readin_rhessys_output(output_prefix, c=1, p=1, g=1)
-  happy2 <- mapply(function(x,y,z) as.data.frame(z[[x]][y]), x = output_variables$out_type, y = output_variables$variable, MoreArgs = list(z = happy))
-  happy3 <- lapply(happy2, function(x) as.data.frame(x))
-  happy4 <- lapply(happy3, setNames, nm = aa)
-
-  if (run == 1){
-    out <- happy4
-  } else {
-    out <- mapply(function(x,y) cbind(x,y), x = out, y = happy4)
-
+    for (cc in seq_len(nrow(output_variables))){
+      system(sprintf("rm %s/allsim/t%s", output_folder, output_variables$variable[cc]))
+      fin_name = sprintf("%s/%s", output_folder, output_variables$out_file[cc])
+      results = read.table(fin_name, header=T)
+      fout_name = sprintf("%s/allsim/t%s", output_folder, output_variables$variable[cc])
+      write(signif(results[,output_variables$variable[cc]],5), ncolumns=1, file=fout_name)
+      system(sprintf("paste %s/allsim/%s %s/allsim/t%s > %s/allsim/new%s", output_folder, output_variables$variable[cc], output_folder, output_variables$variable[cc], output_folder, output_variables$variable[cc]))
+      system(sprintf("mv %s/allsim/new%s %s/allsim/%s", output_folder, output_variables$variable[cc], output_folder, output_variables$variable[cc]))
+    }
   }
-}
+
 
