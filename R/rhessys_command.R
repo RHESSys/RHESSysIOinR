@@ -49,6 +49,8 @@ rhessys_command <- function(rhessys_version,
     tmp = noquote(paste("bash -c \"",tmp,"\"",sep=""))
   }
 
+  print(paste("Command line echo:",tmp),quote = FALSE)
+
   system(tmp)
 
 }

@@ -27,12 +27,13 @@ run_rhessys <- function(parameter_method,
 
   # Check input_rhessys inputs - mostly check if they exist
   if(!file.exists(input_rhessys$rhessys_version)){stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
-  if(!file.exists(input_rhessys$tec_file)){stop(paste("Tec file",input_rhessys$tec_file,"does not exist."))}
   if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
-  if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){warning(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."))}
+  if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){
+    print(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."),quote = FALSE)}
   if(!file.exists(input_rhessys$flow_file)){stop(paste("Flow table",input_rhessys$flow_file,"does not exist."))}
   if(!dir.exists(input_rhessys$output_folder)){stop(paste("Output folder",input_rhessys$output_folder,"does not exist."))}
-  if(length(list.files(path = input_rhessys$output_folder,pattern = paste(input_rhessys$output_filename,"*",sep="")))>0){warning(paste("Files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder))}
+  if(length(list.files(path = input_rhessys$output_folder,pattern = paste(input_rhessys$output_filename,"*",sep="")))>0){
+    print(paste("Output files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder,"and will be overwritten."),quote = FALSE)}
 
   # check start end date using clim input -- AFTER checking input_hdr_
   # check command line args against list of them?
@@ -40,6 +41,7 @@ run_rhessys <- function(parameter_method,
   # Check input_hdr_list
   if(!is.list(input_hdr_list)){stop("input_hdr_list argument is not a list")}
 
+  # check def files exist where they're supposed to - example locations:
   #input_hdr_list$basin_def <- c("ws_p300/defs/basin_p300.def")
   #input_hdr_list$hillslope_def <- c("ws_p300/defs/hill_p300.def")
   #input_hdr_list$zone_def <- c("ws_p300/defs/zone_p300.def")
@@ -81,7 +83,7 @@ run_rhessys <- function(parameter_method,
 
   # Step through each parameter set
   for (aa in seq_len(option_sets_rhessys_rows)){
-    print(paste("----------------- Run", aa ,"of", option_sets_rhessys_rows, "-----------------"))
+    print(paste("----------------- Run", aa ,"of", option_sets_rhessys_rows, "-----------------"),quote = FALSE)
 
     # Call RHESSys
     rhessys_command(rhessys_version = option_sets_rhessys$rhessys_version[aa],

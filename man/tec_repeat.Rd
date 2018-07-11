@@ -4,8 +4,8 @@
 \alias{tec_repeat}
 \title{tec_repeat}
 \usage{
-tec_repeat(start, end, repeat_interval, tec_type, world, thin_mult = NULL,
-  thin_type = NULL, random = NULL)
+tec_repeat(start, end, repeat_interval, world, mult = NULL,
+  thin_type = NULL, random = NULL, write = FALSE)
 }
 \arguments{
 \item{start}{Vector containing start date. Format is "c(year,month,day,hour)".}
@@ -14,18 +14,20 @@ tec_repeat(start, end, repeat_interval, tec_type, world, thin_mult = NULL,
 
 \item{repeat_interval}{Interval in years to repeat chosen tec event.}
 
-\item{tec_type}{Type of tec event to scheduled.}
-
 \item{world}{Worldfile.}
 
-\item{thin_mult}{Multiplier to use for thinning.}
+\item{mult}{Multiplier to use for thinning.}
 
 \item{thin_type}{Type of thinning event.}
 
 \item{random}{Set as "single" to use a single random date for all events, "all" to randomize all dates.}
+
+\item{write}{TRUE/FALSE write deta doc of output to file}
+
+\item{tec_type}{Type of tec event to scheduled.}
 }
 \description{
-Repeats tec events at chosen intervals.
+Repeats tec events at chosen intervals. Template should use -1111 for replacement value, and use worldfile name followed by "template"
 }
 \author{
 Will Burke
