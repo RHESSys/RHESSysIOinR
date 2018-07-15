@@ -40,7 +40,7 @@ make_hdr_file <- function(master_table,
     # Determine the type of def file used
     if (file_name_ext == 0){
       # Reference original def file
-      path_full[zz] <- path_initial
+      path_full[zz] <- path_initial[zz]
     } else {
       # Reference new def file
       path_full[zz] <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".",ext,sep=""))

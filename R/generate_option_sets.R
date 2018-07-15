@@ -103,6 +103,7 @@ generate_option_sets <- function(parameter_method,
 
   # ****Currently not implemented****
   # Code should permit the use of multiple tec files
+  # Ryan, what do you mean by this?^^ -Will
 
   # ---------------------------------------------------------------------
   # Generate all-option table
