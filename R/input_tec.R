@@ -9,6 +9,7 @@
 #' @export
 
 input_tec = function(...){
+  if(is.null(...)){return(NULL)}
   b = list(...)
   if(class(b[[1]])=="data.frame"){
     return(b[[1]])

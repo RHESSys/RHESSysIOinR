@@ -26,7 +26,7 @@ make_hdr_file <- function(master_table,
 
   hdr_out <- data.frame(c1 = length(path_initial), c2 = num_files, stringsAsFactors=FALSE)
 
-  path_full <- vector()
+  path_full <- rep(NA,length(path_initial))
   for (zz in seq_along(path_initial)){
 
     # Def file paths and names
@@ -35,7 +35,7 @@ make_hdr_file <- function(master_table,
     ext <- tools::file_ext(path_initial)[zz]
     path_new <- file.path(path_short, name_no_ext)
 
-    file_name_ext <- ifelse(ext =="def", master_table[path_initial][zz], master_table["dated_id"][zz])
+    file_name_ext <- ifelse(ext =="def", master_table[path_initial][zz], master_table["dated_id"])
 
     # Determine the type of def file used
     if (file_name_ext == 0){
