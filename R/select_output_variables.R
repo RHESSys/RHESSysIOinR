@@ -21,6 +21,8 @@ select_output_variables <- function(output_variables, output_folder,run,output_i
       system(sprintf("rm %s/allsim/t%s", output_folder, output_variables$variable[cc]))
       fin_name = sprintf("%s/%s", output_folder, output_variables$out_file[cc])
       results = read.table(fin_name, header=T)
+      if (output_variables$id_extract[cc] > 0)
+          results = subset(results, stratumID==output_variables$id_extract[cc])
       fout_name = sprintf("%s/allsim/t%s", output_folder, output_variables$variable[cc])
       write(signif(results[,output_variables$variable[cc]],5), ncolumns=1, file=fout_name)
       system(sprintf("paste %s/allsim/%s %s/allsim/t%s > %s/allsim/new%s", output_folder, output_variables$variable[cc], output_folder, output_variables$variable[cc], output_folder, output_variables$variable[cc]))
