@@ -177,7 +177,7 @@ generate_option_sets <- function(parameter_method,
 
   #option_sets_par <- dplyr::select(option_sets_all,names_def_par,names_standard_par, all_id) # this is old and threw and error
 
-  option_sets_par <- dplyr::select(option_sets_all, dplyr::one_of(names_def_par,names_standard_par))
+  option_sets_par <- dplyr::select(option_sets_all, dplyr::one_of(names_def_par,names_standard_par, all_id))
 
   # ---------------------------------------------------------------------
 
