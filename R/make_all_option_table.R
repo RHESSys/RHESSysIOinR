@@ -51,7 +51,6 @@ make_all_option_table <- function(parameter_method,
       all_option_def <- do.call(dplyr::bind_cols,option_sets_def_par_full_name)
       all_option_def <- dplyr::bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
     }
-  }
 
     # Add columns for unchanging def files (These columns are needed when making hdr files)
     input_hdr_list_def <- purrr::flatten(purrr::discard(input_hdr_list, names(input_hdr_list)=="base_stations"))
@@ -65,7 +64,7 @@ make_all_option_table <- function(parameter_method,
         colnames(all_option_def)[colnames(all_option_def) == "placeholder_name"] <- paste(input_hdr_list_def[aa], ":group_id", sep="")
       }
     }
-
+  }
 
   # ---------------------------------------------------------------------
   # Add standard parameters
