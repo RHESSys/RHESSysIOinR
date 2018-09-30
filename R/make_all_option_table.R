@@ -51,18 +51,16 @@ make_all_option_table <- function(parameter_method,
       all_option_def <- do.call(dplyr::bind_cols,option_sets_def_par_full_name)
       all_option_def <- dplyr::bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
     }
-
-    # Add columns for unchanging def files (These columns are needed when making hdr files)
-    input_hdr_list_def <- purrr::flatten(purrr::discard(input_hdr_list, names(input_hdr_list)=="base_stations"))
-    for (aa in seq_along(input_hdr_list_def)){
-      if (input_hdr_list_def[aa] %in% names(option_sets_def_par)){    # Did a def file from the hdr input have parameter changes?
-        # Do nothing!
-      } else {
-        # Attach column to all_option_def for unchanging def files
-        # reaplceed length of rep, was: length(all_option_def[,1])
-        all_option_def <- cbind(all_option_def,  "placeholder_name" = rep(0, length(option_sets_standard_par[,1])))
-        colnames(all_option_def)[colnames(all_option_def) == "placeholder_name"] <- paste(input_hdr_list_def[aa], ":group_id", sep="")
-      }
+  }
+  # Add columns for unchanging def files (These columns are needed when making hdr files)
+  input_hdr_list_def <- purrr::flatten(purrr::discard(input_hdr_list, names(input_hdr_list)=="base_stations"))
+  for (aa in seq_along(input_hdr_list_def)){
+    if (input_hdr_list_def[aa] %in% names(option_sets_def_par)){    # Did a def file from the hdr input have parameter changes?
+      # Do nothing! The group_id for the def file is already in the all_option_def dataframe.
+    } else {
+      # Attach group_id column to all_option_def for unchanging def files
+      all_option_def <- cbind(all_option_def,  "placeholder_name" = rep(0, length(option_sets_standard_par[,1])))
+      colnames(all_option_def)[colnames(all_option_def) == "placeholder_name"] <- paste(input_hdr_list_def[aa], ":group_id", sep="")
     }
   }
 
@@ -77,7 +75,7 @@ make_all_option_table <- function(parameter_method,
     tmp2 <- all_option_def %>%
       dplyr::select(dplyr::ends_with("def_id"))
     tmp3 <- expand.grid(c(tmp1,tmp2))   # Create all combinations of def and standard parameters
-    tmp4 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=list(option_sets_standard_par, all_option_def) , z=names(tmp3), MoreArgs=list(x=tmp3), SIMPLIFY = FALSE)  # Rejoin the variables to the appropriate group_id
+    tmp4 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=list(option_sets_standard_par, as.data.frame(all_option_def)) , z=names(tmp3), MoreArgs=list(x=tmp3), SIMPLIFY = FALSE)  # Rejoin the variables to the appropriate group_id
     all_option_par <- do.call(dplyr::bind_cols, tmp4)
     all_option_par <- dplyr::bind_cols(all_option_par, data.frame(par_id=seq_along(all_option_par[[1]]))) # Add unique par identifier
   }
@@ -85,7 +83,7 @@ make_all_option_table <- function(parameter_method,
   if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
 
     # Generate a single dataframe
-    all_option_par <- dplyr::bind_cols(option_sets_standard_par,all_option_def)
+    all_option_par <- dplyr::bind_cols(option_sets_standard_par,as.data.frame(all_option_def))
     all_option_par <- dplyr::bind_cols(all_option_par, data.frame(par_id=seq_along(all_option_par[[1]]))) # Add unique par identifier
   }
 

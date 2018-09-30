@@ -1,8 +1,12 @@
 #' Produces components of a hdr file
 #'
-#' This function generates the lines in a hdr file associated with a single def file.
+#' This function generates the lines in a hdr file associated with a single def
+#' file.
 #'
-#' @param master_table Data frame of a single row with references to def file number
+#' @param master_table Data frame of a single row with references to def file
+#'   number. A value of zero for the def file number indicates that the original
+#'   def file is to be used. Higher numbers are added as a extension to the file
+#'   name.
 #' @param path_initial Path to the non-differiated def file
 #' @param num_files ???
 #' @param default_file ???

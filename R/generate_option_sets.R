@@ -1,6 +1,52 @@
-#' Produces data-frames for all parameter combinations and for each def file
+#' Produces data-frames with differnt combinations of parameters and inputs
 #'
+#' \code{generate_option_sets} is used to produce dataframes with different
+#' combinations of parameters and inputs which are used in other parts of
+#' RHESSysIOinR or are outputted as csv's.
 #'
+#' @return \code{option_sets_def_par} is a dataframe containing changed def file
+#'   parameters.
+#'
+#'   \code{option_sets_standard_par} is a dataframe containing standard
+#'   parameters.
+#'
+#'   \code{option_sets_par} is a dataframe containing both changed def file and
+#'   standard parameter inputs. This dataframe is exported as
+#'   \code{output_name_parameter_sets.csv} and can then be reimported (following
+#'   optional filtering) under input_preexisting_table.
+#'
+#'   \code{option_sets_dated_seq} is a dataframe containing inputs for dated
+#'   sequences.
+#'
+#'   \code{option_sets_all} is a dataframe containing all inputs for a given
+#'   run.
+#'
+#'   \code{option_sets_hdr} is a dataframe containing inputs for hdr (header)
+#'   files.
+#'
+#'   \code{option_sets_rhessys} is a dataframe containing inputs for
+#'   rhessys_command.
+#'
+#' @section Details:
+#'
+#'   Each output dataframe has a unique identifier (e.g. all_id, hdr_id,
+#'   group_id for def files). These identifiers, and in particular all_id, are
+#'   used identify the same runs across outputs. Unique identifiers increase
+#'   sequentially starting at 1 when they are applicable to a batch of runs.
+#'   When a component of the model is not being used (for example, no dated
+#'   sequence is needed for a run), the code will often generate a 'dummy'
+#'   dataframe with a value of 0 for the unique identifier. A value of 0 is a
+#'   placeholder and the code knows to ignore values of 0.
+#'   \code{option_sets_all} will also generate a column for each unique
+#'   identifier and populate it with 0. The only component of the code in this
+#'   function that acts kinda different is the generation of the def file unique
+#'   id's. No dummy dataframe is generated when def file parameters are not
+#'   being altered. Instead, the output dataframe, \code{option_sets_def_par},
+#'   is NULLed. Unique def file identifiers are still produced in
+#'   \code{option_sets_all} and this file can be used to select unique def file
+#'   group_ids's, as done in section 'Make table used for generating hdr files'.
+#'   However, for consistency with the rest of code, it may be benefical for
+#'   code to generate a dummy dataframe in the future .
 #'
 #'
 #' @export
@@ -102,11 +148,15 @@ generate_option_sets <- function(parameter_method,
   }
 
   # ---------------------------------------------------------------------
-  # Process tec file(s)
+  # Process tecfile(s)
 
-  # ****Currently not implemented****
-  # Code should permit the use of multiple tec files
-  # Ryan, what do you mean by this?^^ -Will
+  # ***** Not currently implemented *****
+  # This is a placeholder for code that would allow more than one tecfile to be
+  # used over a set of runs. Currently, only a single tecfile can be used for
+  # all runs. However, code could be developed to associate different tecfiles
+  # for different runs. This could be useful if one needed to systematically
+  # change the date of redefine worlds across runs, for example.
+
 
   # ---------------------------------------------------------------------
   # Generate all-option table
