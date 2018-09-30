@@ -7,7 +7,10 @@
 make_hdr_file(master_table, path_initial, num_files, default_file)
 }
 \arguments{
-\item{master_table}{Data frame of a single row with references to def file number}
+\item{master_table}{Data frame of a single row with references to def file
+number. A value of zero for the def file number indicates that the original
+def file is to be used. Higher numbers are added as a extension to the file
+name.}
 
 \item{path_initial}{Path to the non-differiated def file}
 
@@ -16,5 +19,6 @@ make_hdr_file(master_table, path_initial, num_files, default_file)
 \item{default_file}{???}
 }
 \description{
-This function generates the lines in a hdr file associated with a single def file.
+This function generates the lines in a hdr file associated with a single def
+file.
 }

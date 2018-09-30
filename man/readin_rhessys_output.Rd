@@ -4,8 +4,8 @@
 \alias{readin_rhessys_output}
 \title{Pulls output from a single RHESSys run into R}
 \usage{
-readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
-  f = 0, wy = 1)
+readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0,
+  g = 0, f = 0, wy = 1)
 }
 \arguments{
 \item{pre}{file}
