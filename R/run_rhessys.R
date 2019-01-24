@@ -28,9 +28,9 @@ run_rhessys <- function(parameter_method,
 
   # Check input_rhessys inputs - mostly check if they exist
   if(!file.exists(input_rhessys$rhessys_version)){stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
-  if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
-  if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){
-    print(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."),quote = FALSE)}
+  #if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
+  #if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){
+  #  print(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."),quote = FALSE)}
   if(!file.exists(input_rhessys$flow_file)){stop(paste("Flow table",input_rhessys$flow_file,"does not exist."))}
   if(length(list.files(path = input_rhessys$output_folder,pattern = paste(input_rhessys$output_filename,"*",sep="")))>0){
     print(paste("Output files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder,"and will be overwritten."),quote = FALSE)}
@@ -45,8 +45,8 @@ run_rhessys <- function(parameter_method,
   if(!is.list(input_hdr_list)){stop("input_hdr_list argument is not a list")}
 
   # check def files exist where they're supposed to:
-  if(any(!unlist(lapply(input_hdr_list,file.exists)))){
-    stop(paste("Missing def file. File(s):",unlist(input_hdr_list)[!unlist(lapply(input_hdr_list,file.exists))]))}
+  # if(any(!unlist(lapply(input_hdr_list,file.exists)))){
+  #   stop(paste("Missing def file. File(s):",unlist(input_hdr_list)[!unlist(lapply(input_hdr_list,file.exists))]))}
 
   # ---------------------------------------------------------------------
   # Generate option sets
