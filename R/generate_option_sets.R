@@ -61,7 +61,7 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Process parameters
 
-  if (is.null(input_preexisting_table) == TRUE){
+  if (is.null(input_preexisting_table)) {
 
     # ---------------------------------------------------------------------
     # Process def files
@@ -69,22 +69,22 @@ generate_option_sets <- function(parameter_method,
 
     option_sets_def_par <- list()
 
-    if (is.null(input_def_list[1]) == FALSE){
+    if (!is.null(input_def_list[1])) {
       input_def_file <- unlist(lapply(input_def_list, function(x) x[1]))
       input_def_file_unique <- unique(input_def_file)
 
-      input_def_list_by_unique_file <- input_def_file_unique %>%
-        # Generates matrix indicating which components of input_def_list are assigned to each def file
-        sapply(function(y) lapply(input_def_list, function(x) x[1] == y)) %>%
-        # Generates three nested lists
-        lapply(seq_along(input_def_file_unique), function(x,y) input_def_list[y[,x] == TRUE], .)
+      # Generates matrix indicating which components of input_def_list are assigned to each def file
+      # Generates three nested lists
+      #input_def_list_by_unique_file <- input_def_file_unique %>% sapply(function(y) lapply(input_def_list, function(x) x[1] == y)) %>% lapply(seq_along(input_def_file_unique), function(x,y) input_def_list[y[,x] == TRUE], .)
+      input_def_tmp <- sapply(input_def_file_unique, function(y) lapply(input_def_list, function(x) x[1] == y))
+      input_def_list_by_unique_file = lapply(seq_along(input_def_file_unique), function(x,y) input_def_list[y[,x] == TRUE], input_def_tmp)
 
       # Subset by each def file
-      for (bb in seq_along(input_def_file_unique)){
+      for (bb in seq_along(input_def_file_unique)) {
         names(input_def_list_by_unique_file[[bb]]) <- lapply(input_def_list_by_unique_file[[bb]], function(x) x[[2]])
         input_def_change_par <- sapply(input_def_list_by_unique_file[[bb]], function(x) x[[3]], simplify = FALSE, USE.NAMES = TRUE) # Isolate parameter values
 
-        option_sets_def_par[[bb]] <- make_option_set_combinations(input_list=input_def_change_par, parameter_method=parameter_method)
+        option_sets_def_par[[bb]] <- make_option_set_combinations(input_list = input_def_change_par, parameter_method = parameter_method)
 
         # Attach group ID to option_sets_def_par
         tmp <- seq_along(option_sets_def_par[[bb]][[1]])
@@ -107,9 +107,9 @@ generate_option_sets <- function(parameter_method,
     # ---------------------------------------------------------------------
     # Process standard RHESSys parameters
 
-    if (is.null(input_standard_par_list[1]) == FALSE){
+    if (!is.null(input_standard_par_list[1])) {
       # Scenario where there are standard parameters to process
-      option_sets_standard_par <- make_option_set_combinations(input_list=input_standard_par_list, parameter_method=parameter_method)
+      option_sets_standard_par <- make_option_set_combinations(input_list = input_standard_par_list, parameter_method = parameter_method)
 
       # Attach group ID to option_sets_standard_par
       tmp <- seq_along(option_sets_standard_par[[1]])
@@ -117,7 +117,7 @@ generate_option_sets <- function(parameter_method,
 
     } else {
       # Scenario where there are no standard parameters to process
-      if (is.null(option_sets_def_par)==FALSE){
+      if (!is.null(option_sets_def_par)) {
         # If there are def parameters processed, then a option_sets_standard_par dataframe consisting of only the stan_id is made of the same length. The values of 0 represent dummy values.
         option_sets_standard_par <- data.frame(stan_id = rep(0, nrow(option_sets_def_par[[1]])))
       } else {
@@ -130,7 +130,7 @@ generate_option_sets <- function(parameter_method,
     # ---------------------------------------------------------------------
     # Code for importing parameter sets
 
-    tmp <- process_input_preexisting_table(input_preexisting_table=input_preexisting_table)
+    tmp <- process_input_preexisting_table(input_preexisting_table = input_preexisting_table)
 
     option_sets_def_par <- tmp$option_sets_def_par
     option_sets_standard_par <- tmp$option_sets_standard_par
@@ -139,7 +139,7 @@ generate_option_sets <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Process dated sequence file(s)
 
-  if (is.null(input_dated_seq_list[1]) == F){
+  if (!is.null(input_dated_seq_list[1])) {
     # Attach group ID to option_sets_dated_seq
     option_sets_dated_seq <- data.frame(dated_id = seq_along(input_dated_seq_list))
 
@@ -230,9 +230,8 @@ generate_option_sets <- function(parameter_method,
   # Isolate variable names from option_sets_standard_par.  If option_sets_standard_par doesn't exist, make names_def_par NULL.
   if (ncol(option_sets_standard_par) > 1){
     # If standard parameters are processed, then option_sets_standard_par will be greater than 1 column.
-    names_standard_par <- option_sets_standard_par %>%
-      names() %>%
-      `[`(. != "stan_id")
+    #names_standard_par <- option_sets_standard_par magrittr::%>% names() magrittr::%>%  `[`(. != "stan_id")
+    names_standard_par <-  names(option_sets_standard_par[names(option_sets_standard_par) != "stan_id"])
   } else {
     names_standard_par=NULL
   }

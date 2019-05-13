@@ -7,7 +7,7 @@
 mkdate(x)
 }
 \arguments{
-\item{x}{???}
+\item{x}{RHESSys output in data.frame/data.table form}
 }
 \description{
 Description...

@@ -37,15 +37,16 @@ make_all_option_table <- function(parameter_method,
     if (parameter_method == "all_combinations"){
 
       # Generate a single dataframe for def files
-      tmp1 <- option_sets_def_par_full_name %>%   # Isolate the group_id for each def file
-        lapply(.,function(x) dplyr::select(x,dplyr::ends_with("group_id")))
+      # Isolate the group_id for each def file
+      #tmp1 <- option_sets_def_par_full_name magrittr::%>%  lapply(.,function(x) dplyr::select(x,dplyr::ends_with("group_id")))
+      tmp1 <- lapply(option_sets_def_par_full_name,function(x) dplyr::select(x,dplyr::ends_with("group_id")))
       tmp2 <- expand.grid(purrr::flatten(tmp1))   # Create all combinations of def parameters
       tmp3 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=option_sets_def_par_full_name, z=names(purrr::flatten(tmp1)), MoreArgs=list(x=tmp2), SIMPLIFY = FALSE) # Rejoin the variables to the appropriate group_id
       all_option_def <- do.call(dplyr::bind_cols, tmp3)
       all_option_def <- dplyr::bind_cols(all_option_def, data.frame(def_id=seq_along(all_option_def[[1]]))) # Add unique par identifier
     }
 
-    if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
+    if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "exact_values"){
 
       # Generate a single dataframe for def files
       all_option_def <- do.call(dplyr::bind_cols,option_sets_def_par_full_name)
@@ -70,17 +71,17 @@ make_all_option_table <- function(parameter_method,
   if (parameter_method == "all_combinations"){
 
     # Generate a single dataframe for def files
-    tmp1 <- option_sets_standard_par %>%
-      dplyr::select(dplyr::ends_with("stan_id"))
-    tmp2 <- all_option_def %>%
-      dplyr::select(dplyr::ends_with("def_id"))
+    #tmp1 <- option_sets_standard_par magrittr::%>% dplyr::select(dplyr::ends_with("stan_id"))
+    #tmp2 <- all_option_def magrittr::%>% dplyr::select(dplyr::ends_with("def_id"))
+    tmp1 <- dplyr::select(option_sets_standard_par, dplyr::ends_with("stan_id"))
+    tmp2 <- dplyr::select(all_option_def, dplyr::ends_with("def_id"))
     tmp3 <- expand.grid(c(tmp1,tmp2))   # Create all combinations of def and standard parameters
     tmp4 <- mapply(function(x,y,z) dplyr::full_join(dplyr::select(x,z),y,by=z), y=list(option_sets_standard_par, as.data.frame(all_option_def)) , z=names(tmp3), MoreArgs=list(x=tmp3), SIMPLIFY = FALSE)  # Rejoin the variables to the appropriate group_id
     all_option_par <- do.call(dplyr::bind_cols, tmp4)
     all_option_par <- dplyr::bind_cols(all_option_par, data.frame(par_id=seq_along(all_option_par[[1]]))) # Add unique par identifier
   }
 
-  if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "specific_values"){
+  if (parameter_method == "monte_carlo" || parameter_method == "lhc" || parameter_method == "exact_values"){
 
     # Generate a single dataframe
     all_option_par <- dplyr::bind_cols(option_sets_standard_par,as.data.frame(all_option_def))
@@ -90,8 +91,8 @@ make_all_option_table <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Add dated sequences
 
-  tmp1 <- all_option_par %>%
-    dplyr::select(dplyr::ends_with("par_id"))
+  #tmp1 <- all_option_par magrittr::%>% dplyr::select(dplyr::ends_with("par_id"))
+  tmp1 <- dplyr::select(all_option_par, dplyr::ends_with("par_id"))
   tmp2 <- expand.grid(c(option_sets_dated_seq, tmp1))
   all_option_dated_seq <- dplyr::full_join(tmp2,all_option_par,by="par_id")
   all_option_dated_seq <- dplyr::bind_cols(all_option_dated_seq, data.frame(par_dated_id=seq_along(all_option_dated_seq[[1]]))) # Add unique all-option identifier
@@ -107,8 +108,8 @@ make_all_option_table <- function(parameter_method,
   # Add rhessys inputs
 
   # Create expanded grid for rhessys_input
-  tmp1 <- all_option_tec %>%
-    dplyr::select(dplyr::ends_with("par_dated_id"))
+  #tmp1 <- all_option_tec magrittr::%>% dplyr::select(dplyr::ends_with("par_dated_id"))
+  tmp1 <- dplyr::select(all_option_tec, dplyr::ends_with("par_dated_id"))
   tmp2 <- expand.grid(c(input_rhessys, tmp1))
   option_sets_all <- dplyr::full_join(tmp2,all_option_tec,by="par_dated_id")
   option_sets_all <- dplyr::bind_cols(option_sets_all, data.frame(all_id=seq_along(option_sets_all[[1]]))) # Add unique all-option identifier

@@ -20,8 +20,9 @@ Imports:
     lhs,
     readr,
     tibble
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Encoding: UTF-8

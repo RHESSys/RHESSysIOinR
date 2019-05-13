@@ -20,8 +20,9 @@ make_hdr_file <- function(master_table,
   # ---------------------------------------------------------------------
   # Function for assembling paths for each hdr input
   def_file_df <- function(def, default_file = "default_file"){
-    output <- lapply(def, function(x) c(x, default_file)) %>%
-      do.call(rbind, .)
+    #output <- lapply(def, function(x) c(x, default_file)) magrittr::%>% do.call(rbind, .)
+    output0 <- lapply(def, function(x) c(x, default_file))
+    output = do.call(rbind, output0)
     colnames(output) <- c("c1", "c2")
     return(output)
   }

@@ -33,9 +33,9 @@ process_input_preexisting_table <- function(input_preexisting_table){
   # Process def files
 
   # Isolate def parmaters
-  def_file_par <- par_table %>%
-    dplyr::select(-one_of(stan_par)) %>%
-    dplyr::select(-all_id)
+  #def_file_par <- par_table magrittr::%>% dplyr::select(-one_of(stan_par)) magrittr::%>% dplyr::select(-all_id)
+  def_file_par0 <- dplyr::select(par_table, -one_of(stan_par))
+  def_file_par = dplyr::select(def_file_par0, -all_id)
 
   # Split def file names and rename def_file_par
   def_file_par_name_split <- strsplit(names(def_file_par), ":")

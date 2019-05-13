@@ -45,9 +45,9 @@ make_clim_base_file <- function(input_clim_base,
     # Make and output dated sequence file
     dated_seq_file <- file.path(path_new, dated_file_name)
     for (aa in seq_along(dated_file_type)){
-      tmp = input_dated_seq %>%
-        dplyr::filter(type==dated_file_type[aa]) %>%
-        dplyr::select(-name,-type)
+      #tmp = input_dated_seq magrittr::%>% dplyr::filter(type==dated_file_type[aa]) magrittr::%>% dplyr::select(-name,-type)
+      tmp0 = dplyr::filter(input_dated_seq, type==dated_file_type[aa])
+      tmp = dplyr::select(tmp0, -name,-type)
       make_dated_seq(input_dated_seq = tmp, dated_seq_file = dated_seq_file[aa])
     }
   } else {

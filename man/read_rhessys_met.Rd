@@ -4,16 +4,14 @@
 \alias{read_rhessys_met}
 \title{Imports RHESSys Climate Data}
 \usage{
-read_rhessys_met(prename)
+read_rhessys_met(prename, dates = FALSE)
 }
 \arguments{
 \item{prename}{String giving the prefix for the climate data to be imported (e.g
 "clim/seqname").}
+
+\item{dates}{TRUE/FALSE to return just the start and end dates, to use with run_rhessys}
 }
 \description{
 This function imports RHESSys climate data into R
-}
-\examples{
-TBD
-
 }
