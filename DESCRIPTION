@@ -19,7 +19,8 @@ Imports:
     purrr,
     lhs,
     readr,
-    tibble
+    tibble,
+    data.table
 RoxygenNote: 6.1.1
 Suggests: testthat,
     knitr,

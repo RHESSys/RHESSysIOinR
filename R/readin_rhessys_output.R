@@ -24,7 +24,8 @@ readin_rhessys_output = function(pre,
                                   read_grow = "dynamic",
                                   stat = FALSE,
                                   stat_time = c("wy", "wyd"),
-                                  stat_space = "b") {
+                                  stat_space = "b",
+                                  patch_family_agg = FALSE) {
 
   # ---------- Arg checking and packages ----------
   require(data.table) # this is important since fread and the data.table [] operations are much faster than base R
@@ -60,7 +61,8 @@ readin_rhessys_output = function(pre,
   exist_data[exist_data] = sapply(all_files[exist_data],function(x) length(readLines(x,n = 4,warn = FALSE))) > 2
   files = all_files[exist_data]
   inputs = all_inputs[exist_data,]
-  short_inputs = sapply(inputs, substring, 1,1)
+  short_inputs = sapply(inputs, substring, 1, 1, simplify = "matrix")
+  if (!is.matrix(short_inputs)) {short_inputs = t(as.matrix(short_inputs))}
   short_inputs[short_inputs[,2] == "s",2] = "c"
 
   # ---------- Build list ----------
@@ -68,7 +70,7 @@ readin_rhessys_output = function(pre,
   list_names = substr(list_names,0,nchar(list_names) - 1) # get rid of underscore at end
   short_names = paste(short_inputs[,2], short_inputs[,3], short_inputs[,1],sep = "")
   out_list = vector("list", length(inputs[,2]))
-  #names(short_names) = list_names
+  names(out_list) = short_names
 
   # ----- Read in data w/ fread -----
   # do in loop since each fread is parallelized, idk if there's a better/faster way to do this
@@ -84,11 +86,12 @@ readin_rhessys_output = function(pre,
   # loop is same speed as lapply in testing, whole thing is still kinda slow tho
   for (i in which(inputs[,3] == "daily")) {
     # if IDate doesn't work use this
-    #out_list[[i]]$date = as.Date(paste(out_list[[i]]$year, out_list[[i]]$month, out_list[[i]]$day, sep = "-"),"%Y-%m-%d")
-    out_list[[i]][, date := as.IDate(paste(year, month, day, sep = "-"),"%Y-%m-%d")]
+    out_list[[i]]$date = as.Date(paste(out_list[[i]]$year, out_list[[i]]$month, out_list[[i]]$day, sep = "-"),"%Y-%m-%d")
+    #out_list[[i]][, date := as.IDate(paste(year, month, day, sep = "-"),"%Y-%m-%d")]
     out_list[[i]]$wy = ifelse(out_list[[i]]$month >= 10, out_list[[i]]$year + 1, out_list[[i]]$year)
     out_list[[i]]$yd = as.integer(format(as.Date(out_list[[i]]$date), format = "%j"))
-    day_ct = out_list[[i]][,max(yd),by = year]
+    #day_ct = out_list[[i]][ , max(yd), by = year]
+    day_ct = aggregate(out_list[[i]]$yd, max, by = list(out_list[[i]]$year))
     no_leap = subset(day_ct, day_ct$V1 == 365)
     out_list[[i]]$wyd = ifelse((out_list[[i]]$year %in% no_leap$year),
                                ifelse(out_list[[i]]$yd >= 274,
@@ -118,6 +121,13 @@ readin_rhessys_output = function(pre,
     cdg = which(inputs[,2] == "stratum" & inputs[,3] == "daily" & inputs[,1] == "grow_")
     out_list[[cdg]][,woodc:=live_stemc + dead_stemc + live_crootc + dead_crootc]
     out_list[[cdg]][,plantc:=woodc + frootc + leafc]
+  }
+
+  # ---------- Patch family aggregation ----------
+  if (patch_family_agg == TRUE) {
+    for (i in which(inputs[,2] == "patch")) {
+
+    }
   }
 
   # ---------- Stats ----------
