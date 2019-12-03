@@ -4,9 +4,16 @@
 \alias{readin_rhessys_output}
 \title{readin_rhessys_output}
 \usage{
-readin_rhessys_output(pre, read_space = "dynamic",
-  read_time = "dynamic", read_grow = "dynamic", stat = FALSE,
-  stat_time = c("wy", "wyd"), stat_space = "b")
+readin_rhessys_output(
+  pre,
+  read_space = "dynamic",
+  read_time = "dynamic",
+  read_grow = "dynamic",
+  stat = FALSE,
+  stat_time = c("wy", "wyd"),
+  stat_space = "b",
+  patch_family_agg = FALSE
+)
 }
 \arguments{
 \item{pre}{file prefix. Does not include spatial or temporal level of aggrigation

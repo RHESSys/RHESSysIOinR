@@ -4,14 +4,14 @@
 \alias{make_clim_base_file}
 \title{Adds a dated sequence to the bottom of a clim base file}
 \usage{
-make_clim_base_file(input_clim_base, clim_base_path, input_dated_seq,
-  clim_dated_ext)
+make_clim_base_file(
+  input_clim_base,
+  clim_base_path,
+  input_dated_seq,
+  clim_dated_ext
+)
 }
 \arguments{
-\item{???}{???}
-
-\item{???}{???}
-
 \item{???}{???}
 }
 \description{

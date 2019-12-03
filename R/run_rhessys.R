@@ -63,8 +63,6 @@ run_rhessys <- function(parameter_method,
   # ---------------------------------------------------------------------
   # Generate RHESSys input files
 
-  input_tec_data = input_tec(input_tec_data) # does nothing if already formatted, will parse character vector into df
-
   generate_input_files(input_rhessys = input_rhessys,
                        input_hdr_list = input_hdr_list,
                        input_clim_base_list = input_clim_base_list,

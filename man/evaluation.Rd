@@ -4,10 +4,15 @@
 \alias{evaluation}
 \title{Code for evaluating model output}
 \usage{
-evaluation(sim_variables, obs_variables, obj_function_selection,
-  input_folder, output_folder, ...,
-  evaluation_type = c("single_objective_function", "composite",
-  "pareto"))
+evaluation(
+  sim_variables,
+  obs_variables,
+  obj_function_selection,
+  input_folder,
+  output_folder,
+  ...,
+  evaluation_type = c("single_objective_function", "composite", "pareto")
+)
 }
 \arguments{
 \item{sim_variables}{????}

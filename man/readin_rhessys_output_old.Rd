@@ -4,8 +4,19 @@
 \alias{readin_rhessys_output_old}
 \title{readin_rhessys_output}
 \usage{
-readin_rhessys_output_old(pre, b = 1, c = 0, z = 0, p = 0, h = 0,
-  g = 0, f = 0, wy = 1, dyn_read = FALSE, clean = TRUE)
+readin_rhessys_output_old(
+  pre,
+  b = 1,
+  c = 0,
+  z = 0,
+  p = 0,
+  h = 0,
+  g = 0,
+  f = 0,
+  wy = 1,
+  dyn_read = FALSE,
+  clean = TRUE
+)
 }
 \arguments{
 \item{pre}{file prefix. Does not include spatial or temporal level of aggrigation

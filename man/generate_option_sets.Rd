@@ -4,9 +4,15 @@
 \alias{generate_option_sets}
 \title{Produces data-frames with differnt combinations of parameters and inputs}
 \usage{
-generate_option_sets(parameter_method, input_hdr_list, input_rhessys,
-  input_preexisting_table, input_def_list, input_standard_par_list,
-  input_dated_seq_list)
+generate_option_sets(
+  parameter_method,
+  input_hdr_list,
+  input_rhessys,
+  input_preexisting_table,
+  input_def_list,
+  input_standard_par_list,
+  input_dated_seq_list
+)
 }
 \value{
 \code{option_sets_def_par} is a dataframe containing changed def file

@@ -4,8 +4,13 @@
 \alias{readin_rhessys_output_cal}
 \title{Extracts output from a multiple RHESSys runs into R}
 \usage{
-readin_rhessys_output_cal(var_names, path, initial_date,
-  parameter_file = NULL, num_canopies = 1)
+readin_rhessys_output_cal(
+  var_names,
+  path,
+  initial_date,
+  parameter_file = NULL,
+  num_canopies = 1
+)
 }
 \arguments{
 \item{var_names}{Vector of the variables names that are to be imported into R}

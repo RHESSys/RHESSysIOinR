@@ -4,30 +4,37 @@
 \alias{tec_repeat}
 \title{tec_repeat}
 \usage{
-tec_repeat(start, end, repeat_interval, world, mult = NULL,
-  thin_type = NULL, random = NULL, write = FALSE)
+tec_repeat(
+  start,
+  end,
+  interval = NULL,
+  unit,
+  event_name,
+  world = NULL,
+  redefine = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{start}{Vector containing start date. Format is "c(year,month,day,hour)".}
 
 \item{end}{Vector containing end date. Format is "c(year,month,day,hour)".}
 
-\item{repeat_interval}{Interval in years to repeat chosen tec event.}
+\item{interval}{Interval to repeat chosen tec event. If left NULL will be executed 1 time.}
 
-\item{world}{Worldfile.}
+\item{unit}{Unit of time for the repeat interval}
 
-\item{mult}{Multiplier to use for thinning.}
+\item{event_name}{The name/type of tec event to repeat.}
 
-\item{thin_type}{Type of thinning event.}
+\item{world}{Worldfile basename to modify and repeat}
 
-\item{random}{Set as "single" to use a single random date for all events, "all" to randomize all dates.}
+\item{redefine}{Redefine file to copy and rename. If NULL no files copied.}
 
-\item{write}{TRUE/FALSE write deta doc of output to file}
-
-\item{tec_type}{Type of tec event to scheduled.}
+\item{overwrite}{Should existing files be overwritten}
 }
 \description{
-Repeats tec events at chosen intervals. Template should use -1111 for replacement value, and use worldfile name followed by "template"
+Repeats tec events at chosen intervals. Outputs a dataframe of the events for use in the tec input for RHESSysIOinR,
+optionally will copy an input redefine file with generated filenames.
 }
 \author{
 Will Burke

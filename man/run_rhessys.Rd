@@ -4,11 +4,20 @@
 \alias{run_rhessys}
 \title{Run multiple RHESSys model simulations}
 \usage{
-run_rhessys(parameter_method, output_method, input_rhessys, input_hdr_list,
-  input_preexisting_table = NULL, input_def_list,
-  input_standard_par_list, input_clim_base_list,
-  input_dated_seq_list = NULL, input_tec_data, output_variables = NULL,
-  output_initiation = 1)
+run_rhessys(
+  parameter_method,
+  output_method,
+  input_rhessys,
+  input_hdr_list,
+  input_preexisting_table = NULL,
+  input_def_list,
+  input_standard_par_list,
+  input_clim_base_list,
+  input_dated_seq_list = NULL,
+  input_tec_data,
+  output_variables = NULL,
+  output_initiation = 1
+)
 }
 \description{
 \code{run_rhessys} permits the calibration and simulation of the rhessys
