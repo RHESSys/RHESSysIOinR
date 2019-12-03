@@ -4,9 +4,18 @@
 \alias{rhessys_command}
 \title{Executes single RHESSys run on command line}
 \usage{
-rhessys_command(rhessys_version, world_file, world_hdr_file, tec_file,
-  flow_file, start_date, end_date, output_file, input_parameters,
-  command_options)
+rhessys_command(
+  rhessys_version,
+  world_file,
+  world_hdr_file,
+  tec_file,
+  flow_file,
+  start_date,
+  end_date,
+  output_file,
+  input_parameters,
+  command_options
+)
 }
 \arguments{
 \item{rhessys_version}{path and file of compiled version of RHESSys.}

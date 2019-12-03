@@ -2,30 +2,41 @@
 % Please edit documentation in R/readin_rhessys_output.R
 \name{readin_rhessys_output}
 \alias{readin_rhessys_output}
-\title{Pulls output from a single RHESSys run into R}
+\title{readin_rhessys_output}
 \usage{
-readin_rhessys_output(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0,
-  f = 0, wy = 1)
+readin_rhessys_output(
+  pre,
+  read_space = "dynamic",
+  read_time = "dynamic",
+  read_grow = "dynamic",
+  stat = FALSE,
+  stat_time = c("wy", "wyd"),
+  stat_space = "b",
+  patch_family_agg = FALSE
+)
 }
 \arguments{
-\item{pre}{file}
+\item{pre}{file prefix. Does not include spatial or temporal level of aggrigation
+ie. "my_watershed" NOT "my_watershed_basin" or "my_watershed_basin.daily"}
 
-\item{b}{basin}
+\item{read_space}{Spatial levels of all_files to be read. Default is "dynamic" which will get all all_files
+that were output (with more than 1 line) with the matching prefix. Can also input a character
+vector with any combination of "b", "h", "z", "p", "c", "f". Even if all_files are specified,
+they will be checked if they have data, and only read if they do.}
 
-\item{c}{canopy}
+\item{read_time}{Timesteps of all_files to be read. Default is "dynamic". Can specify any combination of
+"h", "d", "m", "y", for hourly, daily, monthly, and yearly respectively}
 
-\item{z}{basin}
+\item{read_grow}{Should grow files be read? Default is dynamic. Can also specify TRUE or FALSE}
 
-\item{p}{canopy}
+\item{stat}{Stat to be computed. Only tested with "mean".}
 
-\item{h}{basin}
+\item{stat_time}{Not used yet - only produces "wy", "wyd" for now.}
 
-\item{g}{canopy}
-
-\item{f}{fire}
-
-\item{wy}{wateryear}
+\item{stat_space}{Not used yet. All stats aggregate to basin level. In the future will have options here
+to retain finer spatial resolutions.}
 }
 \description{
-It does fanciness...
+Pulls output from a single RHESSys run into R, optionally calculates statistics. This should
+be much faster than readin_rhessys_output since it uses data.table file read and aggregation methods
 }

@@ -1,185 +1,166 @@
-#' Pulls output from a single RHESSys run into R
+#' readin_rhessys_output
 #'
-#' It does fanciness...
-#'
-#' @param pre file
-#' @param b basin
-#' @param c canopy
-#' @param z basin
-#' @param p canopy
-#' @param h basin
-#' @param g canopy
-#' @param f fire
-#' @param wy wateryear
-#'
+#' Pulls output from a single RHESSys run into R, optionally calculates statistics. This should
+#' be much faster than readin_rhessys_output since it uses data.table file read and aggregation methods
+#' @param pre file prefix. Does not include spatial or temporal level of aggrigation
+#' ie. "my_watershed" NOT "my_watershed_basin" or "my_watershed_basin.daily"
+#' @param read_space Spatial levels of all_files to be read. Default is "dynamic" which will get all all_files
+#' that were output (with more than 1 line) with the matching prefix. Can also input a character
+#' vector with any combination of "b", "h", "z", "p", "c", "f". Even if all_files are specified,
+#' they will be checked if they have data, and only read if they do.
+#' @param read_time Timesteps of all_files to be read. Default is "dynamic". Can specify any combination of
+#' "h", "d", "m", "y", for hourly, daily, monthly, and yearly respectively
+#' @param read_grow Should grow files be read? Default is dynamic. Can also specify TRUE or FALSE
+#' @param stat Stat to be computed. Only tested with "mean".
+#' @param stat_time Not used yet - only produces "wy", "wyd" for now.
+#' @param stat_space Not used yet. All stats aggregate to basin level. In the future will have options here
+#' to retain finer spatial resolutions.
 #'
 #' @export
-readin_rhessys_output = function(pre, b = 1, c = 0, z = 0, p = 0, h = 0, g = 0, f = 0, wy = 1)
-{
-  bd = NULL
-  bdg = NULL
-  cd = NULL
-  cdg = NULL
-  zd = NULL
-  zdg = NULL
-  pd = NULL
-  pdg = NULL
-  fd = NULL
-  bd.wy = NULL
-  bdg.wy = NULL
-  cd.wy = NULL
-  cdg.wy = NULL
-  zd.wy = NULL
-  zdg.wy = NULL
-  pd.wy = NULL
-  pdg.wy = NULL
-  fd.wy = NULL
-  bd.wyd = NULL
-  bdg.wyd = NULL
-  cd.wyd = NULL
-  cdg.wyd = NULL
-  zd.wyd = NULL
-  zdg.wyd = NULL
-  pd.wyd = NULL
-  pdg.wyd = NULL
-  fd.wyd = NULL
-  hd = NULL
-  hdg = NULL
-  hd.wy = NULL
-  hdg.wy = NULL
-  hdg.wyd = NULL
-  hd.wyd = NULL
-  if (b == 1) {
-    nme = sprintf("%s_basin.daily", pre)
-    bd = read.table(nme, header = T)
-    bd$et = bd$trans + bd$evap
-    bd$unfilled_cap = bd$sat_def - bd$unsat_stor - bd$rz_storage
-    bd = mkdate(bd)
-    if (wy == 1) {
-      bd.wy = aggregate(bd, by = list(bd$wy), mean)
-      bd.wyd = aggregate(bd, by = list(bd$wyd), mean)
-      tmp = aggregate(bd$snowpack, by = list(bd$wy), max)
-      bd.wy$pkswe = tmp$x
-    }
-    if (g == 1) {
-      nme = sprintf("%s_grow_basin.daily", pre)
-      bdg = read.table(nme, header = T)
-      bdg = mkdate(bdg)
-      porosity = bd$sat_def/bd$sat_def_z
-      if (nrow(bd)==nrow(bdg)){
-        bd$veg_awc = ifelse((bdg$root_depth < bd$sat_def_z),
-                            porosity * (bd$sat_def_z - bdg$root_depth) +
-                              bd$rz_storage, bd$rz_storage)
-      } else {
-        print("bd and bdg have a mismatch number of rows. veg_awc not computed.")
-      }
-      if (wy == 1) {
-        bdg.wy = aggregate(bdg, by = list(bdg$wy), mean)
-        bdg.wyd = aggregate(bdg, by = list(bdg$wyd),
-                            mean)
-      }
+
+readin_rhessys_output = function(pre,
+                                  read_space = "dynamic",
+                                  read_time = "dynamic",
+                                  read_grow = "dynamic",
+                                  stat = FALSE,
+                                  stat_time = c("wy", "wyd"),
+                                  stat_space = "b",
+                                  patch_family_agg = FALSE) {
+
+  # ---------- Arg checking and packages ----------
+  require(data.table) # this is important since fread and the data.table [] operations are much faster than base R
+  # this shouldn't be in a require() but is for now so the [] based functions work
+
+  # ---------- Parse read_X args ----------
+  # set some vars to parse time/space input args
+  space = c("basin","hillslope","zone","patch","stratum","fire")
+  space_in = c("b", "h", "z", "p", "c","f")
+  time = c("hourly", "daily", "monthly", "yearly")
+  time_in = c("h", "d", "m", "y")
+  grow = c("grow_", "")
+
+  if (read_space != "dynamic") {
+    space = space[space_in %in% read_space]
+  }
+  if (read_time != "dynamic") {
+    time = time[time_in %in% read_time]
+  }
+  if (is.logical(read_grow)) {
+    if (!read_grow) {
+      grow = c("")
+
     }
   }
-  if (z == 1) {
-    nme = sprintf("%s_zone.daily", pre)
-    zd = read.table(nme, header = T)
-    zd = mkdate(zd)
-    if (wy == 1) {
-      zd.wy = aggregate(zd, by = list(zd$wy), mean)
-      zd.wyd = aggregate(zd, by = list(zd$wyd), mean)
-    }
-    if (g == 1) {
-      nme = sprintf("%s_grow_zone.daily", pre)
-      zdg = read.table(nme, header = T)
-      zdg = mkdate(zdg)
-      if (wy == 1) {
-        zdg.wy = aggregate(zdg, by = list(zdg$wy), mean)
-        zdg.wyd = aggregate(zdg, by = list(zdg$wyd),
-                            mean)
-      }
+
+  # all_inputs contains combinations of grow, spatial level, and time step
+  all_inputs = rbind(expand.grid(grow,space[!space == "fire"], time, stringsAsFactors = FALSE),
+                  expand.grid("",space[space == "fire"], time, stringsAsFactors = FALSE))
+  suffixes = sprintf("%s%s.%s",all_inputs[,1], all_inputs[,2], all_inputs[,3])
+  all_files = paste(pre,"_",suffixes,sep="")
+  exist_data = file.exists(all_files) # exist_data is T/F for if file exists and has data in it
+  exist_data[exist_data] = sapply(all_files[exist_data],function(x) length(readLines(x,n = 4,warn = FALSE))) > 2
+  files = all_files[exist_data]
+  inputs = all_inputs[exist_data,]
+  short_inputs = sapply(inputs, substring, 1, 1, simplify = "matrix")
+  if (!is.matrix(short_inputs)) {short_inputs = t(as.matrix(short_inputs))}
+  short_inputs[short_inputs[,2] == "s",2] = "c"
+
+  # ---------- Build list ----------
+  list_names = paste(inputs[,2], inputs[,3], inputs[,1],sep = "_")
+  list_names = substr(list_names,0,nchar(list_names) - 1) # get rid of underscore at end
+  short_names = paste(short_inputs[,2], short_inputs[,3], short_inputs[,1],sep = "")
+  out_list = vector("list", length(inputs[,2]))
+  names(out_list) = short_names
+
+  # ----- Read in data w/ fread -----
+  # do in loop since each fread is parallelized, idk if there's a better/faster way to do this
+  for (i in 1:length(list_names)) {
+    out_list[[i]] = data.table::fread(file = files[i],sep = " ",header = TRUE, stringsAsFactors = FALSE,showProgress = TRUE)
+    setattr(out_list[[i]], "description", list_names[i])
+    setattr(out_list[[i]], "source", files[i])
+  }
+
+  # ---------- Add dates ----------
+  # not using mkdate or cal.wyd since they're slow since they replicate the entire data strucutre passed to them.
+  # date info added to only daily output for now
+  # loop is same speed as lapply in testing, whole thing is still kinda slow tho
+  for (i in which(inputs[,3] == "daily")) {
+    # if IDate doesn't work use this
+    out_list[[i]]$date = as.Date(paste(out_list[[i]]$year, out_list[[i]]$month, out_list[[i]]$day, sep = "-"),"%Y-%m-%d")
+    #out_list[[i]][, date := as.IDate(paste(year, month, day, sep = "-"),"%Y-%m-%d")]
+    out_list[[i]]$wy = ifelse(out_list[[i]]$month >= 10, out_list[[i]]$year + 1, out_list[[i]]$year)
+    out_list[[i]]$yd = as.integer(format(as.Date(out_list[[i]]$date), format = "%j"))
+    #day_ct = out_list[[i]][ , max(yd), by = year]
+    day_ct = aggregate(out_list[[i]]$yd, max, by = list(out_list[[i]]$year))
+    no_leap = subset(day_ct, day_ct$V1 == 365)
+    out_list[[i]]$wyd = ifelse((out_list[[i]]$year %in% no_leap$year),
+                               ifelse(out_list[[i]]$yd >= 274,
+                                      out_list[[i]]$yd - 273, out_list[[i]]$yd + 92),
+                               ifelse(out_list[[i]]$yd >= 275, out_list[[i]]$yd - 274,
+                                      out_list[[i]]$yd + 92)
+    )
+  }
+
+  # ---------- Extra metrics ----------
+  if (any(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "")) {
+    bd = which(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "")
+    out_list[[bd]][,et:=trans + evap]
+    out_list[[bd]][,unfilled_cap:=sat_def - unsat_stor - rz_storage]
+    if (any(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_")) {
+      bdg = which(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_")
+      porosity = out_list[[bd]][,sat_def/sat_def_z]
+      if (nrow(out_list[[bd]]) == nrow(out_list[[bdg]])) {
+        out_list[[bd]]$veg_awc = ifelse((out_list[[bdg]]$root_depth < out_list[[bd]]$sat_def_z),
+                                        porosity * (out_list[[bd]]$sat_def_z - out_list[[bdg]]$root_depth) + out_list[[bd]]$rz_storage,
+                                        out_list[[bd]]$rz_storage)
+      } else {print(paste(,,"and", ,"have a mismatch number of rows. veg_awc not computed."))}
     }
   }
-  if (h == 1) {
-    nme = sprintf("%s_hillslope.daily", pre)
-    hd = read.table(nme, header = T)
-    hd = mkdate(hd)
-    if (wy == 1) {
-      hd.wy = aggregate(hd, by = list(hd$wy), mean)
-      hd.wyd = aggregate(hd, by = list(hd$wyd), mean)
-    }
-    if (g == 1) {
-      nme = sprintf("%s_grow_hillslope.daily", pre)
-      hdg = read.table(nme, header = T)
-      hdg = mkdate(hdg)
-      if (wy == 1) {
-        hdg.wy = aggregate(hdg, by = list(hdg$wy), mean)
-        hdg.wyd = aggregate(hdg, by = list(hdg$wyd),
-                            mean)
-      }
+
+  if (any("stratum" == inputs[,2] & "grow_" == inputs[,1] & inputs[,3] == "daily")) {
+    cdg = which(inputs[,2] == "stratum" & inputs[,3] == "daily" & inputs[,1] == "grow_")
+    out_list[[cdg]][,woodc:=live_stemc + dead_stemc + live_crootc + dead_crootc]
+    out_list[[cdg]][,plantc:=woodc + frootc + leafc]
+  }
+
+  # ---------- Patch family aggregation ----------
+  if (patch_family_agg == TRUE) {
+    for (i in which(inputs[,2] == "patch")) {
+
     }
   }
-  if (c == 1) {
-    nme = sprintf("%s_stratum.daily", pre)
-    cd = read.table(nme, header = T)
-    nme = sprintf("%s_stratum.daily", pre)
-    cd = mkdate(cd)
-    if (wy == 1) {
-      cd.wy = aggregate(cd, by = list(cd$wy), mean)
-      cd.wyd = aggregate(cd, by = list(cd$wyd), mean)
+
+  # ---------- Stats ----------
+  if (stat != FALSE & stat != "mean") {warning("this might not work")}
+
+  if (stat != FALSE) {
+    # make option table for stats - input table, time step to aggregate to, aggregation method
+    stat_opts = expand.grid(short_names, stat_time, stat,stringsAsFactors = FALSE)
+    stat_list = vector("list",length = length(stat_opts[,3]))
+    names(stat_list) = paste(stat_opts[,1], stat_opts[,2], stat_opts[,3],sep = "_")
+
+    # run stats based on option table
+    for (i in 1:length(stat_list)) {
+      stat_list[[i]] = out_list[[stat_opts[i,1]]][, lapply(.SD, match.fun(stat_opts[i,3])), by = c(stat_opts[i,2])]
     }
-    if (g == 1) {
-      nme = sprintf("%s_grow_stratum.daily", pre)
-      cdg = read.table(nme, header = T)
-      cdg = mkdate(cdg)
-      cdg$woodc = cdg$live_stemc + cdg$dead_stemc + cdg$live_crootc +
-        cdg$dead_crootc
-      cdg$plantc = cdg$woodc + cdg$frootc + cdg$leafc
-      if (wy == 1) {
-        cdg.wy = aggregate(cdg, by = list(cdg$wy), mean)
-        cdg.wyd = aggregate(cdg, by = list(cdg$wyd),
-                            mean)
-        tmp = aggregate(cdg$cpool, by = list(cdg$wy),
-                        min)
-        cdg.wy$mincpool = tmp$x
-        cdg.wy$mincpoolp = tmp$x/cdg.wy$plantc * 100
-      }
+
+    # extra level-specific stats
+    bdwy = stat_opts[,1] == "basin_daily" & stat_opts[,2] == "wy"
+    if (any(bdwy)) {
+      bd = inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == ""
+      stat_list[[which(bdwy)]]$pkswe = out_list[[which(bd)]][, max(snowpack), by = c("wy") ][,2]
     }
+    cdgwy = stat_opts[,1] == "stratum_daily_grow" & stat_opts[,2] == "wy"
+    if (any(cdgwy)) {
+      cdg = "stratum" == inputs[,2] & "grow_" == inputs[,1] & inputs[,3] == "daily"
+      stat_list[[which(cdgwy)]]$mincpool = out_list[[which(cdg)]][, min(cpool), by = c("wy") ][,2]
+      stat_list[[which(cdgwy)]][,mincpoolp:= plantc * 100]
+    }
+
+    out_list = c(out_list, stat_list)
   }
-  if (p == 1) {
-    nme = sprintf("%s_patch.daily", pre)
-    pd = read.table(nme, header = T)
-    pd = mkdate(pd)
-    if (wy == 1) {
-      pd.wy = aggregate(pd, by = list(pd$wy), mean)
-      pd.wyd = aggregate(pd, by = list(pd$wyd), mean)
-    }
-    if (g == 1) {
-      nme = sprintf("%s_grow_patch.daily", pre)
-      pdg = read.table(nme, header = T)
-      pdg = mkdate(pdg)
-      if (wy == 1) {
-        pdg.wy = aggregate(pdg, by = list(pdg$wy), mean)
-        pdg.wyd = aggregate(pdg, by = list(pdg$wyd),
-                            mean)
-      }
-    }
-  }
-  if (f == 1) {
-    nme = sprintf("%s_fire.daily", pre)
-    fd = read.table(nme, header = T)
-    fd = mkdate(fd)
-    if (wy == 1) {
-      fd.wy = aggregate(fd, by = list(fd$wy), mean)
-      fd.wyd = aggregate(fd, by = list(fd$wyd), mean)
-    }
-  }
-  a = list(bd = bd, bdg = bdg, bd.wy = bd.wy, bdg.wy = bdg.wy, bd.wyd = bd.wyd,
-           bdg.wyd = bdg.wyd, fd = fd, fd.wy = fd.wy, fd.wyd = fd.wyd,
-           hd = hd, hdg = hdg, hd.wy = hd.wy, hdg.wy = hdg.wy, hd.wyd = hd.wyd,
-           hdg.wyd = hdg.wyd, zd = zd, zdg = zdg, zd.wy = zd.wy, zdg.wy = zdg.wy,
-           zd.wyd = zd.wyd, zdg.wyd = zdg.wyd, pd = pd, pdg = pdg, pd.wy = pd.wy,
-           pdg.wy = pdg.wy, pd.wyd = pd.wyd, pdg.wyd = pdg.wyd, cd = cd,
-           cdg = cdg, cd.wy = cd.wy, cdg.wy = cdg.wy, cd.wyd = cd.wyd,
-           cdg.wyd = cdg.wyd)
-  return(a)
+
+
+  return(out_list)
 }
+

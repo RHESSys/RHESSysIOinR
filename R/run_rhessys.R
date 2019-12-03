@@ -7,23 +7,46 @@
 #'
 #'
 #' @export
-run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_carlo", "exact_values"),
+run_rhessys <- function(parameter_method,
+                        output_method,
                         input_rhessys,
                         input_hdr_list,
-                        input_preexisting_table,
+                        input_preexisting_table = NULL,
                         input_def_list,
                         input_standard_par_list,
                         input_clim_base_list,
-                        input_dated_seq_list,
+                        input_dated_seq_list = NULL,
                         input_tec_data,
-                        output_variables,
+                        output_variables = NULL,
                         output_initiation = 1){
 
   # ---------------------------------------------------------------------
   # Input checks
   # ***Check that there are either parameters to be computed or a data frame, but not both***
 
-  parameter_method <- match.arg(parameter_method)
+  if(!parameter_method %in% c("all_combinations","lhc","monte_carlo","exact_values")){stop("Invalid parameter_method.")}
+
+  # Check input_rhessys inputs - mostly check if they exist
+  if(!file.exists(input_rhessys$rhessys_version)){stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
+  #if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
+  #if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){
+  #  print(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."),quote = FALSE)}
+  if(!file.exists(input_rhessys$flow_file)){stop(paste("Flow table",input_rhessys$flow_file,"does not exist."))}
+  if(length(list.files(path = input_rhessys$output_folder,pattern = paste(input_rhessys$output_filename,"*",sep="")))>0){
+    print(paste("Output files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder,"and will be overwritten."),quote = FALSE)}
+
+  # auto generate folder maybe
+  if(!dir.exists(input_rhessys$output_folder)){stop(paste("Output folder",input_rhessys$output_folder,"does not exist."))}
+
+  # check start end date using clim input -- AFTER checking input_hdr_
+  # check command line args against list of them?
+
+  # Check input_hdr_list
+  if(!is.list(input_hdr_list)){stop("input_hdr_list argument is not a list")}
+
+  # check def files exist where they're supposed to:
+  # if(any(!unlist(lapply(input_hdr_list,file.exists)))){
+  #   stop(paste("Missing def file. File(s):",unlist(input_hdr_list)[!unlist(lapply(input_hdr_list,file.exists))]))}
 
   # ---------------------------------------------------------------------
   # Generate option sets
@@ -74,14 +97,19 @@ run_rhessys <- function(parameter_method = c("all_combinations", "lhc", "monte_c
 
 
     # Process RHESSys output
-    if (is.null(output_variables[1]) == F){
-      select_output_variables_w_awk(output_variables = output_variables,
+    if (!is.null(output_variables[1])) {
+      if (output_method=="awk") {
+        select_output_variables_w_awk(output_variables = output_variables,
+                                      output_folder = input_rhessys$output_folder,
+                                      run = aa,
+                                      output_initiation = output_initiation)
+      } else {select_output_variables(output_variables = output_variables,
                                     output_folder = input_rhessys$output_folder,
-                                    run = aa,
+                                    run=aa,
                                     output_initiation = output_initiation)
+      }
     }
   }
   return()
 }
-
 

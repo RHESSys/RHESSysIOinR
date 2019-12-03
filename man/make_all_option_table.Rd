@@ -4,8 +4,14 @@
 \alias{make_all_option_table}
 \title{Create all-options table}
 \usage{
-make_all_option_table(parameter_method, input_rhessys, input_hdr_list,
-  option_sets_def_par, option_sets_standard_par, option_sets_dated_seq)
+make_all_option_table(
+  parameter_method,
+  input_rhessys,
+  input_hdr_list,
+  option_sets_def_par,
+  option_sets_standard_par,
+  option_sets_dated_seq
+)
 }
 \description{
 Combines vectors of parameter inputs into data frame of parameter sets that

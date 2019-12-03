@@ -42,6 +42,7 @@ make_option_set_combinations <- function(input_list,
 
     # Create parameter data frame
     out <- mapply(function(x, y, z) runif(min=x, max=y, n=z), x=min_par, y=max_par, MoreArgs = list(z=n))
+    out <- matrix(out,nrow=n)
     out <- as.data.frame(out)
     colnames(out) <- names(input_list)
   }
@@ -62,6 +63,7 @@ make_option_set_combinations <- function(input_list,
     # Transform a Latin hypercube
     grid <- lhs::randomLHS(n, k) # Generate generic hypercube
     out <- mapply(function(w, x, y, z) qunif(w[,x], min=y, max=z), x=seq_len(k), y=min_par, z=max_par, MoreArgs = list(w=grid))
+    out <- matrix(out,nrow=n)
     out <- as.data.frame(out)
     colnames(out) <- names(input_list)
 

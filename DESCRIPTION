@@ -19,9 +19,11 @@ Imports:
     purrr,
     lhs,
     readr,
-    tibble
-RoxygenNote: 6.0.1
+    tibble,
+    data.table
+RoxygenNote: 7.0.0
 Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Encoding: UTF-8

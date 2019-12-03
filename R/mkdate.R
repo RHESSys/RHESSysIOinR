@@ -2,7 +2,7 @@
 #'
 #' Description...
 #'
-#' @param x ???
+#' @param x RHESSys output in data.frame/data.table form
 #'
 #' @export
 mkdate = function (x)

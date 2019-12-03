@@ -4,8 +4,13 @@
 \alias{select_parameter_sets}
 \title{Select approach to evaluate objective function output}
 \usage{
-select_parameter_sets(obj_function_all, obj_function_selection, method,
-  num_ps = 1, ...)
+select_parameter_sets(
+  obj_function_all,
+  obj_function_selection,
+  method,
+  num_ps = 1,
+  ...
+)
 }
 \description{
 Description...

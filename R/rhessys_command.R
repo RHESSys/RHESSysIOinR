@@ -42,6 +42,16 @@ rhessys_command <- function(rhessys_version,
                  input_parameters,
                  command_options)
 
+
+  # check OS and run via system correctly - windows requires the linux subsystem i think
+
+  if(.Platform$OS.type=="windows"){
+    tmp = noquote(paste("bash -c \"",tmp,"\"",sep=""))
+  }
+
+  print(paste("Command line echo:",tmp),quote = FALSE)
+
   system(tmp)
+
 }
 
