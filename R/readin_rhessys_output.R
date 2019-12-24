@@ -15,29 +15,29 @@
 #' @param stat_time Not used yet - only produces "wy", "wyd" for now.
 #' @param stat_space Not used yet. All stats aggregate to basin level. In the future will have options here
 #' to retain finer spatial resolutions.
+#' @param patch_family_agg Should additional dataframes of aggregated patch families be created?
+# @param patch_areas If aggregating patches to patch family for the stratum output only, a data frame of
+# patch IDs and their respective areas needs to be provided for the weighted average to be computed correctly
 #'
 #' @export
 
 readin_rhessys_output = function(pre,
-                                  read_space = "dynamic",
-                                  read_time = "dynamic",
-                                  read_grow = "dynamic",
-                                  stat = FALSE,
-                                  stat_time = c("wy", "wyd"),
-                                  stat_space = "b",
-                                  patch_family_agg = FALSE) {
+                                 read_space = "dynamic",
+                                 read_time = "dynamic",
+                                 read_grow = "dynamic",
+                                 stat = FALSE,
+                                 stat_time = c("wy", "wyd"),
+                                 stat_space = "b",
+                                 patch_family_agg = FALSE) {
 
   # ---------- Arg checking and packages ----------
-  require(data.table) # this is important since fread and the data.table [] operations are much faster than base R
-  # this shouldn't be in a require() but is for now so the [] based functions work
+  # lol maybe add or not idk
 
   # ---------- Parse read_X args ----------
-  # set some vars to parse time/space input args
   space = c("basin","hillslope","zone","patch","stratum","fire")
   space_in = c("b", "h", "z", "p", "c","f")
   time = c("hourly", "daily", "monthly", "yearly")
   time_in = c("h", "d", "m", "y")
-  grow = c("grow_", "")
 
   if (read_space != "dynamic") {
     space = space[space_in %in% read_space]
@@ -45,87 +45,96 @@ readin_rhessys_output = function(pre,
   if (read_time != "dynamic") {
     time = time[time_in %in% read_time]
   }
-  if (is.logical(read_grow)) {
-    if (!read_grow) {
-      grow = c("")
 
-    }
+  grow = c("grow_", "")
+  if (is.logical(read_grow) && !read_grow) {
+    grow = c("")
   }
 
   # all_inputs contains combinations of grow, spatial level, and time step
   all_inputs = rbind(expand.grid(grow,space[!space == "fire"], time, stringsAsFactors = FALSE),
                   expand.grid("",space[space == "fire"], time, stringsAsFactors = FALSE))
-  suffixes = sprintf("%s%s.%s",all_inputs[,1], all_inputs[,2], all_inputs[,3])
+  suffixes = paste0(all_inputs[,1], all_inputs[,2], ".", all_inputs[,3])
   all_files = paste(pre,"_",suffixes,sep="")
   exist_data = file.exists(all_files) # exist_data is T/F for if file exists and has data in it
   exist_data[exist_data] = sapply(all_files[exist_data],function(x) length(readLines(x,n = 4,warn = FALSE))) > 2
   files = all_files[exist_data]
   inputs = all_inputs[exist_data,]
-  short_inputs = sapply(inputs, substring, 1, 1, simplify = "matrix")
-  if (!is.matrix(short_inputs)) {short_inputs = t(as.matrix(short_inputs))}
-  short_inputs[short_inputs[,2] == "s",2] = "c"
+
+  # get short inputs
+  abrev_inputs = sapply(inputs, substring, 1, 1, simplify = "matrix")
+  if (!is.matrix(abrev_inputs)) {abrev_inputs = t(as.matrix(abrev_inputs))}
+  abrev_inputs[abrev_inputs[,2] == "s",2] = "c"
 
   # ---------- Build list ----------
   list_names = paste(inputs[,2], inputs[,3], inputs[,1],sep = "_")
   list_names = substr(list_names,0,nchar(list_names) - 1) # get rid of underscore at end
-  short_names = paste(short_inputs[,2], short_inputs[,3], short_inputs[,1],sep = "")
+  # actually use short names for lists to make it consistent w old version
+  short_names = paste(abrev_inputs[,2], abrev_inputs[,3], abrev_inputs[,1],sep = "")
   out_list = vector("list", length(inputs[,2]))
   names(out_list) = short_names
 
   # ----- Read in data w/ fread -----
-  # do in loop since each fread is parallelized, idk if there's a better/faster way to do this
+  # in loop for now, can use lapply version below if its faster
   for (i in 1:length(list_names)) {
-    out_list[[i]] = data.table::fread(file = files[i],sep = " ",header = TRUE, stringsAsFactors = FALSE,showProgress = TRUE)
-    setattr(out_list[[i]], "description", list_names[i])
-    setattr(out_list[[i]], "source", files[i])
+    out_list[[i]] = data.table::fread(file = files[i], stringsAsFactors = FALSE,showProgress = TRUE)
+    #attr(out_list[[i]], "description") = list_names[i]
+    data.table::setattr(out_list[[i]], "description", list_names[i])
+    #attr(out_list[[i]], "source") = files[i]
+    data.table::setattr(out_list[[i]], "source", files[i])
   }
+  # out_list2 = lapply(files, data.table::fread, stringsAsFactors = FALSE,showProgress = TRUE)
 
   # ---------- Add dates ----------
   # not using mkdate or cal.wyd since they're slow since they replicate the entire data strucutre passed to them.
   # date info added to only daily output for now
-  # loop is same speed as lapply in testing, whole thing is still kinda slow tho
-  for (i in which(inputs[,3] == "daily")) {
-    # if IDate doesn't work use this
-    out_list[[i]]$date = as.Date(paste(out_list[[i]]$year, out_list[[i]]$month, out_list[[i]]$day, sep = "-"),"%Y-%m-%d")
-    #out_list[[i]][, date := as.IDate(paste(year, month, day, sep = "-"),"%Y-%m-%d")]
-    out_list[[i]]$wy = ifelse(out_list[[i]]$month >= 10, out_list[[i]]$year + 1, out_list[[i]]$year)
-    out_list[[i]]$yd = as.integer(format(as.Date(out_list[[i]]$date), format = "%j"))
-    #day_ct = out_list[[i]][ , max(yd), by = year]
-    day_ct = aggregate(out_list[[i]]$yd, max, by = list(out_list[[i]]$year))
-    no_leap = subset(day_ct, day_ct$V1 == 365)
-    out_list[[i]]$wyd = ifelse((out_list[[i]]$year %in% no_leap$year),
-                               ifelse(out_list[[i]]$yd >= 274,
-                                      out_list[[i]]$yd - 273, out_list[[i]]$yd + 92),
-                               ifelse(out_list[[i]]$yd >= 275, out_list[[i]]$yd - 274,
-                                      out_list[[i]]$yd + 92)
-    )
-  }
+
+  out_list = lapply(out_list, add_dates)
 
   # ---------- Extra metrics ----------
   if (any(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "")) {
     bd = which(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "")
-    out_list[[bd]][,et:=trans + evap]
-    out_list[[bd]][,unfilled_cap:=sat_def - unsat_stor - rz_storage]
-    if (any(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_")) {
-      bdg = which(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_")
-      porosity = out_list[[bd]][,sat_def/sat_def_z]
-      if (nrow(out_list[[bd]]) == nrow(out_list[[bdg]])) {
-        out_list[[bd]]$veg_awc = ifelse((out_list[[bdg]]$root_depth < out_list[[bd]]$sat_def_z),
-                                        porosity * (out_list[[bd]]$sat_def_z - out_list[[bdg]]$root_depth) + out_list[[bd]]$rz_storage,
-                                        out_list[[bd]]$rz_storage)
-      } else {print(paste(,,"and", ,"have a mismatch number of rows. veg_awc not computed."))}
-    }
+    bdg = which(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_")
+    out_list[[bd]]$et = out_list[[bd]]$trans + out_list[[bd]]$evap
+    out_list[[bd]]$unfilled_cap = out_list[[bd]]$unsat_stor + out_list[[bd]]$rz_storage
+
+    if (any(inputs[,2] == "basin" & inputs[,3] == "daily" & inputs[,1] == "grow_") &&
+        nrow(out_list[[bd]]) == nrow(out_list[[bdg]])) {
+
+      # they might be from different runs
+      out_list[[bd]]$veg_awc = ifelse((out_list[[bd]]$rootdepth < out_list[[bd]]$sat_def_z),
+                                      out_list[[bd]]$sat_def / out_list[[bd]]$sat_def_z *
+                                        (out_list[[bd]]$sat_def_z - out_list[[bd]]$rootdepth) + out_list[[bd]]$rz_storage,
+                                      out_list[[bd]]$rz_storage)
+    } else {print("basin daily and basin daily grow have different number rows")}
   }
 
   if (any("stratum" == inputs[,2] & "grow_" == inputs[,1] & inputs[,3] == "daily")) {
     cdg = which(inputs[,2] == "stratum" & inputs[,3] == "daily" & inputs[,1] == "grow_")
-    out_list[[cdg]][,woodc:=live_stemc + dead_stemc + live_crootc + dead_crootc]
-    out_list[[cdg]][,plantc:=woodc + frootc + leafc]
+    out_list[[cdg]]$woodc = out_list[[cdg]]$live_stemc + out_list[[cdg]]$dead_stemc +
+      out_list[[cdg]]$live_crootc + out_list[[cdg]]$dead_crootc
+    out_list[[cdg]]$plantc = out_list[[cdg]]$woodc + out_list[[cdg]]$frootc + out_list[[cdg]]$leafc
   }
 
   # ---------- Patch family aggregation ----------
   if (patch_family_agg == TRUE) {
-    for (i in which(inputs[,2] == "patch")) {
+    # patch + stratum aggregation
+    if (any("patch" == inputs[,2])) {
+      fam_agg_ind = which("patch" == inputs[,2])
+      pfam_list_p = lapply(out_list[fam_agg_ind], patch_fam_agg)
+      names(pfam_list_p) = paste0(names(out_list)[fam_agg_ind],"_fam_agg")
+      out_list = c(out_list, pfam_list_p)
+
+    }
+    if (any("stratum" == inputs[,2])) {
+      fam_agg_ind = which("stratum" == inputs[,2])
+      if (!"patch" %in% inputs[,2]) {
+        stop("Need patches to get area - or add a code fix line 183")
+      }
+      areas = out_list$pd[,c("patchID", "area")]
+      pfam_list_s = lapply(out_list[fam_agg_ind], patch_fam_agg, areas = unique(areas))
+      names(pfam_list_s) = paste0(names(out_list)[fam_agg_ind],"_fam_agg")
+      out_list = c(out_list, pfam_list_s)
 
     }
   }

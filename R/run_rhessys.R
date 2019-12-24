@@ -1,12 +1,27 @@
-#' Run multiple RHESSys model simulations
+#' Run RHESSys model simulations
 #'
-#' \code{run_rhessys} permits the calibration and simulation of the rhessys
+#' Permits the calibration and simulation of the rhessys
 #' model. Multiple model runs can be run, either in series or in parallel (such
 #' as with cluster computing).
-#'
-#'
-#'
+#' @param parameter_method One of the following methods: "all_combinations","lhc","monte_carlo","exact_values"
+#' @param input_rhessys List containing the following named elements: "rhessys_version" (path to rhessys binary),
+#' "tec_file"(name for tec file to be built), "world_file"(path to existing worldfile), "world_hdr_prefix"(prefix for headers to create),
+#' "flow_file"(path to existing flowtable), "start_date"(format c('yyyy mm dd hr')), "end_date"(format c('yyyy mm dd hr')),
+#' "output_folder"(path to output folder), "output_filename"(prefix for output files to create), "command_options"(additional commandline options)
+#' @param input_hdr_list List of named elements, named for each def file type (basin_def, hillslope_def, zone_def, soil_def, landuse_def, patch_def,
+#' stratum_def) as well as an element named "base_stations". Each element should contain the path to the corresponding def file.
+#' @param input_preexisting_table Optional means of inputing parameters based on a prexisting setup. Defaults to NULL
+#' @param input_def_list To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
+#' list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>)
+#' @param input_standard_par_list List of standard (command line) parameters
+#' @param input_clim_base_list List of the climate base station components - also see clim_auto
+#' @param input_dated_seq_list List of dated sequences, defaults to NULL
+#' @param input_tec_data Input tec events, see input_tec function
+#' @param output_variables List of output variables to subset via the indicated method, Defaults to NULL
+#' @param output_method "awk" will use awk, any other non NULL input will use R based output selection
+#' @param return_data TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run
 #' @export
+
 run_rhessys <- function(parameter_method,
                         output_method,
                         input_rhessys,
@@ -18,16 +33,25 @@ run_rhessys <- function(parameter_method,
                         input_dated_seq_list = NULL,
                         input_tec_data,
                         output_variables = NULL,
-                        output_initiation = 1){
+                        output_initiation = 1,
+                        return_data = FALSE){
 
   # ---------------------------------------------------------------------
   # Input checks
   # ***Check that there are either parameters to be computed or a data frame, but not both***
 
-  if(!parameter_method %in% c("all_combinations","lhc","monte_carlo","exact_values")){stop("Invalid parameter_method.")}
+  if (!parameter_method %in% c("all_combinations","lhc","monte_carlo","exact_values")) {stop("Invalid parameter_method.")}
 
   # Check input_rhessys inputs - mostly check if they exist
-  if(!file.exists(input_rhessys$rhessys_version)){stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
+  reqs_rhessys_input = c("rhessys_version", "tec_file", "world_file", "world_hdr_prefix",
+                         "flow_file", "start_date", "end_date", "output_folder",
+                         "output_filename", "command_options")
+  if (any(!reqs_rhessys_input %in% names(input_rhessys))) {
+    stop(paste0("Missing rhessys_input (s):", names(input_rhessys)[!reqs_rhessys_input %in% names(input_rhessys)]))
+  }
+
+  if (!file.exists(input_rhessys$rhessys_version)) {stop(paste("RHESSys Version",input_rhessys$rhessys_version,"does not exist."))}
+
   #if(!file.exists(input_rhessys$world_file)){stop(paste("World file",input_rhessys$world_file,"does not exist."))}
   #if(file.exists(file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix))){
   #  print(paste("Header folder",input_rhessys$world_hdr_prefix,"already exists, contents will be overwritten."),quote = FALSE)}
@@ -47,6 +71,8 @@ run_rhessys <- function(parameter_method,
   # check def files exist where they're supposed to:
   # if(any(!unlist(lapply(input_hdr_list,file.exists)))){
   #   stop(paste("Missing def file. File(s):",unlist(input_hdr_list)[!unlist(lapply(input_hdr_list,file.exists))]))}
+
+  # check output variables is correct format
 
   # ---------------------------------------------------------------------
   # Generate option sets
@@ -98,18 +124,39 @@ run_rhessys <- function(parameter_method,
 
     # Process RHESSys output
     if (!is.null(output_variables[1])) {
-      if (output_method=="awk") {
+
+      # make allsim folder in output location - won't overwrite, warning for if exists is supressed
+      dir.create(file.path(input_rhessys$output_folder,"allsim"), showWarnings = FALSE)
+
+      if (output_method == "awk") {
         select_output_variables_w_awk(output_variables = output_variables,
                                       output_folder = input_rhessys$output_folder,
                                       run = aa,
-                                      output_initiation = output_initiation)
-      } else {select_output_variables(output_variables = output_variables,
-                                    output_folder = input_rhessys$output_folder,
-                                    run=aa,
-                                    output_initiation = output_initiation)
+                                      output_initiation = output_initiation
+        )
+      } else if (output_method == "r") {
+        data_out = select_output_variables_R(output_variables = output_variables,
+                                             output_folder = input_rhessys$output_folder,
+                                             output_filename = input_rhessys$output_filename,
+                                             run = aa,
+                                             output_initiation = output_initiation,
+                                             return_data = return_data)
+
+      } else {
+        select_output_variables(output_variables = output_variables,
+                                output_folder = input_rhessys$output_folder,
+                                run = aa,
+                                output_initiation = output_initiation
+        )
       }
     }
   }
+
+  if (return_data && seq_len(option_sets_rhessys_rows) == 1) {
+    return(data_out)
+  }
+
   return()
+
 }
 

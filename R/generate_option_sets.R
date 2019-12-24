@@ -93,7 +93,7 @@ generate_option_sets <- function(parameter_method,
 
       names(option_sets_def_par) <- input_def_file_unique
 
-      lapply(input_def_file_unique, function(x,y) names(y[[x]]), option_sets_def_par)
+      lapply(input_def_file_unique, function(x,y) names(y[[x]]), option_sets_def_par) # IdK what this is doing... - Will
 
     } else {
       option_sets_def_par <- NULL
@@ -101,7 +101,6 @@ generate_option_sets <- function(parameter_method,
       # possibly move code from make_all_option_table that makes the unchanging
       # def files to here. I would then have to generate an new def file whether
       # parameters change or not
-
     }
 
     # ---------------------------------------------------------------------
@@ -186,15 +185,20 @@ generate_option_sets <- function(parameter_method,
   option_sets_all$output_file <- file.path(option_sets_all$output_folder,option_sets_all$output_filename)
 
   # Generate input_parameters
-  option_sets_all$input_parameters <- sprintf("-s %f %f -sv %f %f -svalt %f %f -gw %f %f",
-                                              option_sets_all$m,
-                                              option_sets_all$k,
-                                              option_sets_all$m_v,
-                                              option_sets_all$k_v,
-                                              option_sets_all$pa,
-                                              option_sets_all$po,
-                                              option_sets_all$gw1,
-                                              option_sets_all$gw2)
+  if (!is.null(input_standard_par_list)) {
+    option_sets_all$input_parameters <- sprintf("-s %f %f -sv %f %f -svalt %f %f -gw %f %f",
+                                                option_sets_all$m,
+                                                option_sets_all$k,
+                                                option_sets_all$m_v,
+                                                option_sets_all$k_v,
+                                                option_sets_all$pa,
+                                                option_sets_all$po,
+                                                option_sets_all$gw1,
+                                                option_sets_all$gw2)
+  } else {
+    option_sets_all$input_parameters = NA
+  }
+
   # ***Input_parameters needs to be redone generically so that any combination
   # of standard parameters can be included in model***
 
@@ -210,6 +214,10 @@ generate_option_sets <- function(parameter_method,
                                        output_file,
                                        input_parameters,
                                        command_options)
+
+  if (is.null(input_standard_par_list)) {
+    option_sets_rhessys$input_parameters = NULL
+  }
 
   # ---------------------------------------------------------------------
   # Make table (option_sets_par) for exporting and use in subsequent simulations

@@ -21,7 +21,7 @@ Imports:
     readr,
     tibble,
     data.table
-RoxygenNote: 7.0.0
+RoxygenNote: 7.0.2
 Suggests: testthat,
     knitr,
     rmarkdown

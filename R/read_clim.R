@@ -3,7 +3,7 @@
 #' Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA
 #' @param clim_in Climate file - prefix will return all matching data, including suffix returns just that time series
 #' (e.g. 'site.rain' only return the precipitation time series).
-#' @param dates_out
+#' @param dates_out Should start and end dates be output?
 #' @author Will Burke
 #' @export
 
@@ -62,8 +62,13 @@ read_clim = function(clim_in, dates_out = FALSE) {
   clim$year = clim$date$year + 1900
   clim$month = clim$date$mon + 1
   clim$day = clim$date$mday
-  clim$day_of_year = clim$date$yday
+  #clim$day_of_year = clim$date$yday
   clim$date = as.POSIXct(clim$date)
+  clim$wy = data.table::fifelse(clim$month >= 10, clim$year + 1, clim$year)
+
+  yd = lubridate::yday(c(clim$date, seq.Date(clim$date[length(clim$date)], by = "day", length.out = 93)[2:93]))
+  clim$yd = yd[1:(length(yd) - 92)]
+  clim$wyd = yd[93:length(yd)]
 
   return(clim)
 }

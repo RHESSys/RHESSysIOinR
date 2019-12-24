@@ -9,6 +9,8 @@ read_clim(clim_in, dates_out = FALSE)
 \arguments{
 \item{clim_in}{Climate file - prefix will return all matching data, including suffix returns just that time series
 (e.g. 'site.rain' only return the precipitation time series).}
+
+\item{dates_out}{Should start and end dates be output?}
 }
 \description{
 Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA

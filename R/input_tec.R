@@ -49,8 +49,7 @@ input_tec = function(start_end = NULL, start = NULL, end = NULL){
       data.frame(
         as.numeric(date_split[[2]][1]),
         as.numeric(date_split[[2]][2]),
-        as.numeric(date_split[[2]][3]),
-        as.numeric(date_split[[2]][4]),
+        as.numeric(date_split[[2]][3]), 1,
         "output_current_state",
         stringsAsFactors = FALSE
       )
@@ -91,7 +90,7 @@ input_tec = function(start_end = NULL, start = NULL, end = NULL){
         as.numeric(end_split[1]),
         as.numeric(end_split[2]),
         as.numeric(end_split[3]),
-        as.numeric(end_split[4]),
+        1,
         "output_current_state",
         stringsAsFactors = FALSE
       )

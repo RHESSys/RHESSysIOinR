@@ -35,6 +35,8 @@ they will be checked if they have data, and only read if they do.}
 
 \item{stat_space}{Not used yet. All stats aggregate to basin level. In the future will have options here
 to retain finer spatial resolutions.}
+
+\item{patch_family_agg}{Should additional dataframes of aggregated patch families be created?}
 }
 \description{
 Pulls output from a single RHESSys run into R, optionally calculates statistics. This should

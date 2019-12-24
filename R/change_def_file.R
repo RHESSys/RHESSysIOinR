@@ -15,15 +15,24 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   # ---------------------------------------------------------------------
   # Read in def file
   def_table <- read.table(def_file, header = FALSE, stringsAsFactors = FALSE)
-
+  names(def_table) = c("pars", "names")
   # ---------------------------------------------------------------------
   # Replace parameters
 
-  sub_pos <- sapply(colnames(par_sets), function(x,y) which(x == y[,2]), def_table)
+  # idk why par sets is a a named tibble, but changing here so everything isnt in lists
+  # maybe add an IF here to detect input type for par_sets, make the function flexible/usable outside of run_rhessys
+  par_sets_df = data.frame(pars = t(unname(par_sets)), names = colnames(par_sets))
 
-  for (dd in seq_along(sub_pos)){
-    def_table[sub_pos[dd],1] = par_sets[1,dd]
+  # replace existing in def file
+  in_def = par_sets_df$names %in% def_table$names
+  if (any(in_def)) {
+    def_table[match(par_sets_df$names, def_table$names, nomatch = 0),1] = par_sets_df$pars[in_def]
   }
+  # add to def file
+  if (any(!in_def)) {
+    def_table = rbind(def_table, par_sets_df[!in_def,])
+  }
+
   def_table <- format(def_table, scientific=FALSE);
 
   # ---------------------------------------------------------------------

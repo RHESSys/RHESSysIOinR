@@ -30,17 +30,21 @@ rhessys_command <- function(rhessys_version,
                             input_parameters,
                             command_options){
 
-  tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s %s",
-                 rhessys_version,
-                 world_file,
-                 world_hdr_file,
-                 tec_file,
-                 flow_file,
-                 start_date,
-                 end_date,
-                 output_file,
-                 input_parameters,
-                 command_options)
+  # tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s %s",
+  #                rhessys_version,
+  #                world_file,
+  #                world_hdr_file,
+  #                tec_file,
+  #                flow_file,
+  #                start_date,
+  #                end_date,
+  #                output_file,
+  #                input_parameters,
+  #                command_options)
+
+  # handles NULLS better
+  tmp = paste0(rhessys_version, " -w ", world_file, " -whdr ",world_hdr_file, " -t ", tec_file, " -r ", flow_file,
+               " -st ", start_date, " -ed ", end_date, " -pre ", output_file, " ", input_parameters, " ", command_options)
 
 
   # check OS and run via system correctly - windows requires the linux subsystem i think
