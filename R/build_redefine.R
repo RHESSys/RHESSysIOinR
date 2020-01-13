@@ -17,30 +17,38 @@
 build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_thin = NULL, patchID = NULL, strataID = NULL, veg_parm_ID = NULL, append = FALSE) {
 
   # test
-  # worldfile = "worldfiles/BC_shrub_N.world"
-  # out_file = "worldfiles/redefine/BC_shrub_N_over_0.1.world"
-  # std_thin = 0
-  # veg_parm_ID = 7
-  # patchID = 101
+  # worldfile = worldfilesA[w]
+  # out_file = sub(".world", "_under_0.1.world" ,redef_worldfilesA[w])
+  # # std_thin = 0
+  # # veg_parm_ID = 7
+  # # patchID = 101
   # vars = NULL
   # values = NULL
   # strataID = NULL
   # append = FALSE
+  #
+  # std_thin = "1"
+  # veg_parm_ID = "50"
+  # patchID = "101"
 
+  # ---------- Check Aguments ----------
+  if (!file.exists(worldfile)) {stop(noquote(paste0("No file found at", worldfile)))}
+  if (file.exists(out_file)) {print(paste0("File '",out_file,"' will be overwritten"), quote = FALSE)}
 
   # ---------- Parse Worldfile ----------
   # parsing the values as characters to retain the exact value/precision
-  read_world = readLines(worldfile)
-  world =  strsplit(trimws(read_world), "\t+")
-  world = data.frame(matrix(unlist(world), nrow = length(world), byrow = T),stringsAsFactors = FALSE)
+  read_world = readLines(worldfile, warn = FALSE)
+  read_world = read_world[nchar(read_world) > 0]
+  world =  strsplit(trimws(read_world), "\\s+")
+  world = data.frame(matrix(unlist(world), nrow = length(world), byrow = T), stringsAsFactors = FALSE)
   names(world) = c("values","vars")
 
   # ---------- Find Levels----------
-  index_all = which(world[,2] == "world_ID" | world[,2] == "basin_ID" | world[,2] == "hillslope_ID" |
-                      world[,2] == "zone_ID" | world[,2] == "patch_ID" | world[,2] == "canopy_strata_ID")
+  index_all = which(world$vars == "world_ID" | world$vars == "basin_ID" | world$vars == "hillslope_ID" |
+                      world$vars == "zone_ID" | world$vars == "patch_ID" | world$vars == "canopy_strata_ID")
   index_names = gsub("_ID", "", x = world$vars[index_all])
-  index_max = c(index_all[2:length(index_all)] - 1, length(read_world))
-  world$level = unname(unlist(mapply(rep,index_names, (index_max - index_all) + 1 )))
+  index_max = c(index_all[2:length(index_all)] - 1, length(world$vars))
+  world$level = unname(unlist(mapply(rep, index_names, (index_max - index_all) + 1 )))
   world$ID = unname(unlist(mapply(rep, world$values[index_all], (index_max - index_all) + 1 )))
   world$unique = 1
   world$patchID = NA
@@ -166,6 +174,7 @@ build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_t
   no_change_vars = c(1:length(read_world))[-keep_index]
   no_change_old = world$values[no_change_vars]
 
+  # this is in case you only want to add vars
   if (!append) {
     read_world[no_change_vars] = unname(mapply(sub,paste0(no_change_old,"[[:blank:]]"),paste0("-9999","\t"),read_world[no_change_vars]))
   }
@@ -173,6 +182,6 @@ build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_t
   # ---------- Write file ----------
   writeLines(text = read_world,out_file)
 
-  print(noquote(paste("Successfully wrote updated worldfile to",out_file)))
+  print(noquote(paste("Successfully wrote redefine worldfile to",out_file)))
 
 }

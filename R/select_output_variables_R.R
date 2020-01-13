@@ -9,24 +9,15 @@
 #' @param output_folder Folder where rhessys output is located (e.g. 'out')
 #' @param run Simulation number. Used to reset files in allsim at beginning of simulation
 #' @param return_data TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run
+#' @param out Output location, if not will use default "allsim" within output folder
 #' @export
 
-select_output_variables_R <- function(output_variables, output_folder, output_filename, run, output_initiation, return_data = FALSE) {
+select_output_variables_R <- function(output_variables, output_folder, output_filename, run, max_run = NULL, return_data = FALSE, out = NULL, no_write = FALSE) {
 
-  # maybe set this in a first run IF
-  # to make this as fast as possible, copied output (using dput), idk how much a difference this really makes though
-  # space = c("basin","hillslope","zone","patch","stratum","fire")
-  # time = c("hourly", "daily", "monthly", "yearly")
-  # grow = c("grow_", "")
-  # all_inputs = rbind(expand.grid(grow,space[!space == "fire"], time, stringsAsFactors = FALSE),
-  #                    expand.grid("",space[space == "fire"], time, stringsAsFactors = FALSE))
-  # space_ab = c("b", "h", "z", "p", "c","f")
-  # time_ab = c("h", "d", "m", "y")
-  # grow_ab = c("g", "")
-  # all_abrevs = rbind(expand.grid(grow_ab, space_ab[!space_ab == "f"], time_ab, stringsAsFactors = FALSE),
-  #                     expand.grid("", space_ab[space_ab == "f"], time_ab, stringsAsFactors = FALSE))
-  # sufs = paste0(all_inputs[,1], all_inputs[,2], ".", all_inputs[,3])
-  # abrevs = paste0(all_abrevs[,2], all_abrevs[,3], all_abrevs[,1])
+  # could get rid of this but its the main difference from the other select functions so it's probably worthwhile
+  if (is.null(max_run) && run == 1) {
+    warning("Argument 'max_run' is missing. Output data will not be converted from a single column to a table.")
+  }
 
   sufs = c("grow_basin.hourly", "basin.hourly", "grow_hillslope.hourly",
            "hillslope.hourly", "grow_zone.hourly", "zone.hourly", "grow_patch.hourly",
@@ -60,7 +51,7 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
 
   files_out = file.path(output_folder,"allsim", output_variables$variable)
 
-  if (run == 1 && output_initiation == 1){
+  if (run == 1){
     z = suppressWarnings(file.remove(files_out))
     cat(noquote(paste0("> ", files_out," \n")))
     #system(sprintf("echo > %s/allsim/%s", output_folder, output_variables$variable[dd])) # I think this is just to print what is being output?
@@ -73,19 +64,37 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
   # no error checking rn, should add something
   data_subset = lapply(seq_along(file_index), function(X) data.table:::subset.data.table(read_data[[file_index[X]]], select = output_variables$variable[X]))
 
-  # the rest here could be optimized different ways
-  # read and write with data table is faster than Unix paste, so going w that for now.
-  # alternative - write to sqlite dbase or just rdata format intermediate, only to text last itr
+  if (return_data && no_write) {
+    return(data_subset)
+  }
 
   if (run == 1) {
-    lapply(seq_along(files_out), function(X) colnames(data_subset[[X]]) = paste0(output_variables$variable[X],"_",run))
+    data_subset = lapply(seq_along(files_out), function(X) {colnames(data_subset[[X]]) = paste0(output_variables$variable[X],"_",run); data_subset[[X]]})
     z = lapply(seq_along(files_out), function(X) data.table::fwrite(data_subset[[X]], files_out[X]))
+
   } else {
-    read_append = lapply(files_out, data.table::fread)
+
+    # OLD
+    # read_append = lapply(files_out, data.table::fread)
+    # data_append = function(X) {
+    #   data.table::fwrite(read_append[[X]][, data.table::set(x = read_append[[X]], j = paste0(output_variables$variable[X],"_",run), value = data_subset[[X]])], files_out[X])
+    # }
+    # z = lapply(seq_along(files_out), data_append)
+
+    # FASTER - appends in a single col, optionally collects and renames at end (see below)
     data_append = function(X) {
-      data.table::fwrite(read_append[[X]][, data.table::set(x = read_append[[X]], j = paste0(output_variables$variable[X],"_",run), value = data_subset[[X]])], files_out[X])
+      data.table::fwrite(data_subset[[X]], files_out[X], append = TRUE)
+      return()
     }
     z = lapply(seq_along(files_out), data_append)
+  }
+
+  # this only works if
+  if (!is.null(max_run) && run == max_run) {
+    read_final = lapply(files_out, data.table::fread)
+    final_wide = lapply(seq_along(files_out), function(X) data.table::data.table(matrix(read_final[[X]][[1]], ncol = max_run)))
+    final_wide = lapply(seq_along(files_out), function(X) {colnames(final_wide[[X]]) = paste0(output_variables$variable[X],"_", c(1:max_run)); final_wide[[X]]})
+    z = lapply(seq_along(files_out), function(X) data.table::fwrite(final_wide[[X]], files_out[X]) )
   }
 
   if (return_data && run == 1) {

@@ -50,8 +50,6 @@ tec_repeat <- function(start, end, interval = NULL, unit, event_name, world = NU
     df_out[1,4] = 10
   }
 
-
-
   # read in template
   # tx = readLines(paste(world,"template",sep="")) # read in template world
   #

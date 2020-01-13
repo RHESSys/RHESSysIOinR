@@ -1,11 +1,10 @@
 #' Produces a hdr file in RHESSys
 #'
 #' The hdr file in RHESSys determines which definition and climate files are to be used for a given run.
-#'
 #' This function produces hdr file and associated files that are called by hdr file; def files and clim.base files.
 #'
-#'
 #' @export
+
 generate_input_files <- function(input_rhessys,
                                  input_hdr_list,
                                  input_clim_base_list,
@@ -15,25 +14,20 @@ generate_input_files <- function(input_rhessys,
                                  option_sets_def_par,
                                  option_sets_par,
                                  option_sets_hdr,
-                                 option_sets_dated_seq){
-
+                                 option_sets_dated_seq) {
 
   # ---------------------------------------------------------------------
   # Export parameter file and all-options file
-
   write.csv(option_sets_par, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_parameter_sets.csv", sep="")), row.names = FALSE, quote=FALSE)
   write.csv(option_sets_all, file.path(input_rhessys$output_folder, paste(input_rhessys$output_filename, "_all_options.csv", sep="")), row.names = FALSE, quote=FALSE)
 
   # ---------------------------------------------------------------------
   # Generate def files
-
-  if (is.null(option_sets_def_par)==FALSE){
+  if (!is.null(option_sets_def_par)) {
     # Step though each def file
-    for (aa in seq_along(option_sets_def_par)){
-
+    for (aa in seq_along(option_sets_def_par)) {
       # Step through each unique parameter set and make def file
-      for (bb in seq_along(option_sets_def_par[[aa]]$group_id)){
-
+      for (bb in seq_along(option_sets_def_par[[aa]]$group_id)) {
         change_def_file(def_file = names(option_sets_def_par)[aa],
                         par_sets = dplyr::as_tibble(dplyr::select(option_sets_def_par[[aa]], -group_id))[bb,],
                         file_name_ext = as.character(option_sets_def_par[[aa]]$group_id[bb]))
@@ -42,17 +36,13 @@ generate_input_files <- function(input_rhessys,
     }
   }
 
-
   # ---------------------------------------------------------------------
   # Cycle through each base station/dated sequence file
-
   # Step though each dated seq file (Note that clim files without dated sequence
   # will have a option_sets_dated_seq$dated_id of length one and equal to 0)
   for (aa in seq_along(option_sets_dated_seq$dated_id)){
-
     # Step through each climate base station
     for (bb in seq_along(input_clim_base_list)){
-
       make_clim_base_file(input_clim_base = input_clim_base_list[[bb]],
                           clim_base_path = input_hdr_list$base_stations[bb],
                           input_dated_seq = input_dated_seq_list[[aa]],
@@ -60,10 +50,8 @@ generate_input_files <- function(input_rhessys,
     }
   }
 
-
   # ---------------------------------------------------------------------
   # Generate hdr files
-
   option_sets_hdr <- dplyr::arrange(option_sets_hdr, hdr_id) # Arrange hdr_id in sequential order
 
   # Create hdr output folder
