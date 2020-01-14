@@ -9,9 +9,9 @@
 #'
 #' @export
 
-compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFLAGS = NULL) {
+compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFLAGS = NULL, ignore.stdout = FALSE) {
 
-  # find the makefile
+  # find the makefile - i think foolproof but who knows
   if (endsWith(location, "makefile") && file.exists(location)) {
     makefile = location
   } else if (endsWith(file.path(location), "rhessys") && file.exists(file.path(location, "makefile")) ) {
@@ -30,11 +30,14 @@ compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFL
     }
   }
 
-  print(paste0("Compiling RHESSys using makefile: ", makefile), quote = FALSE)
+  cat("\n -------------------- Start compile_rhessys.R -------------------- \n\n")
+  cat("Compiling RHESSys using makefile: ", makefile,"\n")
+  #print(paste0("Compiling RHESSys using makefile: ", makefile), quote = FALSE)
   read_make = readLines(makefile)
   make_info = c(read_make[startsWith(read_make, "VERSION")],
                 read_make[startsWith(read_make, "CFLAGS")])
-  print(paste(make_info, collapse = " | "), quote = FALSE)
+  #print(paste(make_info, collapse = " | "), quote = FALSE)
+  cat(paste(make_info, collapse = " | "), "\n")
 
   # delete objects
   if (delete_objs) {
@@ -42,7 +45,8 @@ compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFL
     if (!file.exists(objs)) { stop("Couldn't find the objects folder")}
     out = file.remove(file.path(objs, list.files(objs)))
     if (length(out) > 0 && out) {
-      print("Objects removed", quote = FALSE)
+      #print("Objects removed", quote = FALSE)
+      cat("RHESSys objects removed \n")
     }
   }
 
@@ -50,8 +54,10 @@ compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFL
   if (!is.null(CFLAGS)) {
     new_makefile = read_make
     new_makefile[startsWith(read_make, "CFLAGS")] = paste0(new_makefile[startsWith(read_make, "CFLAGS")], " ", trimws(CFLAGS))
-    makefile = file.path(dirname(makefile), "makefile_tmp")
+    makefile = file.path(dirname(makefile), ".makefile_tmp")
     writeLines(new_makefile, makefile)
+    #print(paste0("Wrote temporary makefile '", makefile,"' with additional CFLAGS: ", CFLAGS), quote = FALSE)
+    cat("Wrote temporary makefile '", makefile,"' with additional CFLAGS: ", CFLAGS,"\n\n")
   }
 
   make_cmd = shQuote(paste0("make -C ", dirname(makefile), " -f ", basename(makefile)), type = "sh")
@@ -62,24 +68,30 @@ compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFL
     make_cmd2 = make_cmd
   }
 
-  sysout = system(make_cmd2)
-  print(paste("Command line echo:", make_cmd2), quote = FALSE)
+  cat("Running makefile... \n\n")
 
-  if (sysout != 0) {
-    warning("Make probably failed, returned: ", sysout)
-  }
+  sysout = system(command = make_cmd2, ignore.stdout = ignore.stdout)
+  #print(paste("Command line echo:", make_cmd2), quote = FALSE)
+  cat("\nCommand line echo:", make_cmd2,"\n")
+
+  # if (sysout != 0) {
+  #   warning("Make probably failed, returned: ", sysout)
+  # }
 
   if (!is.null(CFLAGS)) {
     out_rm = file.remove(makefile)
+    #print(paste0("Removed temporary makefile: '", makefile, "'"), quote = FALSE)
+    cat("Removed temporary makefile: '", makefile, "'","\n", sep = "")
   }
-
 
   # move rhessys
   if (!is.null(destination)) {
     rhessys_write = file.path(dirname(makefile), paste0("rhessys", substr(make_info[1], 11, nchar(make_info[1]))))
     file.rename(rhessys_write, to = file.path(destination, basename(rhessys_write)))
-    print(paste0("Moved ",basename(rhessys_write), " from ", dirname(makefile), " to ", destination), quote = FALSE)
+    #print(paste0("Moved ",basename(rhessys_write), " from ", dirname(makefile), " to ", destination), quote = FALSE)
+    cat("Moved '",basename(rhessys_write), "' from '", dirname(makefile), "' to '", destination,"'\n", sep = "")
   }
 
+  cat("\n -------------------- End compile_rhessys.R -------------------- \n")
 
 }

@@ -45,3 +45,6 @@ doc
 Meta
 
 inst/doc
+
+# prevent readme html from accidentally getting pushed
+README.html
