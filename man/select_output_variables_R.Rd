@@ -9,8 +9,10 @@ select_output_variables_R(
   output_folder,
   output_filename,
   run,
-  output_initiation,
-  return_data = FALSE
+  max_run = NULL,
+  return_data = FALSE,
+  out = NULL,
+  no_write = FALSE
 )
 }
 \arguments{
@@ -24,6 +26,8 @@ and the files in output_folder will be parsed appropriately, or can use the full
 \item{run}{Simulation number. Used to reset files in allsim at beginning of simulation}
 
 \item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
+
+\item{out}{Output location, if not will use default "allsim" within output folder}
 }
 \description{
 Somewhat optimized R-based read and subsetting of RHESSys output

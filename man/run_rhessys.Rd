@@ -51,7 +51,6 @@ list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <va
 \item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
 }
 \description{
-Permits the calibration and simulation of the rhessys
-model. Multiple model runs can be run, either in series or in parallel (such
-as with cluster computing).
+Permits the calibration and simulation of the rhessys model. Multiple model
+runs can be run, either in series or in parallel (such as with cluster computing).
 }

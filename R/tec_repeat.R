@@ -59,7 +59,7 @@ tec_repeat <- function(start, end, interval = NULL, unit, event_name, world = NU
   #   writeLines(tx2, con=fname)
   # }
 
-  if (file.exists(redefine) & !is.null(world)) {
+  if (!is.null(redefine) && file.exists(redefine) & !is.null(world)) {
     # build vector of filenames
     filenames = paste(world,".Y",df_out[,1],"M",df_out[,2],"D",df_out[,3],"H",df_out[,4],sep = "")
     # copy redefine and rename w world name

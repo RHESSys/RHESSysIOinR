@@ -19,7 +19,5 @@ generate_input_files(
 }
 \description{
 The hdr file in RHESSys determines which definition and climate files are to be used for a given run.
-}
-\details{
 This function produces hdr file and associated files that are called by hdr file; def files and clim.base files.
 }

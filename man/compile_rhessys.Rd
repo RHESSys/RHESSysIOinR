@@ -8,7 +8,8 @@ compile_rhessys(
   location,
   delete_objs = TRUE,
   destination = NULL,
-  CFLAGS = NULL
+  CFLAGS = NULL,
+  ignore.stdout = FALSE
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ compile_rhessys(
 \item{destination}{Optional input of where to move resulting RHESSys executable}
 
 \item{CFLAGS}{Overwrite CFLAGS in the makefile}
+
+\item{ignore.stdout}{Passed through to system()}
 
 \item{delete_obj}{TRUE/FALSE to delete objects (before and after)}
 }

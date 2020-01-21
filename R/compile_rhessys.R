@@ -5,6 +5,7 @@
 #' @param delete_obj TRUE/FALSE to delete objects (before and after)
 #' @param destination Optional input of where to move resulting RHESSys executable
 #' @param CFLAGS Overwrite CFLAGS in the makefile
+#' @param ignore.stdout Passed through to system()
 #' @author Will Burke
 #'
 #' @export

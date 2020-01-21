@@ -9,10 +9,7 @@ n_sim = 1
 
 # ----- Climate Data -----
 clim_data = "p301_input/clim/Grove_lowprov_clim"
-start_end = read_rhessys_met(clim_data, dates = TRUE)
-
-# change length
-start_end[2] = "1961 09 30 24"
+start_end = read_clim(clim_data, dates = TRUE)
 
 # ----- Parameter Method -----
 parameter_method = "exact_values"
@@ -96,7 +93,7 @@ input_dated_seq_list <- NULL
 
 # ----- Make Tec File -----
 #input_tec_data <- NULL
-input_tec_data = input_tec(NULL, start_end = start_end)
+input_tec_data = input_tec(start_end = start_end)
 # input_tec_data <- data.frame(year=integer(),month=integer(),day=integer(),hour=integer(),name=character(),stringsAsFactors=FALSE)
 # input_tec_data[1,] <- data.frame(1941, 10, 1, 1, "print_daily_on", stringsAsFactors=FALSE)
 # input_tec_data[2,] <- data.frame(1941, 10, 1, 2, "print_daily_growth_on", stringsAsFactors=FALSE)
@@ -117,18 +114,17 @@ output_variables = NULL
 
 # ----- Run RHESSys -----
 
-system.time(
-  run_rhessys(parameter_method = parameter_method,
-              output_method = output_method,
-              input_rhessys = input_rhessys,
-              input_hdr_list = input_hdr_list,
-              input_preexisting_table = input_preexisting_table,
-              input_def_list = input_def_list,
-              input_standard_par_list = input_standard_par_list,
-              input_clim_base_list = input_clim_base_list,
-              input_dated_seq_list = input_dated_seq_list,
-              input_tec_data = input_tec_data,
-              output_variables = output_variables)
-)
+run_rhessys(parameter_method = parameter_method,
+            output_method = output_method,
+            input_rhessys = input_rhessys,
+            input_hdr_list = input_hdr_list,
+            input_preexisting_table = input_preexisting_table,
+            input_def_list = input_def_list,
+            input_standard_par_list = input_standard_par_list,
+            input_clim_base_list = input_clim_base_list,
+            input_dated_seq_list = input_dated_seq_list,
+            input_tec_data = input_tec_data,
+            output_variables = output_variables)
+
 
 

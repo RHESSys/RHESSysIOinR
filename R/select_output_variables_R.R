@@ -40,13 +40,13 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
 
   if (all(output_variables$out_file %in% sufs)) {
     files_in = file.path(output_folder, paste0(output_filename, "_", output_variables$out_file))
-    if (any(!file.exists(files_in))) stop(paste0("Cant find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
   } else if (all(output_variables$out_file %in% abrevs)) {
     files_in = file.path(output_folder, paste0(output_filename, "_", sufs[match(output_variables$out_file, abrevs)]))
-    if (any(!file.exists(files_in))) stop(paste0("Cant find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
   } else {    # probs should add a check for if file exists etc. - need to double check on time penalty though
     files_in = output_variables$out_file
-    if (any(!file.exists(files_in))) stop(paste0("Cant find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
   }
 
   files_out = file.path(output_folder,"allsim", output_variables$variable)

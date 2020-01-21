@@ -9,12 +9,10 @@ change_def_file(def_file, par_sets, file_name_ext = NULL)
 \arguments{
 \item{def_file}{Path and name of def file}
 
-\item{par_sets}{Data frame with parameter names as colnames and a single row
-of parameter values}
+\item{par_sets}{Data frame with parameter names as colnames and a single row of parameter values}
 
 \item{file_name_ext}{Optional extension to add to file name}
 }
 \description{
-This function imports a def file, replaces the values of selected parameters,
-and exports a def file.
+This function imports a def file, replaces the values of selected parameters, and exports a def file.
 }

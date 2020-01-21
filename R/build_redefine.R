@@ -16,96 +16,39 @@
 
 build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_thin = NULL, patchID = NULL, strataID = NULL, veg_parm_ID = NULL, append = FALSE) {
 
-  # test
-  # worldfile = worldfilesA[w]
-  # out_file = sub(".world", "_under_0.1.world" ,redef_worldfilesA[w])
-  # # std_thin = 0
-  # # veg_parm_ID = 7
-  # # patchID = 101
-  # vars = NULL
-  # values = NULL
-  # strataID = NULL
-  # append = FALSE
-  #
-  # std_thin = "1"
-  # veg_parm_ID = "50"
-  # patchID = "101"
 
   # ---------- Check Aguments ----------
   if (!file.exists(worldfile)) {stop(noquote(paste0("No file found at", worldfile)))}
   if (file.exists(out_file)) {print(paste0("File '",out_file,"' will be overwritten"), quote = FALSE)}
 
-  # ---------- Parse Worldfile ----------
-  # parsing the values as characters to retain the exact value/precision
-  read_world = readLines(worldfile, warn = FALSE)
-  read_world = read_world[nchar(read_world) > 0]
-  world =  strsplit(trimws(read_world), "\\s+")
-  world = data.frame(matrix(unlist(world), nrow = length(world), byrow = T), stringsAsFactors = FALSE)
-  names(world) = c("values","vars")
+  world = read_world(worldfile)
 
-  # ---------- Find Levels----------
-  index_all = which(world$vars == "world_ID" | world$vars == "basin_ID" | world$vars == "hillslope_ID" |
-                      world$vars == "zone_ID" | world$vars == "patch_ID" | world$vars == "canopy_strata_ID")
-  index_names = gsub("_ID", "", x = world$vars[index_all])
-  index_max = c(index_all[2:length(index_all)] - 1, length(world$vars))
-  world$level = unname(unlist(mapply(rep, index_names, (index_max - index_all) + 1 )))
-  world$ID = unname(unlist(mapply(rep, world$values[index_all], (index_max - index_all) + 1 )))
-  world$unique = 1
-  world$patchID = NA
-  for (i in 2:length(world$unique)) {
-    if (world$level[i] != world$level[i - 1] | world$ID[i] != world$ID[i - 1]) {
-      world$unique[i] = world$unique[i - 1] + 1
-      if (world$level[i] == "patch") {
-        world$patchID[i] = world$ID[i]
-      } else if (world$level[i] == "canopy_strata" & world$level[i - 1] == "patch") {
-        world$patchID[i] = world$patchID[i - 1]
-      }
-    } else {
-      world$unique[i] = world$unique[i - 1]
-      world$patchID[i] = world$patchID[i - 1]
-    }
-  }
+  read_world = readLines(worldfile, warn = FALSE, encoding = "UTF-8")
+  read_world = read_world[nchar(trimws(read_world)) > 0]
 
   # thinning vars
   thin_vars =  c(
-    "cs_pool",
-    "cs_leafc",
-    "cs_dead_leafc",
-    "cs_live_stemc",
-    "cs_dead_stemc",
-    "cs_live_crootc",
-    "cs_dead_crootc",
-    "cs_frootc",
-    "cs.pool",
+    "cs.cpool",
     "cs.leafc",
     "cs.dead_leafc",
     "cs.live_stemc",
     "cs.dead_stemc",
     "cs.live_crootc",
     "cs.dead_crootc",
-    "cs.frootc",
-    "cs.cpool"
+    "cs.frootc"
   )
 
+  # could add, but wont be read:
+  # "ns.npool"
+  # "ns.leafn"
+  # "ns.dead_leafn"
+  # "ns.live_stemn"
+  # "ns.dead_stemn"
+  # "ns.live_crootn"
+  # "ns.dead_crootn"
+  # "ns.frootn"
+
   other_thin_vars = c("cover_fraction", "gap_fraction")
-
-  # thinning options- rhessys-side
-  #
-  # redefine_world_thin_remain -
-  # For cover fraction and gap fraction, the value in the redefine file will become the value in the new worldfile
-  # For the C-pool values, the values in the redefine file should be the fraction of those pools you want "thinned",
-  # or removed from the live biomass pools. The corresponding N-pool values will be automatically removed and both the
-  # C and N removed fractions will be distributed to the appropriate litter and CWD pools
-  #
-  # redefine_world_thin_harvest -
-  # Works the same as above, but the aboveground C and N fractions are "harvested" (e.g., removed from the live biomass
-  # pools but not added into the litter and CWD pools) while the belowground C and N fractions are removed and added to
-  # the litter and CWD pools
-  #
-  # redefine_world_thin_snags -
-  # Biomass C and N pools are reduced based on the fractions specified (as in the thin_remain option above) except livestem
-  # C and N pools are transferred to deadwood C and N instead of CWD.
-
 
   # ugh clean this up to not mix numeric indices and TF vectors
   redef_index = NULL
@@ -167,8 +110,29 @@ build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_t
   }
 
   # ---------- Replace all other values w -9999 ----------
-  keep_vars = c("world_ID", "basin_ID", "hillslope_ID", "zone_ID", "patch_ID", "canopy_strata_ID",
-                "num_basins", "num_hillslopes", "num_zones", "num_patches", "num_stratum")
+  keep_vars = c(
+    "world_ID",
+    "basin_ID",
+    "hillslope_ID",
+    "zone_ID",
+    "patch_ID",
+    "canopy_strata_ID",
+    "num_basins",
+    "num_hillslopes",
+    "num_zones",
+    "num_patches",
+    "num_canopy_strata",
+    "basin_n_basestations",
+    "basin_basestation_ID",
+    "hillslope_n_basestations",
+    "hillslope_basestation_ID",
+    "zone_n_basestations",
+    "zone_basestation_ID",
+    "patch_n_basestations",
+    "patch_basestation_ID",
+    "canopy_strata_n_basestations",
+    "canopy_strata_basestation_ID"
+  )
   keep_index = c(unique(redef_index, replace_index),
                  which(world$vars %in% keep_vars))
   no_change_vars = c(1:length(read_world))[-keep_index]
