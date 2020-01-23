@@ -4,11 +4,17 @@
 \alias{input_tec}
 \title{input_tec}
 \usage{
-input_tec(start_end = NULL, start = NULL, end = NULL)
+input_tec(start_end = NULL, start = NULL, end = NULL, output_state = TRUE)
 }
 \arguments{
 \item{start_end}{Vector of two charaters, indicating start and end dates, same as used to input start and end date for input_rhessys.
 Used to auto generate tec events for printing (normal and grow), and output current state at end}
+
+\item{start}{start date of run - used along with 'end' arg}
+
+\item{end}{End date of run}
+
+\item{output_state}{TRUE/FALSE if an output_current_state tec event should be scheduled at the end of the simulation}
 
 \item{...}{Vector(s) containing tec events in format c(<year>,<month>,<day>,<hour>,<name/event type>).
 Additional tec events can be added just as additional arguments.}

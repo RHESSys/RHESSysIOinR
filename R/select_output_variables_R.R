@@ -89,12 +89,15 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
     z = lapply(seq_along(files_out), data_append)
   }
 
-  # this only works if
+  # only at max run
   if (!is.null(max_run) && run == max_run) {
-    read_final = lapply(files_out, data.table::fread)
-    final_wide = lapply(seq_along(files_out), function(X) data.table::data.table(matrix(read_final[[X]][[1]], ncol = max_run)))
-    final_wide = lapply(seq_along(files_out), function(X) {colnames(final_wide[[X]]) = paste0(output_variables$variable[X],"_", c(1:max_run)); final_wide[[X]]})
-    z = lapply(seq_along(files_out), function(X) data.table::fwrite(final_wide[[X]], files_out[X]) )
+    # loop for now for simplicity - lapply gets messy with large output for some reason
+    for (i in files_out) {
+      read_final = data.table::fread(i)
+      dt_out = data.table::as.data.table(matrix(read_final[[1]], ncol = max_run))
+      colnames(dt_out) = paste0("run_", c(1:ncol(dt_out)))
+      data.table::fwrite(x = dt_out, i)
+    }
   }
 
   if (return_data && run == 1) {

@@ -6,11 +6,14 @@
 #' Additional tec events can be added just as additional arguments.
 #' @param start_end Vector of two charaters, indicating start and end dates, same as used to input start and end date for input_rhessys.
 #' Used to auto generate tec events for printing (normal and grow), and output current state at end
+#' @param start start date of run - used along with 'end' arg
+#' @param end End date of run
+#' @param output_state TRUE/FALSE if an output_current_state tec event should be scheduled at the end of the simulation
 #' @author Will Burke
 #'
 #' @export
 
-input_tec = function(start_end = NULL, start = NULL, end = NULL){
+input_tec = function(start_end = NULL, start = NULL, end = NULL, output_state = TRUE){
 
   if (is.null(start_end) & is.null(start) & is.null(end)){
     return(NULL)
@@ -45,14 +48,17 @@ input_tec = function(start_end = NULL, start = NULL, end = NULL){
         "print_daily_growth_on",
         stringsAsFactors = FALSE
       )
-    input_tec_data[3, ] <-
-      data.frame(
-        as.numeric(date_split[[2]][1]),
-        as.numeric(date_split[[2]][2]),
-        as.numeric(date_split[[2]][3]), 1,
-        "output_current_state",
-        stringsAsFactors = FALSE
-      )
+    if (output_state) {
+      input_tec_data[3, ] <-
+        data.frame(
+          as.numeric(date_split[[2]][1]),
+          as.numeric(date_split[[2]][2]),
+          as.numeric(date_split[[2]][3]), 1,
+          "output_current_state",
+          stringsAsFactors = FALSE
+        )
+    }
+
   }
 
   if (!is.null(start) & !is.null(end) & is.null(start_end)) {
@@ -85,15 +91,18 @@ input_tec = function(start_end = NULL, start = NULL, end = NULL){
         "print_daily_growth_on",
         stringsAsFactors = FALSE
       )
-    input_tec_data[3, ] <-
-      data.frame(
-        as.numeric(end_split[1]),
-        as.numeric(end_split[2]),
-        as.numeric(end_split[3]),
-        1,
-        "output_current_state",
-        stringsAsFactors = FALSE
-      )
+
+    if (output_state) {
+      input_tec_data[3, ] <-
+        data.frame(
+          as.numeric(end_split[1]),
+          as.numeric(end_split[2]),
+          as.numeric(end_split[3]),
+          1,
+          "output_current_state",
+          stringsAsFactors = FALSE
+        )
+    }
   }
 
 
