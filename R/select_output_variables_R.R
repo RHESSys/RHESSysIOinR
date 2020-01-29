@@ -53,6 +53,7 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
 
   if (run == 1){
     z = suppressWarnings(file.remove(files_out))
+    cat("\nWriting selection(s) to file(s):\n")
     cat(noquote(paste0("> ", files_out," \n")))
     #system(sprintf("echo > %s/allsim/%s", output_folder, output_variables$variable[dd])) # I think this is just to print what is being output?
   }
@@ -87,6 +88,7 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
       return()
     }
     z = lapply(seq_along(files_out), data_append)
+    cat("\nAppended selection(s)\n")
   }
 
   # only at max run
@@ -98,6 +100,7 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
       colnames(dt_out) = paste0("run_", c(1:ncol(dt_out)))
       data.table::fwrite(x = dt_out, i)
     }
+    cat("\nOutput transformed to table(s)\n")
   }
 
   if (return_data && run == 1) {

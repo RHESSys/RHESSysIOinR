@@ -9,8 +9,6 @@
 
 change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
 
-  def_file = "defs/veg_p301_conifer.def"
-
   # ------------------------------ Read in def file ------------------------------
   # def_table = data.table::fread(def_file, header = FALSE, stringsAsFactors = FALSE)
   # def_table = read.table(def_file, header = FALSE, stringsAsFactors = FALSE)
@@ -25,9 +23,11 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   names(def_table)[1:2] = c("pars", "names")
 
   # ------------------------------ Replace parameters ------------------------------
-  # idk why par sets needs to be a named tibble, but changing here so everything isnt in lists
-  # maybe add an IF here to detect input type for par_sets, make the function flexible/usable outside of run_rhessys
-  par_sets_df = data.frame(pars = t(unname(par_sets)), names = colnames(par_sets))
+  par_sets_df = data.frame(pars = as.vector(t(par_sets[1,])), names = colnames(par_sets))
+
+  if (any(duplicated(par_sets_df$names))) {
+    cat("Duplicate def file changes found for", par_sets_df$names[duplicated(par_sets_df$names)], "in", def_file)
+  }
 
   # in case on comments
   if (ncol(def_table) == 3) {

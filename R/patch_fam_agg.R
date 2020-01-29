@@ -15,7 +15,7 @@ patch_fam_agg = function(X, areas = NULL, na.rm = FALSE) {
       X$familyID = floor(X$patchID/100)
       print(noquote("'familyID' was missing, generated based on 'patchID's."))
     } else {
-      stop(paste0("Couldn't find 'familyID' column"))
+      stop(paste0("Couldn't find 'familyID' column and patchID length is too short to contain familyIDs"))
     }
   }
 
