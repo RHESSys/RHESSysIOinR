@@ -44,7 +44,7 @@ run_rhessys <- function(parameter_method,
   }
   # Following inputs must exist to run
   if (!file.exists(input_rhessys$rhessys_version)) {stop(paste("RHESSys version", input_rhessys$rhessys_version, "does not exist."))}
-  if (!file.exists(input_rhessys$world_file)) {stop(paste("World file", nput_rhessys$world_file, "does not exist."))}
+  if (!file.exists(input_rhessys$world_file)) {stop(paste("World file", input_rhessys$world_file, "does not exist."))}
   if (!file.exists(input_rhessys$flow_file)) {stop(paste("Flow table", input_rhessys$flow_file, "does not exist."))}
   # auto generate output folder - if people don't like this, add an IF and make it an argument option
   if (!dir.exists(input_rhessys$output_folder)) {
@@ -59,6 +59,7 @@ run_rhessys <- function(parameter_method,
   #   print(paste("Output files with prefix",input_rhessys$output_filename,"alerady exist in",input_rhessys$output_folder,"and will be overwritten."),quote = FALSE)}
 
   # ------------------------------ Generate option sets ------------------------------
+  # this section seems to work pretty well but could use soem cleanup to make things as efficient/straightforward as possible
   option_sets <- generate_option_sets(parameter_method = parameter_method,
                                       input_rhessys = input_rhessys,
                                       input_hdr_list = input_hdr_list,
@@ -68,6 +69,7 @@ run_rhessys <- function(parameter_method,
                                       input_dated_seq_list = input_dated_seq_list)
 
   # ------------------------------ Generate RHESSys input files ------------------------------
+  # this function needs some revision to be more robust
   generate_input_files(input_rhessys = input_rhessys,
                        input_hdr_list = input_hdr_list,
                        input_clim_base_list = input_clim_base_list,

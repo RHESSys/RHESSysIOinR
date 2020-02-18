@@ -28,9 +28,11 @@ generate_input_files <- function(input_rhessys,
     for (aa in seq_along(option_sets_def_par)) {
       # Step through each unique parameter set and make def file
       for (bb in seq_along(option_sets_def_par[[aa]]$group_id)) {
+
         change_def_file(def_file = names(option_sets_def_par)[aa],
                         par_sets = option_sets_def_par[[aa]][bb, colnames(option_sets_def_par[[aa]]) != "group_id", drop = FALSE],
                         file_name_ext = as.character(option_sets_def_par[[aa]]$group_id[bb]))
+
       }
       print(paste("New def files written for file", names(option_sets_def_par)[aa]))
     }

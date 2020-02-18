@@ -23,13 +23,13 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   names(def_table)[1:2] = c("pars", "names")
 
   # ------------------------------ Replace parameters ------------------------------
-  par_sets_df = data.frame(pars = as.vector(t(par_sets[1,])), names = colnames(par_sets))
+  par_sets_df = data.frame(pars = as.vector(t(par_sets[1,])), names = colnames(par_sets), stringsAsFactors = FALSE)
 
   if (any(duplicated(par_sets_df$names))) {
     cat("Duplicate def file changes found for", par_sets_df$names[duplicated(par_sets_df$names)], "in", def_file)
   }
 
-  # in case on comments
+  # in case of comments
   if (ncol(def_table) == 3) {
     par_sets_df$V3 = NA
   }

@@ -122,6 +122,7 @@ build_redefine = function(worldfile, out_file, vars = NULL, values = NULL, std_t
     "num_zones",
     "num_patches",
     "num_canopy_strata",
+    "num_stratum",
     "basin_n_basestations",
     "basin_basestation_ID",
     "hillslope_n_basestations",

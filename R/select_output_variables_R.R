@@ -19,6 +19,11 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
     warning("Argument 'max_run' is missing. Output data will not be converted from a single column to a table.")
   }
 
+  if (run == 1 && !dir.exists(file.path(output_folder, "allsim"))) {
+    dir.create(file.path(output_folder, "allsim"))
+  }
+
+
   sufs = c("grow_basin.hourly", "basin.hourly", "grow_hillslope.hourly",
            "hillslope.hourly", "grow_zone.hourly", "zone.hourly", "grow_patch.hourly",
            "patch.hourly", "grow_stratum.hourly", "stratum.hourly", "grow_basin.daily",
@@ -40,13 +45,13 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
 
   if (all(output_variables$out_file %in% sufs)) {
     files_in = file.path(output_folder, paste0(output_filename, "_", output_variables$out_file))
-    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files_in[!file.exists(files_in)]))
   } else if (all(output_variables$out_file %in% abrevs)) {
     files_in = file.path(output_folder, paste0(output_filename, "_", sufs[match(output_variables$out_file, abrevs)]))
-    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files_in[!file.exists(files_in)]))
   } else {    # probs should add a check for if file exists etc. - need to double check on time penalty though
     files_in = output_variables$out_file
-    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files[!file.exists(files)]))
+    if (any(!file.exists(files_in))) stop(paste0("Cannot find ", files_in[!file.exists(files_in)]))
   }
 
   files_out = file.path(output_folder,"allsim", output_variables$variable)
@@ -94,11 +99,25 @@ select_output_variables_R <- function(output_variables, output_folder, output_fi
   # only at max run
   if (!is.null(max_run) && run == max_run) {
     # loop for now for simplicity - lapply gets messy with large output for some reason
-    for (i in files_out) {
-      read_final = data.table::fread(i)
+    for (i in seq_along(files_out)) {
+      read_final = data.table::fread(files_out[i])
       dt_out = data.table::as.data.table(matrix(read_final[[1]], ncol = max_run))
       colnames(dt_out) = paste0("run_", c(1:ncol(dt_out)))
-      data.table::fwrite(x = dt_out, i)
+
+      # get matching columns
+      out_vars = colnames(read_data[[file_index[i]]])[colnames(read_data[[file_index[i]]]) %in%
+                                                        c("day", "month", "year", "basinID", "hillID", "zoneID", "patchID", "stratumID", "area")]
+
+      # get date from normal output of respective spatial level, cbind date w output
+      date_subset = data.table:::subset.data.table(read_data[[file_index[i]]], select = out_vars)
+
+      if (nrow(date_subset) == nrow(dt_out)) {
+        dt_out = cbind(date_subset, dt_out)
+      } else {
+        cat("\nDates and data had mismatched lengths, not added to table output")
+      }
+
+      data.table::fwrite(x = dt_out, files_out[i])
     }
     cat("\nOutput transformed to table(s)\n")
   }

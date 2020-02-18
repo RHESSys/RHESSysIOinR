@@ -10,7 +10,7 @@
 #'
 #' @export
 
-compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFLAGS = NULL, ignore.stdout = FALSE) {
+compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, make_args = NULL, CFLAGS = NULL, ignore.stdout = FALSE) {
 
   # find the makefile - i think foolproof but who knows
   if (endsWith(location, "makefile") && file.exists(location)) {
@@ -61,12 +61,16 @@ compile_rhessys = function(location, delete_objs = TRUE, destination = NULL, CFL
     cat("Wrote temporary makefile '", makefile,"' with additional CFLAGS: ", CFLAGS,"\n\n")
   }
 
-  make_cmd = shQuote(paste0("make -C ", dirname(makefile), " -f ", basename(makefile)), type = "sh")
+  make_cmd = paste0("make -C ", dirname(makefile), " -f ", basename(makefile))
+
+  if (!is.null(make_args)) {
+    make_cmd = paste(make_cmd, make_args)
+  }
 
   if (.Platform$OS.type == "windows") {
-    make_cmd2 = paste0("bash -c ", make_cmd)
+    make_cmd2 = paste0("bash -c ", shQuote(make_cmd, type = "sh"))
   } else {
-    make_cmd2 = make_cmd
+    make_cmd2 = shQuote(make_cmd, type = "sh")
   }
 
   cat("Running makefile... \n\n")
