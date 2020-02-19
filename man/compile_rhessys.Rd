@@ -8,6 +8,7 @@ compile_rhessys(
   location,
   delete_objs = TRUE,
   destination = NULL,
+  make_args = NULL,
   CFLAGS = NULL,
   ignore.stdout = FALSE
 )

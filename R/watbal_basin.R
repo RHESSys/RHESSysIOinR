@@ -1,17 +1,11 @@
 #' watbal_basin.R
 #'
-#' Water balance for basin daily RHESSys output
-
-
-# To run, if your basin output is called "bd" type "bd=watbal(bd)".
-# This will add a number of fields to your basin output file, the last
-# of which will be called "watbal".  This is your water balance error.
-# You should see a minor numerical error here even if your water balances
-# (on the order of 10^-6).  If your watbal values are negative then
-# water inputs are less than water outputs, and vice versa.
-
-rhout = readin_rhessys_output(pre = "../../SERI/BigCreekPatchScale/output/BC_1p")
-bd = rhout$bd
+#' Water balance for basin daily RHESSys output. To run, if your basin output is called "bd" type "bd=watbal(bd)".
+#' This will add a number of fields to your basin output file, the last of which will be called "watbal".
+#' This is your water balance error. You should see a minor numerical error here even if your water balances
+#' (on the order of 10^-6).  If your watbal values are negative then water inputs are less than water outputs, and vice versa.
+#' @param bd The basin daily outputs from rhessys, most easily retrieved via `readin_rhessys_output()`
+#' @export
 
 watbal_basin = function(bd) {
 
@@ -38,11 +32,9 @@ watbal_basin = function(bd) {
   # fluxes minus stores
   bd$watbal = with(bd, watbal_flux + sddiff - snodiff - detdiff - litdiff - candiff - gwdiff)
 
-  max(bd$watbal)
-  summary(bd$watbal)
-  hist(bd$watbal)
-
-
+  # max(bd$watbal)
+  # summary(bd$watbal)
+  # hist(bd$watbal)
 
   return(bd)
 
