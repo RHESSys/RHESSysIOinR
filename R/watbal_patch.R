@@ -30,7 +30,8 @@
 watbal_patch = function(pd, cd) {
 
   library(tidyverse)
-  pd$watbal.tmp=with(pd,rain+Qin-Qout-trans_sat-trans_unsat-evap-evap_surface-soil_evap)
+    qouta = ifelse(qp$streamflow > 0, qp$streamflow, qp$Qout)
+  pd$watbal.tmp=with(pd,pcp+Qin-qouta-trans_sat-trans_unsat-evap-evap_surface-soil_evap)
   pd$sd=with(pd,sat_def-rz_storage-unsat_stor)
 
   cd$weighted_snow_stored = cd$snow_stored * cd$covfrac
