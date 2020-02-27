@@ -30,7 +30,7 @@
 watbal_patch = function(pd, cd) {
 
   library(tidyverse)
-    qouta = ifelse(qp$streamflow > 0, qp$streamflow, qp$Qout)
+    qouta = ifelse(pd$streamflow > 0, pd$streamflow, pd$Qout)
   pd$watbal.tmp=with(pd,pcp+Qin-qouta-trans_sat-trans_unsat-evap-evap_surface-soil_evap)
   pd$sd=with(pd,sat_def-rz_storage-unsat_stor)
 
