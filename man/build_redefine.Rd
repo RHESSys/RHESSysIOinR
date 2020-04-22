@@ -12,8 +12,7 @@ build_redefine(
   std_thin = NULL,
   patchID = NULL,
   strataID = NULL,
-  veg_parm_ID = NULL,
-  append = FALSE
+  veg_parm_ID = NULL
 )
 }
 \arguments{
