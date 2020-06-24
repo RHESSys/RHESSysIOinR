@@ -60,7 +60,7 @@ make_all_option_table <- function(parameter_method,
       # Do nothing! The group_id for the def file is already in the all_option_def dataframe.
     } else {
       # Attach group_id column to all_option_def for unchanging def files
-      all_option_def <- cbind(all_option_def,  "placeholder_name" = rep(0, length(option_sets_standard_par[,1])))
+      all_option_def <- cbind(all_option_def,  "placeholder_name" = rep(0, nrow(all_option_def)))
       colnames(all_option_def)[colnames(all_option_def) == "placeholder_name"] <- paste(input_hdr_list_def[aa], ":group_id", sep="")
     }
   }
