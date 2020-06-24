@@ -9,19 +9,19 @@ readin_rhessys_output_cal(
   path,
   initial_date,
   parameter_file = NULL,
-  num_canopies = 1
+  num_layers = 1
 )
 }
 \arguments{
-\item{var_names}{Vector of the variables names that are to be imported into R}
+\item{var_names}{Vector of the variables names that are to be imported into R. Variables should all have the same number of layers.}
 
 \item{path}{Path to the directory containing data}
 
-\item{initial_date}{Initial date for the data e.g. ymd("1941-10-01")}
+\item{initial_date}{Initial date for the data e.g. lubridate::ymd("1941-10-01")}
 
-\item{parameter_file}{Optional file containing parameters to be included in analysis (e.g. RHESSys output x_parameter_sets.txt)}
+\item{parameter_file}{Optional file containing parameters to be included in analysis (e.g. RHESSysIOinR output x_parameter_sets.csv)}
 
-\item{num_canopies}{Number of layers in data. Generally a value of 1 expect when using two canopies.}
+\item{num_layers}{Number of layers in data. For most output (e.g. patch, basin), this will generally have a value of one. The exception being when using two canopies.}
 }
 \description{
 Imports multiple-run RHESSys output that has been consolidated by variable. This
@@ -29,5 +29,5 @@ function imports and manipulates data so that it is 'tidy' and easily imported
 into ggplot.
 }
 \details{
-In general, user should not combine data output with a different number of layers
+This function processes the output from multiple run calibration or simulations which consolidate a selection of the output into the allsim folder.
 }
