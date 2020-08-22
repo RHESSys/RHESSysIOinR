@@ -5,13 +5,12 @@
 #' @param ??? ???
 #' @param ??? ???
 #' @param ??? ???
-#'
-#'
 #' @export
+
 make_clim_base_file <- function(input_clim_base,
                                 clim_base_path,
                                 input_dated_seq,
-                                clim_dated_ext){
+                                clim_dated_ext) {
 
   # Create core part of climate base file
   clim_base_core <- do.call(dplyr::bind_rows, input_clim_base)
