@@ -44,7 +44,7 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
     def_table = rbind(def_table, par_sets_df[!in_def,])
   }
 
-  def_table <- format(def_table, scientific=FALSE);
+  def_table <- format(def_table, scientific = FALSE);
 
   # ------------------------------ Output def file ------------------------------
   path <- dirname(def_file)
@@ -53,12 +53,15 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
 
   # Create new directory
   path_new <- file.path(path, name_no_ext)
-  if(dir.exists(path_new) == FALSE){dir.create(path_new)}
+  if (dir.exists(path_new) == FALSE) {dir.create(path_new)}
 
+  if (!is.null(file_name_ext)) {
+    file_name_ext = paste0("_",file_name_ext)
+  }
   # Write new file
-  file_name_out <- file.path(path_new, paste(name_no_ext,"_",file_name_ext,".def",sep=""))
+  file_name_out <- file.path(path_new, paste(name_no_ext,file_name_ext,".def",sep = ""))
   # if there are comments, this should remove extra NAs
   def_table[def_table == "NA"] = " "
-  write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote=FALSE, sep="       ")
+  write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
 }
 

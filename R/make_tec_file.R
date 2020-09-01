@@ -14,5 +14,3 @@ make_tec_file <- function(tec_file, tec_data){
 
   write.table(tec_data, file = tec_file, col.names = FALSE, row.names=FALSE, quote = FALSE)
 }
-
-

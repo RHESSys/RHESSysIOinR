@@ -12,9 +12,13 @@ clim_auto(
   effective_lai,
   screen_height,
   annual_prefix = "annual",
+  num_non_critical_annual_sequences = 0,
   monthly_prefix = "monthly",
+  num_non_critical_monthly_sequences = 0,
   daily_prefix = "daily",
-  hourly_prefix = "hourly"
+  num_non_critical_daily_sequences = 0,
+  hourly_prefix = "hourly",
+  num_non_critical_hourly_sequences = 0
 )
 }
 \description{

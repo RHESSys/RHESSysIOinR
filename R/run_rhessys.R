@@ -33,7 +33,7 @@ run_rhessys <- function(parameter_method,
                         input_tec_data,
                         output_variables = NULL,
                         output_initiation = 1,
-                        return_data = FALSE){
+                        return_data = FALSE) {
 
   # ------------------------------ Input checks ------------------------------
   if (!parameter_method %in% c("all_combinations","lhc","monte_carlo","exact_values")) {stop("Invalid parameter_method.")}
