@@ -1,0 +1,44 @@
+---
+title: "IOin_examples"
+author: "Will Burke"
+date: "9/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## RHESSysIOinR Input Functions
+
+This vignette shows example uses of the IOin_X functions, which serve to construct input data objects used to run one or many RHESSys simulations.
+
+New/renamed input functions:
+
+ * IOin_rhessys_input
+ * IOin_tec_std
+ * IOin_std_pars
+ * IOin_hdr
+ * IOin_clim
+
+### IOin_rhessys_input
+
+```{r eval=FALSE}
+
+IOin_rhessys_input(
+  version,
+  tec_file,
+  world_file,
+  world_hdr_prefix,
+  flowtable,
+  start,
+  end,
+  output_folder,
+  output_prefix,
+  commandline_options
+)
+
+
+
+
+```

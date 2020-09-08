@@ -1,23 +1,34 @@
-#' input_tec
+#' IOin_tec_std
 #'
-#' Tiny wrapper to simplify input of tec events
+#' Input function to construct a dataframe of standard tec events, including start, grow start, and output state
 #'
-#' @param ... Vector(s) containing tec events in format c(<year>,<month>,<day>,<hour>,<name/event type>).
-#' Additional tec events can be added just as additional arguments.
 #' @param start_end Vector of two charaters, indicating start and end dates, same as used to input start and end date for input_rhessys.
 #' Used to auto generate tec events for printing (normal and grow), and output current state at end
 #' @param start start date of run - used along with 'end' arg
 #' @param end End date of run
 #' @param output_state TRUE/FALSE if an output_current_state tec event should be scheduled at the end of the simulation
+#'
 #' @author Will Burke
 #'
 #' @export
 
-input_tec = function(start_end = NULL, start = NULL, end = NULL, output_state = TRUE){
+IOin_tec_std = function(start_end = NULL, start = NULL, end = NULL, output_state = TRUE){
 
   if (is.null(start_end) & is.null(start) & is.null(end)){
+    cat("Either start_end or both start and end arguments are needed")
     return(NULL)
   }
+
+  if (is.null(start_end) & ((is.null(start) & !is.null(end)) | (!is.null(start) & is.null(end))) ) {
+    cat("Both start and end arguments are needed")
+    return(NULL)
+  }
+
+  # check if inputs are dates or already in RHESSys date format
+
+  # put small IFs here to split dates into start and end if input as start_end, then rest of function is unified
+
+
 
   if (!is.null(start_end)) {
     date_split = strsplit(start_end,split = " ")

@@ -1,12 +1,26 @@
-#' clim_auto
+#' IOin_clim
 #'
-#' Generate input for run_rhessys basestation input
+#' Generate input for run_rhessys climate basestation input
+#' @param base_station_id Base station ID.
+#' @param x_coordinate X coordinate.
+#' @param y_coordinate Y coordinate.
+#' @param z_coordinate Z coordinate.
+#' @param effective_lai Effective LAI.
+#' @param screen_height Screen height.
+#' @param annual_prefix Prefix for annual climate inputs.
+#' @param num_non_critical_annual_sequences Number of non critical annual climate inputs. Defaults to 0.
+#' @param monthly_prefix Prefix for monthly climate inputs.
+#' @param num_non_critical_monthly_sequences Number of non critical annual climate inputs. Defaults to 0.
+#' @param daily_prefix Prefix for daily climate inputs.
+#' @param num_non_critical_daily_sequences Number of non critical annual climate inputs. Defaults to 0.
+#' @param hourly_prefix Prefix for hourly climate inputs.
+#' @param num_non_critical_hourly_sequences Number of non critical annual climate inputs. Defaults to 0.
 #'
 #' @author Will Burke
 #'
 #' @export
 
-clim_auto = function(base_station_id,
+IOin_clim = function(base_station_id,
                      x_coordinate,
                      y_coordinate,
                      z_coordinate,
