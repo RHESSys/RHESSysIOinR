@@ -23,7 +23,7 @@ watbal_basin = function(bd) {
   # changes in stores
   bd$sd = with(bd, sat_def - rz_storage - unsat_stor)
   bd$sddiff = c(0, diff(bd$sd))
-  bd$snodiff = c(0, diff(bd$snow))
+  bd$snodiff = c(0, diff(bd$snowpack))
   bd$detdiff = c(0, diff(bd$detention_store))
   bd$litdiff = c(0, diff(bd$litter_store))
   bd$candiff = c(0, diff(bd$canopy_store))
