@@ -25,9 +25,9 @@ New/renamed input functions:
 
 ```{r eval=FALSE}
 
-IOin_rhessys_input(
-  version,
-  tec_file,
+rhessysinput = IOin_rhessys_input(
+  version = "",
+  tec_file = "",
   world_file,
   world_hdr_prefix,
   flowtable,
@@ -38,7 +38,82 @@ IOin_rhessys_input(
   commandline_options
 )
 
+```
 
+### IOin_tec_std
 
+```{r eval=FALSE}
+
+tec_std = IOin_tec_std(start_end,
+                       output_state = 
+)
+
+tec_std = IOin_tec_std(start = ,
+                       end = ,
+                       output_state = 
+)
+
+```
+
+### IOin_std_pars
+
+```{r eval=FALSE}
+
+std_pars = IOin_std_pars(m = 2,
+                         k = 2,
+                         m_v = 2,
+                         k_v = 2,
+                         pa = 2,
+                         po = 2,
+                         gw1 = 2,
+                         gw2 = 2
+)
+
+```
+
+### IOin_hdr
+
+```{r eval=FALSE}
+
+hdr = IOin_hdr(basin = ,
+               hillslope = ,
+               zone = ,
+               soil = ,
+               landuse = ,
+               stratum = ,
+               basestations = ,
+)
+
+```
+
+### IOin_clim
+
+```{r eval=FALSE}
+
+clim = IOin_clim(base_station_id = ,
+                 x_coordinate = ,
+                 y_coordinate = ,
+                 z_coordinate = ,
+                 effective_lai = ,
+                 screen_height = ,
+                 daily_prefix = ,
+                 num_non_critical_daily_sequences = 
+)
+
+clim = IOin_clim(base_station_id = ,
+                 x_coordinate = ,
+                 y_coordinate = ,
+                 z_coordinate = ,
+                 effective_lai = ,
+                 screen_height = ,
+                 annual_prefix = ,
+                 num_non_critical_annual_sequences = ,
+                 monthly_prefix = ,
+                 num_non_critical_monthly_sequences = ,
+                 daily_prefix = ,
+                 num_non_critical_daily_sequences = ,
+                 hourly_prefix = ,
+                 num_non_critical_hourly_sequences = ,
+)
 
 ```

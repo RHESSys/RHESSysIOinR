@@ -1,14 +1,16 @@
 #' IOin_std_pars
 #'
-#' Input standard soil parameters for RHESSys
-#' @param m
-#' @param k
-#' @param m_v
-#' @param k_v
-#' @param pa
-#' @param po
-#' @param gw1
-#' @param gw2
+#' Input standard soil parameters for RHESSys, see https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options
+#' @param m Decay of hydraulic conductivity with depth
+#' @param k Hydraulic conductivity at the surface
+#' @param m_v Multiplier to scale the vertical decay of hydraulic conductivity with depth
+#' @param k_v Multiplier to scale the vertical hydraulic conductivity at the surface
+#' @param pa Multiplier to scale the pore size index, set in soil def file.
+#' @param po Multiplier to scale the psi air entry, set in soil def file.
+#' @param gw1 Multiplier on the sat_to_gw_coeff parameter set in the soil definition file
+#' (representing the amount of water moving from the saturated store to the groundwater store).
+#' @param gw2 Multiplier on the gw_loss_coeff parameter in the hillslope default file
+#' (representing the amount of water moving from the groundwater store to the stream).
 #'
 #' @author Will Burke
 #'
