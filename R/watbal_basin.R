@@ -11,7 +11,7 @@ watbal_basin = function(bd) {
 
   # some error checks here
   req_cols = c("precip", "streamflow", "trans", "evap", "sat_def", "rz_storage", "unsat_stor",
-               "sd", "snowpack", "detention_store", "litter_store", "canopy_store", "gw.storage")
+               "snowpack", "detention_store", "litter_store", "canopy_store", "gw.storage")
   if (!is.data.frame(bd) || any(!req_cols %in% colnames(bd))) {
     cat("Input is either not a data frame or is missing the correct columns")
     return(NA)
@@ -23,7 +23,7 @@ watbal_basin = function(bd) {
   # changes in stores
   bd$sd = with(bd, sat_def - rz_storage - unsat_stor)
   bd$sddiff = c(0, diff(bd$sd))
-  bd$snodiff = c(0, diff(bd$snow))
+  bd$snodiff = c(0, diff(bd$snowpack))
   bd$detdiff = c(0, diff(bd$detention_store))
   bd$litdiff = c(0, diff(bd$litter_store))
   bd$candiff = c(0, diff(bd$canopy_store))
