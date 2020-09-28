@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## RHESSysIOinR Input Functions
 
-This vignette shows example uses of the IOin_X functions, which serve to construct input data objects used to run one or many RHESSys simulations.
+This vignette shows example uses of the IOin_X functions, which together construct input data objects used to run one or many RHESSys simulations.
 
 New/renamed input functions:
 
@@ -20,22 +20,23 @@ New/renamed input functions:
  * IOin_std_pars
  * IOin_hdr
  * IOin_clim
+ * IOin_def_pars_simple
 
 ### IOin_rhessys_input
 
 ```{r eval=FALSE}
 
-rhessysinput = IOin_rhessys_input(
-  version = "",
-  tec_file = "",
-  world_file,
-  world_hdr_prefix,
-  flowtable,
-  start,
-  end,
-  output_folder,
-  output_prefix,
-  commandline_options
+input_rhessys = IOin_rhessys_input(
+  version = file.path("bin", comp_ID, "rhessys7.2"),
+  tec_file = "tecfiles/BC.tec",
+  world_file = "worldfiles/no_multi/BC_conifer_S_2p.world",
+  world_hdr_prefix = "BC",
+  flowtable = "flowtables/BC_2p.flow",
+  start = "1943 10 01 01",
+  end = "1948 10 01 01",
+  output_folder = "output/",
+  output_prefix = "BC_2p",
+  commandline_options = c("-vmort_off -g -b -p -c -msr -v -6")
 )
 
 ```
@@ -44,13 +45,9 @@ rhessysinput = IOin_rhessys_input(
 
 ```{r eval=FALSE}
 
-tec_std = IOin_tec_std(start_end,
-                       output_state = 
-)
-
-tec_std = IOin_tec_std(start = ,
-                       end = ,
-                       output_state = 
+tec_std = IOin_tec_std(start = "1943 10 01 01",
+                       end = "1948 10 01 01",
+                       output_state = TRUE
 )
 
 ```
@@ -59,14 +56,15 @@ tec_std = IOin_tec_std(start = ,
 
 ```{r eval=FALSE}
 
-std_pars = IOin_std_pars(m = 2,
-                         k = 2,
-                         m_v = 2,
-                         k_v = 2,
-                         pa = 2,
-                         po = 2,
-                         gw1 = 2,
-                         gw2 = 2
+std_pars = IOin_std_pars(
+  m = 2,
+  k = 2,
+  m_v = 2,
+  k_v = 2,
+  pa = 1.15,
+  po = 0.766,
+  gw1 = 0.24,
+  gw2 = 0.2
 )
 
 ```
@@ -75,13 +73,28 @@ std_pars = IOin_std_pars(m = 2,
 
 ```{r eval=FALSE}
 
-hdr = IOin_hdr(basin = ,
-               hillslope = ,
-               zone = ,
-               soil = ,
-               landuse = ,
-               stratum = ,
-               basestations = ,
+input_hdr_list = IOin_hdr(basin = "defs/basin_p301.def",
+                          hillslope = "defs/hill_p301.def",
+                          zone = "defs/zone_p301.def",
+                          soil = "defs/soil_forestshrub.def",
+                          landuse = "defs/lu_p301.def",
+                          stratum = c("defs/veg_p301_shrub.def", "defs/veg_p301_conifer.def"),
+                          basestations = "clim/upGGmod.base")
+
+```
+
+### Run RHESSys
+
+Together, these inputs can run RHESSys for a single simulation with very simple options.
+
+```{r eval=FALSE}
+
+# this is a nearly barebones run
+run_rhessys_core(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr_list,
+  std_pars = input_std_pars,
+  tec_data = input_tec_data
 )
 
 ```
@@ -90,30 +103,76 @@ hdr = IOin_hdr(basin = ,
 
 ```{r eval=FALSE}
 
-clim = IOin_clim(base_station_id = ,
-                 x_coordinate = ,
-                 y_coordinate = ,
-                 z_coordinate = ,
-                 effective_lai = ,
-                 screen_height = ,
-                 daily_prefix = ,
-                 num_non_critical_daily_sequences = 
+# this is a very simple case, just creating a basestation
+input_clim = IOin_clim(
+  base_station_id = 101,
+  x_coordinate = 100.0,
+  y_coordinate = 100.0,
+  z_coordinate = 1984,
+  effective_lai = 3.5,
+  screen_height = 160,
+  daily_prefix = "clim/upGGmod"
 )
 
-clim = IOin_clim(base_station_id = ,
-                 x_coordinate = ,
-                 y_coordinate = ,
-                 z_coordinate = ,
-                 effective_lai = ,
-                 screen_height = ,
-                 annual_prefix = ,
-                 num_non_critical_annual_sequences = ,
-                 monthly_prefix = ,
-                 num_non_critical_monthly_sequences = ,
-                 daily_prefix = ,
-                 num_non_critical_daily_sequences = ,
-                 hourly_prefix = ,
-                 num_non_critical_hourly_sequences = ,
+```
+
+### IOin_def_pars
+
+```{r eval=FALSE}
+
+input_def_pars = IOin_def_pars_simple(
+  list("defs/veg_p301_conifer.def", "epc.allocation_flag","dickenson"),
+  list("defs/veg_p301_conifer.def", "epc.alloc_frootc_leafc", 1),
+  list("defs/veg_p301_conifer.def", "epc.alloc_stemc_leafc", 0.6),
+  list("defs/veg_p301_conifer.def", "epc.netpabs_shade", 0.2),
+  list("defs/soil_forestshrub.def", "soil_depth", 1),
+  list("defs/soil_forestshrub.def", "pore_size_index", 0.15),
+  list("defs/soil_forestshrub.def", "sat_to_gw_coeff", 0.12),
+  list("defs/soil_forestshrub.def", "psi_air_entry", 0.15)
+)
+
+```
+
+### TODO: Output vars
+
+```{r eval=FALSE}
+
+  output_method = "r"
+
+  # this will be turned into a function
+  # patch/canopy level vars
+  output_variables <- data.frame(out_file = character(), variable = character(), stringsAsFactors = FALSE)
+  output_variables[1,] = c("pd", "Qout")
+  output_variables[2,] <- c("pd", "litter.S") 
+  output_variables[3,] <- c("pd", "psn")
+  output_variables[4,] <- c("pdg", "lai")
+  output_variables[5,] <- c("pdg", "plantc")
+  output_variables[6,] <- c("cd", "height")
+  output_variables[7,] <- c("cdg", "leafc") 
+  output_variables[8,] <- c("pdg", "litrc_sum") 
+  output_variables[9,] <- c("pd", "rz_storage") 
+  output_variables[10,] <- c("pd", "fire_et")
+  output_variables[11,] <- c("pd", "pet")
+
+```
+
+
+### Run RHESSys (v2)
+
+This runs RHESSys for a single simulation with a few more options.
+
+```{r eval=FALSE}
+
+run_rhessys_core(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr_list,
+  def_pars = input_def_pars,
+  std_pars = input_std_pars,
+  tec_data = input_tec_data,
+  clim_base = input_clim,
+  output_method = output_method,
+  output_variables = output_vars,
+  
 )
 
 ```

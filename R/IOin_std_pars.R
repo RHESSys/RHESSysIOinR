@@ -31,8 +31,8 @@ IOin_std_pars = function(m,
 
 
   # TODO check here for real world ranges of the parameters, warn if out of bounds
-
-  std_pars = c(m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
+  #
+  std_pars = list(m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
 
   return(std_pars)
 
