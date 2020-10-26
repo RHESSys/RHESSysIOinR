@@ -9,11 +9,12 @@
 #' @param var_names Vector of the variables names that are to be imported into R. Variables should all have the same number of layers.
 #' @param path Path to the directory containing data
 #' @param initial_date Initial date for the data e.g. lubridate::ymd("1941-10-01")
+#' @param timestep Timestep used for modeling (e.g. yearly, monthly, or daily). Default is daily.
 #' @param parameter_file Optional file containing parameters to be included in analysis (e.g. RHESSysIOinR output x_parameter_sets.csv)
 #' @param num_layers Number of layers in data. For most output (e.g. patch, basin), this will generally have a value of one. The exception being when using two canopies.
 #'
 #' @export
-readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_file = NULL, num_layers = 1){
+readin_rhessys_output_cal <- function(var_names, path, initial_date, timestep = "daily", parameter_file = NULL, num_layers = 1){
 
   # Read in 'allsim' output into list
   a <- var_names %>%
@@ -21,7 +22,13 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
     lapply(., read_tsv, col_names = FALSE, skip = 2, col_types = cols(X1 = col_skip()))
 
   # Inputs for processing
-  dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]][[1]])/num_layers) - 1, by = "day"), times = num_layers)
+  if (timestep == "yearly"){
+    dates <- rep(seq(initial_date, initial_date + lubridate::years(length(a[[1]][[1]])/num_layers) - 1, by = "year"), times = num_layers)
+  } else if (timestep == "monthly") {
+    dates <- rep(seq(initial_date, initial_date + months(length(a[[1]][[1]])/num_layers) - 1, by = "month"), times = num_layers)
+  } else {
+    dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]][[1]])/num_layers) - 1, by = "day"), times = num_layers)
+  }
 
   # Process data to tidy data frame (part 1)
   b <- a %>%
