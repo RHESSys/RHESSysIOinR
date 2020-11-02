@@ -7,6 +7,7 @@
 #' @param soil Path to soil parameter definition file(s).
 #' @param landuse Path to landuse parameter definition file(s).
 #' @param stratum Path to stratum parameter definition file(s).
+#' @param fire Path to fire parameter definition file.
 #' @param basestations Path to basin climate basestation file(s).
 #'
 #' @author Will Burke
@@ -24,6 +25,7 @@ IOin_hdr = function(basin,
                     soil,
                     landuse,
                     stratum,
+                    fire = NULL,
                     basestations) {
 
   input_hdr_list <- list()
@@ -37,6 +39,7 @@ IOin_hdr = function(basin,
   input_hdr_list$soil_def <- soil
   input_hdr_list$landuse_def <- landuse
   input_hdr_list$stratum_def <- stratum
+  input_hdr_list$fire_def <- fire
   input_hdr_list$base_stations <- basestations
 
   return(input_hdr_list)

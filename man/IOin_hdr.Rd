@@ -4,7 +4,16 @@
 \alias{IOin_hdr}
 \title{IOin_hdr}
 \usage{
-IOin_hdr(basin, hillslope, zone, soil, landuse, stratum, basestations)
+IOin_hdr(
+  basin,
+  hillslope,
+  zone,
+  soil,
+  landuse,
+  stratum,
+  fire = NULL,
+  basestations
+)
 }
 \arguments{
 \item{basin}{Path to basin parameter definition file.}
@@ -18,6 +27,8 @@ IOin_hdr(basin, hillslope, zone, soil, landuse, stratum, basestations)
 \item{landuse}{Path to landuse parameter definition file(s).}
 
 \item{stratum}{Path to stratum parameter definition file(s).}
+
+\item{fire}{Path to fire parameter definition file.}
 
 \item{basestations}{Path to basin climate basestation file(s).}
 }

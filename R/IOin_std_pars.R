@@ -27,12 +27,18 @@ IOin_std_pars = function(m,
                          pa,
                          po,
                          gw1,
-                         gw2) {
+                         gw2,
+                         n = 1,
+                         pct_range = 0.25) {
 
 
   # TODO check here for real world ranges of the parameters, warn if out of bounds
   #
   std_pars = list(m = m, k = k, m_v = m_v, k_v = k_v, pa = pa, po = po, gw1 = gw1, gw2 = gw2)
+
+  if (n > 1) {
+    std_pars = lapply(std_pars, function(x) runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
+  }
 
   return(std_pars)
 

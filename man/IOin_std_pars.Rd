@@ -4,7 +4,7 @@
 \alias{IOin_std_pars}
 \title{IOin_std_pars}
 \usage{
-IOin_std_pars(m, k, m_v, k_v, pa, po, gw1, gw2)
+IOin_std_pars(m, k, m_v, k_v, pa, po, gw1, gw2, n = 1, pct_range = 0.25)
 }
 \arguments{
 \item{m}{Decay of hydraulic conductivity with depth}

@@ -11,18 +11,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## RHESSysIOinR Input Functions
 
-This vignette shows example uses of the IOin_X functions, which together construct input data objects used to run one or many RHESSys simulations.
+This vignette shows example uses of the IOin\_X functions, which together construct input data objects used to run one or many RHESSys simulations.
 
-New/renamed input functions:
+#### New/renamed input functions:
 
- * IOin_rhessys_input
- * IOin_tec_std
- * IOin_std_pars
- * IOin_hdr
- * IOin_clim
- * IOin_def_pars_simple
+-   IOin\_rhessys\_input
+-   IOin\_tec\_std
+-   IOin\_std\_pars
+-   IOin\_hdr
+-   IOin\_clim
+-   IOin\_def\_pars\_simple
 
-### IOin_rhessys_input
+### IOin\_rhessys\_input
 
 ```{r eval=FALSE}
 
@@ -41,7 +41,7 @@ input_rhessys = IOin_rhessys_input(
 
 ```
 
-### IOin_tec_std
+### IOin\_tec\_std
 
 ```{r eval=FALSE}
 
@@ -52,7 +52,7 @@ tec_std = IOin_tec_std(start = "1943 10 01 01",
 
 ```
 
-### IOin_std_pars
+### IOin\_std\_pars
 
 ```{r eval=FALSE}
 
@@ -64,12 +64,12 @@ std_pars = IOin_std_pars(
   pa = 1.15,
   po = 0.766,
   gw1 = 0.24,
-  gw2 = 0.2
+  gw2 = 0.2 , 
 )
 
 ```
 
-### IOin_hdr
+### IOin\_hdr
 
 ```{r eval=FALSE}
 
@@ -85,7 +85,7 @@ input_hdr_list = IOin_hdr(basin = "defs/basin_p301.def",
 
 ### Run RHESSys
 
-Together, these inputs can run RHESSys for a single simulation with very simple options.
+Together, these inputs (IOin\_X) can be used to run RHESSys for a single simulation with very simple options.
 
 ```{r eval=FALSE}
 
@@ -99,7 +99,7 @@ run_rhessys_core(
 
 ```
 
-### IOin_clim
+### IOin\_clim
 
 ```{r eval=FALSE}
 
@@ -116,7 +116,7 @@ input_clim = IOin_clim(
 
 ```
 
-### IOin_def_pars
+### IOin\_def\_pars
 
 ```{r eval=FALSE}
 
@@ -133,37 +133,30 @@ input_def_pars = IOin_def_pars_simple(
 
 ```
 
-### TODO: Output vars
+### Output Variables
 
 ```{r eval=FALSE}
 
+  # to use native R-based subsetting
   output_method = "r"
 
-  # this will be turned into a function
-  # patch/canopy level vars
-  output_variables <- data.frame(out_file = character(), variable = character(), stringsAsFactors = FALSE)
-  output_variables[1,] = c("pd", "Qout")
-  output_variables[2,] <- c("pd", "litter.S") 
-  output_variables[3,] <- c("pd", "psn")
-  output_variables[4,] <- c("pdg", "lai")
-  output_variables[5,] <- c("pdg", "plantc")
-  output_variables[6,] <- c("cd", "height")
-  output_variables[7,] <- c("cdg", "leafc") 
-  output_variables[8,] <- c("pdg", "litrc_sum") 
-  output_variables[9,] <- c("pd", "rz_storage") 
-  output_variables[10,] <- c("pd", "fire_et")
-  output_variables[11,] <- c("pd", "pet")
+  my_vars = data.frame(c("pd", "Qout"),
+                       c("pd", "psn"),
+                       c("pdg", "lai"),
+                       c("pdg", "plantc"),
+                       c("cd", "height"))
+  
+  output_vars = IOin_output_vars(my_vars)
 
 ```
 
-
-### Run RHESSys (v2)
+### Run RHESSys with more options
 
 This runs RHESSys for a single simulation with a few more options.
 
 ```{r eval=FALSE}
 
-run_rhessys_core(
+output_data = run_rhessys_core(
   input_rhessys = input_rhessys,
   hdr_files = input_hdr_list,
   def_pars = input_def_pars,
@@ -172,7 +165,7 @@ run_rhessys_core(
   clim_base = input_clim,
   output_method = output_method,
   output_variables = output_vars,
-  
+  return_data = T
 )
 
 ```

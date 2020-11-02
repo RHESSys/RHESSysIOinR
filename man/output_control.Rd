@@ -10,22 +10,27 @@ output_control(
   return_data,
   output_folder,
   output_filename,
-  run = 1
+  runID = 1
 )
 }
 \arguments{
-\item{output_method}{"awk" will use awk, any other non NULL input will use R based output selection}
+\item{output_method}{Output method (function) to use. "awk" will use awk, "r" will use new R based method,
+any other non NULL input will use the older R based output selection.}
 
-\item{output_variables}{List of output variables to subset via the indicated method, Defaults to NULL}
+\item{output_variables}{Datafrane with two named columns: "variables" containing variables of interest
+found in the header of standard rhessys output files, "out_file" points to the files containing the associated variables,
+this can be either the path to that file, can use the abbreviation for the different output types
+(patch daily = pd, patch daily grow = pdg etc.) and the files in output_folder will be parsed appropriately,
+or can use the fully written out space.time suffix, e.g. "patch.daily" or "grow_patch.daily"}
 
 \item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
 
-\item{output_folder}{Folder where rhessys output is located (e.g. 'out')}
+\item{output_folder}{Folder where rhessys output is located}
 
 \item{output_filename}{Base file name of standard rhessys output}
 
-\item{run}{Simulation number. Used to reset files in allsim at beginning of simulation}
+\item{runID}{Integer ID of the current run, used internally}
 }
 \description{
-Passes output variables to appropriate output method - eventually should put all the output code in here directly maybe?
+Passes output variables to appropriate output selection method.
 }

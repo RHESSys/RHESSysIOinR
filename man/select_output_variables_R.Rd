@@ -16,7 +16,7 @@ select_output_variables_R(
 )
 }
 \arguments{
-\item{output_variables}{Datafrane with named columns: "variables" containing variables matching variables of interest
+\item{output_variables}{Datafrane with named columns: "variables" containing variables of interest
 found in the header of rhessys output files, "out_file" points to the files containing the associated variables,
 this can be either the path to that file, can use the abbreviation for the different output types
 (patch daily = pd, patch daily grow = pdg etc.) and the files in output_folder will be parsed appropriately,
