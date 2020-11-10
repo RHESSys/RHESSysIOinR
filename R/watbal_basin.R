@@ -31,7 +31,7 @@ watbal_basin = function(bd) {
 
   # fluxes minus stores
   bd$watbal = with(bd, watbal_flux + sddiff - snodiff - detdiff - litdiff - candiff - gwdiff)
-
+  bd$watbal[1] = 0.0
   # max(bd$watbal)
   # summary(bd$watbal)
   # hist(bd$watbal)
