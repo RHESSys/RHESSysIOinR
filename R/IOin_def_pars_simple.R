@@ -5,7 +5,7 @@
 #' a seperate funciton later if desired.
 #' @param ... Any number of lists, each containing 3 elements in format: list("<def file>", "<parameter name>", <value>)
 #' @param n The number of parameter sets to generate.
-#' @param pct_range The percent range
+#' @param pct_range The percent range of variation from input values over which sampling (if any), will happen.
 #' @param rm_dup TRUE/FALSE should duplicate def file + variable entries be automatically removed? A warning will occur regardless.
 #'
 #' @author Will Burke

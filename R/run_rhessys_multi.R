@@ -1,7 +1,7 @@
-#' Run RHESSys simulations
+#' Run multiple RHESSys simulations
 #'
 #' Runs RHESSys simulations.
-#' @inheritParams run_rhessys_core
+#' @inheritParams run_rhessys_single
 #' @author Will Burke
 #'
 #' @export
@@ -12,25 +12,24 @@
 
 
 # some testing
-def_pars = input_def_pars
-def_pars = input_def_parsx1
-def_pars = NULL
+# def_pars = input_def_pars
+# def_pars = input_def_parsx1
+# def_pars = NULL
+#
+# std_pars = input_std_pars
+# std_pars = input_std_parsx1
 
-std_pars = input_std_pars
-std_pars = input_std_parsx1
 
-
-
-run_rhessys_sims = function(input_rhessys,
-                            hdr_files,
-                            std_pars,
-                            tec_data,
-                            def_pars = NULL,
-                            clim_base = NULL,
-                            output_method = NULL,
-                            output_variables = NULL,
-                            return_data = FALSE,
-                            runID = NULL) {
+run_rhessys_multi = function(input_rhessys,
+                             hdr_files,
+                             std_pars,
+                             tec_data,
+                             def_pars = NULL,
+                             clim_base = NULL,
+                             output_method = NULL,
+                             output_variables = NULL,
+                             return_data = FALSE,
+                             runID = NULL) {
 
   # TODO add logic on how to combine scenarios/iterations/param sets ACROSS data objects
   # e.g. if def_pars has 10 values for each paramter, there shouldbe 10 RHESSys runs. but if std_pars has 5 values for each parameter
@@ -47,6 +46,7 @@ run_rhessys_sims = function(input_rhessys,
     stop("Input standard paramters must include: 'm', 'k', 'm_v', 'k_v', 'pa', 'po', 'gw1', and 'gw2' ")
   }
   # TODO add check for same number of std pars?
+
 
   # start list of dfs of inputs to include in making scenarios
   dfs = list(std_pars_df)
@@ -67,8 +67,12 @@ run_rhessys_sims = function(input_rhessys,
     # i think do nothing
   }
 
+
   # --- tec events ---
   # add here when tec event scenarios/iterations get added
+
+
+
 
   # get all combinations - expand grid but with dfs, take from reshape::expand.grid.df
   indexes <- lapply(dfs, function(x) 1:nrow(x))
@@ -76,6 +80,7 @@ run_rhessys_sims = function(input_rhessys,
   df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs, grid))
   colnames(df) <- unlist(lapply(dfs, colnames))
   rownames(df) <- 1:nrow(df)
+
 
   # as a for loop
   for (i in nrow(df)) {

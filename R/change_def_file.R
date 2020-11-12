@@ -1,6 +1,6 @@
 #' Replaces parameters in a def file
 #'
-#' This function imports a def file, replaces the values of selected parameters, and exports a def file.
+#' This function reads a def file, replaces the values of selected parameters, and writes a new def file.
 #' @param def_file Path and name of def file
 #' @param par_sets Data frame with parameter names as colnames and a single row of parameter values
 #' @param file_name_ext Optional extension to add to file name
@@ -63,5 +63,8 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   # if there are comments, this should remove extra NAs
   def_table[def_table == "NA"] = " "
   write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
+
+  return(file_name_out)
+
 }
 

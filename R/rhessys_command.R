@@ -12,6 +12,8 @@
 #' @param output_file Path and base file name of RHESSys output
 #' @param input_parameters Soil parameters passed to RHESSys command line.
 #' @param command_options RHESSys command line options, ex. '-g' or '-p'.
+#' @param prefix_command A shell command to be run previous to the RHESSys command line call.
+#' This can be used to source a shell script, which itself can run multiple commands if needed.
 #'
 #' @export
 
@@ -24,19 +26,35 @@ rhessys_command <- function(rhessys_version,
                             end_date,
                             output_file,
                             input_parameters,
-                            command_options) {
+                            command_options,
+                            prefix_command = NULL) {
 
-  # handles NULLS better
-  tmp = paste0(rhessys_version, " -w ", world_file, " -whdr ",world_hdr_file, " -t ", tec_file, " -r ", flow_file,
-               " -st ", start_date, " -ed ", end_date, " -pre ", output_file, " ", input_parameters, " ", command_options)
+  # assemble RHESSys command call
+  tmp = paste0(
+    rhessys_version,
+    " -w ", world_file,
+    " -whdr ", world_hdr_file,
+    " -t ", tec_file,
+    " -r ", flow_file,
+    " -st ", start_date,
+    " -ed ", end_date,
+    " -pre ", output_file,
+    " ", input_parameters,
+    " ", command_options
+  )
 
-  # check OS and run via system correctly - windows requires the linux subsystem
-  if(.Platform$OS.type=="windows"){
-    tmp = noquote(paste("bash -c \"",tmp,"\"",sep=""))
+  # add prefix command optionally
+  if (!is.null(prefix_command)) {
+    tmp = paste0(prefix_command, "; ", tmp)
   }
 
-  print(paste("Command line echo:",tmp),quote = FALSE)
+  # check OS and run via system correctly - windows requires the linux subsystem
+  # TODO add check for WSL installation
+  if (.Platform$OS.type == "windows") {
+    tmp = noquote(paste("bash -c \"", tmp, "\"", sep = ""))
+  }
 
+  print(paste("Command line echo:", tmp), quote = FALSE)
   system(tmp)
 
 }

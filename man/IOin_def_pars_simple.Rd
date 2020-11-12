@@ -4,14 +4,16 @@
 \alias{IOin_def_pars_simple}
 \title{IOin_def_pars_simple}
 \usage{
-IOin_def_pars_simple(..., n = 1, pct_range = 0.25)
+IOin_def_pars_simple(..., n = 1, pct_range = 0.25, rm_dup = F)
 }
 \arguments{
 \item{...}{Any number of lists, each containing 3 elements in format: list("<def file>", "<parameter name>", <value>)}
 
 \item{n}{The number of parameter sets to generate.}
 
-\item{pct_range}{The percent range}
+\item{pct_range}{The percent range of variation from input values over which sampling (if any), will happen.}
+
+\item{rm_dup}{TRUE/FALSE should duplicate def file + variable entries be automatically removed? A warning will occur regardless.}
 }
 \description{
 The definition file parameters to modify. This input function  generates an input parameter object, either for a single simulation,

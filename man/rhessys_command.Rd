@@ -14,7 +14,8 @@ rhessys_command(
   end_date,
   output_file,
   input_parameters,
-  command_options
+  command_options,
+  prefix_command = NULL
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ rhessys_command(
 \item{input_parameters}{Soil parameters passed to RHESSys command line.}
 
 \item{command_options}{RHESSys command line options, ex. '-g' or '-p'.}
+
+\item{prefix_command}{A shell command to be run previous to the RHESSys command line call.
+This can be used to source a shell script, which itself can run multiple commands if needed.}
 }
 \description{
 \code{rhessys_command} Assembles command line RHESSys call, and runs it. See the RHESSys wiki:

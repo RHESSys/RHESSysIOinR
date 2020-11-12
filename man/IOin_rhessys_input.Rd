@@ -14,7 +14,8 @@ IOin_rhessys_input(
   end,
   output_folder,
   output_prefix,
-  commandline_options
+  commandline_options,
+  prefix_command
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ IOin_rhessys_input(
 \item{output_prefix}{Prefix for output files.}
 
 \item{commandline_options}{Commandline options to be passed to RHESSys, e.x. '-g' or '-p'}
+
+\item{prefix_command}{A shell command to be run previous to the RHESSys command line call.
+This can be used to source a shell script, which itself can run multiple commands if needed.}
 }
 \description{
 Basic inputs to run RHESSys

@@ -19,16 +19,16 @@
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
 
-run_rhessys_core <- function(input_rhessys,
-                             hdr_files,
-                             std_pars,
-                             tec_data,
-                             def_pars = NULL,
-                             clim_base = NULL,
-                             output_method = NULL,
-                             output_variables = NULL,
-                             return_data = FALSE,
-                             runID = NULL) {
+run_rhessys_single <- function(input_rhessys,
+                               hdr_files,
+                               tec_data,
+                               std_pars = NULL,
+                               def_pars = NULL,
+                               clim_base = NULL,
+                               output_method = NULL,
+                               output_variables = NULL,
+                               return_data = FALSE,
+                               runID = NULL) {
 
   # ------------------------------ Input checks ------------------------------
   req_rhessys_input = c( "rhessys_version", "tec_file", "world_file", "world_hdr_prefix", "flow_file",
@@ -45,6 +45,10 @@ run_rhessys_core <- function(input_rhessys,
     dir.create(input_rhessys$output_folder)
     cat("Created output folder: ", input_rhessys$output_folder)
   }
+  # just for safety since this is optional
+  if (is.null(input_rhessys$prefix_command)) {
+    input_rhessys$prefix_command = NULL
+  }
 
   # ------------------------------ Def file parameters ------------------------------
   # check the def files all exist
@@ -60,86 +64,59 @@ run_rhessys_core <- function(input_rhessys,
       def_pars_df = def_pars
     }
 
-    # check the def files to change are in the list of existing ones - warning only since maybe this is intentional
+    # check the def files to change are in the list of existing ones - warning only since maybe this is intentional?
     if (any(!unique(def_pars_df$X1) %in% unlist(hdr_files))) {
       warning("Def file '",unique(def_pars_df$X1)[!unique(def_pars_df$X1) %in% unlist(hdr_files)],"' is not included in header def files." )
     }
 
+    def_files = data.frame(old = unique(def_pars_df$X1), new = NA)
     for (f in unique(def_pars_df$X1)) {
       # subset def file pars and put in format expected by the change_def_file function
       def_par_subset = data.frame(t(def_pars_df[def_pars_df$X1 == f,3]))
       names(def_par_subset) = def_pars_df[def_pars_df$X1 == f,2]
-      change_def_file(def_file = f, par_sets = def_par_subset)
+      new_file = change_def_file(def_file = f, par_sets = def_par_subset, file_name_ext = runID)
+      def_files[def_files[,1] == f, 2] = new_file
     }
     cat("\n===== Wrote def files =====")
   }
 
   # ------------------------------ Standard parameters ------------------------------
   if (!is.null(std_pars)) {
+    # value of 1 == null as far as RHESSys is concerned, setting all NULLs to 1 to be safe, then ignoring if all inputs are 1s
+    # std_pars = lapply(std_pars, function(X) {if (!is.null(X) && X == 1) X = NULL; return(X)})
+    std_pars = lapply(std_pars, function(X) {if (is.null(X)) X = 1; return(X)})
 
-    if (!is.null(std_pars$m) & !is.null(std_pars$k)) {
-      std1 = paste("-s", std_pars$m, std_pars$k)
+    if (std_pars[["m"]] != 1 | std_pars[["k"]] != 1) {
+      std_pars_out = paste("-s", std_pars$m, std_pars$k)
+      if (std_pars[["soil_dep"]] != 1) {
+        std_pars_out = paste(std_pars_out, std_pars$soil_dep)
+      }
+    } else {
+      std_pars_out = NULL
     }
-    if (!is.null(std_pars$m_v) & !is.null(std_pars$k_v)) {
-      std2 = paste("-sv", std_pars$m_v, std_pars$k_v)
+    if (std_pars[["m_v"]] != 1 | std_pars[["k_v"]] != 1) {
+      std_pars_out = paste(std_pars_out, "-sv", std_pars$m_v, std_pars$k_v)
     }
-    if (!is.null(std_pars$pa) & !is.null(std_pars$po)) {
-      std3 = paste("-svalt", std_pars$pa, std_pars$po)
+    if (std_pars[["pa"]] != 1 | std_pars[["po"]] != 1) {
+      std_pars_out = paste(std_pars_out, "-svalt", std_pars$pa, std_pars$po)
     }
-    if (!is.null(std_pars$gw1) & !is.null(std_pars$gw2)) {
-      std4 = paste("-gw", std_pars$gw1, std_pars$gw2)
+    if (std_pars[["gw1"]] != 1 | std_pars[["gw2"]] != 1) {
+      std_pars_out = paste(std_pars_out, "-gw", std_pars$gw1, std_pars$gw2)
     }
-
-    std_pars_out = paste(std1, std2, std3, std4)
+    if (std_pars[["vgseng1"]] != 1 | std_pars[["vgseng2"]] != 1 | std_pars[["vgseng3"]] != 1) {
+      std_pars_out = paste(std_pars_out, "-vgsen", std_pars$vgseng1, std_pars$vgseng2, std_pars$vgseng3)
+    }
 
   }
+
+  # ------------------------------ Climate ------------------------------
+  # TODO add climate and dated seqeunce functionality in here
+  # if (!is.null(clim)) {
+  #
+  # }
 
   # ------------------------------ Header file ------------------------------
-  # Create hdr output folder
-  world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix)
-  if (!dir.exists(world_hdr_path)) {dir.create(world_hdr_path)}
-
-  # check the hdr items being used
-  hdr_def_opts = c("basin_def", "hillslope_def", "zone_def", "soil_def", "landuse_def", "stratum_def", "fire_def", "spinup_def", "base_stations")
-  if (any(!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts)) {
-    warning("header definition for ",
-            names(hdr_files[!is.null(hdr_files)])[!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts],
-            "is invalid and won't be added to header")
-  }
-  # ignore any that aren't valid, specifically to ignore patch header files which it seems should be soil defs
-  hdr_files = hdr_files[names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts]
-
-  # get needed info for hdr file format
-  hdr_values = lapply(hdr_files, function(x) c(length(x), x))
-  hdr_vars = mapply(function(x, y) {
-    x[1] =  paste0("num_", y)
-    x[2:length(x)] = y
-    return(x)
-    }, hdr_values, names(hdr_values))
-
-  # make combined df
-  hdr_df = data.frame(unlist(hdr_values), unlist(hdr_vars), row.names = NULL)
-  # fix the names up
-  hdr_df[,2] = gsub("def", "default_file", hdr_df[,2])
-  hdr_df[,2] = gsub("base_stations", "base_stations_file", hdr_df[,2])
-  hdr_df[,2][startsWith(hdr_df[,2], "num")] = paste0(hdr_df[,2][startsWith(hdr_df[,2], "num")],"s")
-
-  # replace with modified defs where needed
-  old_paths = unique(def_pars_df$X1)
-  new_paths = file.path(gsub(".def","",old_paths) ,basename(old_paths))
-  # this is silly
-  # hdrpaths = as.list(data.frame(unname(t(data.frame(old_paths, new_paths)))))
-  #ugh this is bad
-  for (i in seq_along(old_paths)) {
-    hdr_df[,1] = gsub(old_paths[i], new_paths[i], hdr_df[,1])
-  }
-
-  world_hdr_name_out <- file.path(world_hdr_path, paste(input_rhessys$world_hdr_prefix,".hdr",sep=""))
-  write.table(hdr_df, file = world_hdr_name_out, col.names = FALSE, row.names=FALSE, quote = FALSE, sep="\t\t")
-  cat("\n===== Wrote hdr file '",world_hdr_name_out,"' =====", sep = "")
-
-  # NOTE ON WRITE SPEEDS
-  # write times w data.table::fwrite is only ~100 microsec faster for the header for example so leaving all the writing as write.table for now
+  make_hdr_file2(input_rhessys, hdr_files, def_files)
 
   # ------------------------------ Temporal event control (tec) file ------------------------------
   if (!is.null(tec_data)) {
@@ -148,7 +125,6 @@ run_rhessys_core <- function(input_rhessys,
   }
 
   # ------------------------------ Call RHESSys ------------------------------
-
   output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
 
   rhessys_command(rhessys_version = input_rhessys$rhessys_version,
@@ -160,10 +136,10 @@ run_rhessys_core <- function(input_rhessys,
                   end_date = input_rhessys$end_date,
                   output_file = output_path,
                   input_parameters = std_pars_out,
-                  command_options = input_rhessys$command_options)
+                  command_options = input_rhessys$command_options,
+                  prefix_command = input_rhessys$prefix_command)
 
   # ------------------------------ Process Output ------------------------------
-
   data_out = output_control(output_method,
                             output_variables,
                             return_data)

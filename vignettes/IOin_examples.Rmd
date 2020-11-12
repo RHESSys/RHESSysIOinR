@@ -17,7 +17,7 @@ This vignette shows example uses of the IOin\_X functions, which together constr
 
 -   IOin\_rhessys\_input
 -   IOin\_tec\_std
--   IOin\_std\_pars
+-   IOin\_cmd\_pars
 -   IOin\_hdr
 -   IOin\_clim
 -   IOin\_def\_pars\_simple

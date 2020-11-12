@@ -4,16 +4,33 @@
 \alias{IOin_std_pars}
 \title{IOin_std_pars}
 \usage{
-IOin_std_pars(m, k, m_v, k_v, pa, po, gw1, gw2, n = 1, pct_range = 0.25)
+IOin_std_pars(
+  m = 1,
+  k = 1,
+  soil_dep = 1,
+  m_v = 1,
+  k_v = 1,
+  pa = 1,
+  po = 1,
+  gw1 = 1,
+  gw2 = 1,
+  vgseng1 = 1,
+  vgseng2 = 1,
+  vgseng3 = 1,
+  n = 1,
+  pct_range = 0.25
+)
 }
 \arguments{
-\item{m}{Decay of hydraulic conductivity with depth}
+\item{m}{Decay of hydraulic conductivity with depth.}
 
-\item{k}{Hydraulic conductivity at the surface}
+\item{k}{Hydraulic conductivity at the surface.}
 
-\item{m_v}{Multiplier to scale the vertical decay of hydraulic conductivity with depth}
+\item{soil_dep}{Soil depth.}
 
-\item{k_v}{Multiplier to scale the vertical hydraulic conductivity at the surface}
+\item{m_v}{Multiplier to scale the vertical decay of hydraulic conductivity with depth.}
+
+\item{k_v}{Multiplier to scale the vertical hydraulic conductivity at the surface.}
 
 \item{pa}{Multiplier to scale the pore size index, set in soil def file.}
 
@@ -24,6 +41,20 @@ IOin_std_pars(m, k, m_v, k_v, pa, po, gw1, gw2, n = 1, pct_range = 0.25)
 
 \item{gw2}{Multiplier on the gw_loss_coeff parameter in the hillslope default file
 (representing the amount of water moving from the groundwater store to the stream).}
+
+\item{vgseng1}{Multiples specific leaf areas.}
+
+\item{vgseng2}{Multiplies the ratio of shaded to sunlit leaf area.}
+
+\item{vgseng3}{Multiplier used only with the Dickenson algorithm of carbon allocation
+(set with the epc.allocation_flag variable in the vegetation definition file). It changes
+the allocation of net photosynthate sensitivity based on the current LAI. If not using the
+Dickenson strategy of carbon allocation (i.e. using Waring or default Constant strategies),
+set third value to 1.0. (i.e. -vgsen 1.0 2.0 1.0)}
+
+\item{n}{The number of parameter sets to generate.}
+
+\item{pct_range}{The percent range of variation from input values over which sampling (if any), will happen.}
 }
 \description{
 Input standard soil parameters for RHESSys, see https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options
