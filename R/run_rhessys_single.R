@@ -116,7 +116,7 @@ run_rhessys_single <- function(input_rhessys,
   # }
 
   # ------------------------------ Header file ------------------------------
-  make_hdr_file2(input_rhessys, hdr_files, def_files)
+  world_hdr_name_out = make_hdr_file2(input_rhessys, hdr_files, def_files)
 
   # ------------------------------ Temporal event control (tec) file ------------------------------
   if (!is.null(tec_data)) {

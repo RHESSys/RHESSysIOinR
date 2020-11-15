@@ -53,5 +53,7 @@ make_hdr_file2 = function(input_rhessys,
   # write times w data.table::fwrite is only ~100 microsec faster for the header
   # for example so leaving all the writing as write.table for now
 
+  return(world_hdr_name_out)
+
 }
 
