@@ -53,7 +53,7 @@ readin_rhessys_output = function(pre,
 
   # all_inputs contains combinations of grow, spatial level, and time step
   all_inputs = rbind(expand.grid(grow,space[!space == "fire"], time, stringsAsFactors = FALSE),
-                  expand.grid("",space[space == "fire"], time, stringsAsFactors = FALSE))
+                  expand.grid(grow,space[space == "fire"], time, stringsAsFactors = FALSE))
   suffixes = paste0(all_inputs[,1], all_inputs[,2], ".", all_inputs[,3])
   all_files = paste(pre,"_",suffixes,sep="")
   exist_data = file.exists(all_files) # exist_data is T/F for if file exists and has data in it
