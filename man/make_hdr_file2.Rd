@@ -4,7 +4,7 @@
 \alias{make_hdr_file2}
 \title{Write Header File}
 \usage{
-make_hdr_file2(input_rhessys, hdr_files, def_pars_df)
+make_hdr_file2(input_rhessys, hdr_files, def_files)
 }
 \arguments{
 \item{input_rhessys}{List containing the following named elements: "rhessys_version" (path to rhessys binary),
