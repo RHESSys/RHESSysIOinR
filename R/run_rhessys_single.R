@@ -51,10 +51,11 @@ run_rhessys_single <- function(input_rhessys,
   }
 
   # ------------------------------ Def file parameters ------------------------------
-  # check the def files all exist
-  if (any(!file.exists(unlist(hdr_files)))) {
-    stop("Def file(s) '", unlist(hdr_files)[!file.exists(unlist(hdr_files))],"' is/are not exist at specified path." )
+  # check the def files all exist - except for the fire grid prefix
+  if (any(!file.exists(unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"] )))) {
+    stop("Def file(s) '", unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"])[!file.exists(unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"]))],"' is/are not exist at specified path." )
   }
+  # TODO if keeping the fire grid header method - add check for those files if header is included
 
   # if there are def file pars to change
   if (!is.null(def_pars)) {
@@ -116,6 +117,7 @@ run_rhessys_single <- function(input_rhessys,
   # }
 
   # ------------------------------ Header file ------------------------------
+  # TODO add check for single path to existing hdr file
   world_hdr_name_out = make_hdr_file2(input_rhessys, hdr_files, def_files)
 
   # ------------------------------ Temporal event control (tec) file ------------------------------

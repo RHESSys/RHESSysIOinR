@@ -15,7 +15,7 @@ make_hdr_file2 = function(input_rhessys,
   if (!dir.exists(world_hdr_path)) {dir.create(world_hdr_path)}
 
   # check the hdr items being used
-  hdr_def_opts = c("basin_def", "hillslope_def", "zone_def", "soil_def", "landuse_def", "stratum_def", "fire_def", "spinup_def", "base_stations")
+  hdr_def_opts = c("basin_def", "hillslope_def", "zone_def", "soil_def", "landuse_def", "stratum_def", "fire_def", "fire_grid_prefix", "spinup_def", "base_stations")
   if (any(!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts)) {
     warning("header definition for ",
             names(hdr_files[!is.null(hdr_files)])[!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts],

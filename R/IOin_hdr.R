@@ -8,6 +8,8 @@
 #' @param landuse Path to landuse parameter definition file(s).
 #' @param stratum Path to stratum parameter definition file(s).
 #' @param fire Path to fire parameter definition file.
+#' @param fire_grid_prefix Path and basename/prefix name of the fire grid files used for the RHESSys WMFire model.
+#' @param spinup Path to spinup parameter definition file(s).
 #' @param basestations Path to basin climate basestation file(s).
 #'
 #' @author Will Burke
@@ -26,6 +28,8 @@ IOin_hdr = function(basin,
                     landuse,
                     stratum,
                     fire = NULL,
+                    fire_grid_prefix = NULL,
+                    spinup = NULL,
                     basestations) {
 
   input_hdr_list <- list()
@@ -40,6 +44,8 @@ IOin_hdr = function(basin,
   input_hdr_list$landuse_def <- landuse
   input_hdr_list$stratum_def <- stratum
   input_hdr_list$fire_def <- fire
+  input_hdr_list$fire_grid_prefix <- fire_grid_prefix
+  input_hdr_list$spinup <- spinup
   input_hdr_list$base_stations <- basestations
 
   return(input_hdr_list)

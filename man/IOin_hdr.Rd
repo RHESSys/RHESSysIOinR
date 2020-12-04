@@ -12,6 +12,8 @@ IOin_hdr(
   landuse,
   stratum,
   fire = NULL,
+  fire_grid_prefix = NULL,
+  spinup = NULL,
   basestations
 )
 }
@@ -29,6 +31,10 @@ IOin_hdr(
 \item{stratum}{Path to stratum parameter definition file(s).}
 
 \item{fire}{Path to fire parameter definition file.}
+
+\item{fire_grid_prefix}{Path and basename/prefix name of the fire grid files used for the RHESSys WMFire model.}
+
+\item{spinup}{Path to spinup parameter definition file(s).}
 
 \item{basestations}{Path to basin climate basestation file(s).}
 }

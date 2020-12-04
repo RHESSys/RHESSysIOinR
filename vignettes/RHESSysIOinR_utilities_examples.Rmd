@@ -24,9 +24,12 @@ The following are various utility functions included with RHESSysIOinR
 * `readin_rhessys_output()`: reads rhessys output into R, includes some subsetting and simply aggregation
 * `readin_rhessys_output_old()`: legacy method to read in rhessys output
 * `tec_repeat()`: generates repeating tec events for input into `run_rhessys()`, can also copy+rename a redefine file as needed
+* `watbal_basin()`: Calculate water balance for a the basin
+* `watbal_patch()`: Calculate water balance for a single patch
+* `watbal_patch_multi()`: Calculate water balance for a multiple patches
 * `write_sample_clim()`: generate new climate based on existing climate
 
-## build_redefine
+## update_world
 
 ```{r }
 
