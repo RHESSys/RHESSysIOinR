@@ -2,6 +2,7 @@
 
 export(IOin_clim)
 export(IOin_def_pars_simple)
+export(IOin_def_pars_sobol)
 export(IOin_hdr)
 export(IOin_output_vars)
 export(IOin_rhessys_input)

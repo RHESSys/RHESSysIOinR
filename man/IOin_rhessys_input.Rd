@@ -15,7 +15,7 @@ IOin_rhessys_input(
   output_folder,
   output_prefix,
   commandline_options,
-  prefix_command
+  prefix_command = NULL
 )
 }
 \arguments{

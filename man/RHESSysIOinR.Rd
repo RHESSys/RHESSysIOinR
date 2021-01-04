@@ -5,7 +5,9 @@
 \alias{RHESSysIOinR}
 \alias{.datatable.aware}
 \title{RHESSysIOinR}
-\format{An object of class \code{logical} of length 1.}
+\format{
+An object of class \code{logical} of length 1.
+}
 \usage{
 .datatable.aware
 }

@@ -29,7 +29,7 @@ IOin_rhessys_input = function(version,
                               output_folder,
                               output_prefix,
                               commandline_options,
-                              prefix_command) {
+                              prefix_command = NULL) {
 
   rh_list = list()
 

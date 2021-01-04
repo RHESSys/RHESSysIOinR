@@ -47,9 +47,14 @@ compile_rhessys = function(location,
   # delete objects if they exist
   if (delete_objs) {
     objs = file.path(dirname(makefile), "objects")
-    if (!file.exists(objs)) { stop("Couldn't find the objects folder") }
-    out = file.remove(file.path(objs, list.files(objs)))
-    if (length(out) > 0 && out) { cat("RHESSys objects removed before compilation\n") }
+    if (!file.exists(objs)) {
+      cat("Couldn't find the objects folder - may not exist yet\n")
+    } else {
+      out = file.remove(file.path(objs, list.files(objs)))
+      if (length(out) > 0 && out) {
+        cat("RHESSys objects removed before compilation\n")
+      }
+    }
   }
 
   if (!is.null(CFLAGS)) {

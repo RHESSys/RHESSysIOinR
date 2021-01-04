@@ -52,15 +52,15 @@ run_rhessys_single <- function(input_rhessys,
 
   # ------------------------------ Def file parameters ------------------------------
   # check the def files all exist - except for the fire grid prefix
-  if (any(!file.exists(unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"] )))) {
-    stop("Def file(s) '", unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"])[!file.exists(unlist(input_hdr[names(input_hdr) != "fire_grid_prefix"]))],"' is/are not exist at specified path." )
+  if (any(!file.exists(unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"] )))) {
+    stop("Def file(s) '", unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"])[!file.exists(unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"]))],"' is/are not exist at specified path." )
   }
   # TODO if keeping the fire grid header method - add check for those files if header is included
 
   # if there are def file pars to change
   if (!is.null(def_pars)) {
     if (!is.data.frame(def_pars)) {
-      def_pars_df = data.frame(matrix(unlist(def_pars), nrow=length(def_pars), byrow=T))
+      def_pars_df = data.frame(matrix(unlist(def_pars), nrow = length(def_pars), byrow = T))
     } else {
       def_pars_df = def_pars
     }
@@ -79,6 +79,8 @@ run_rhessys_single <- function(input_rhessys,
       def_files[def_files[,1] == f, 2] = new_file
     }
     cat("\n===== Wrote def files =====")
+  } else {
+    def_files = NULL
   }
 
   # ------------------------------ Standard parameters ------------------------------
@@ -108,6 +110,8 @@ run_rhessys_single <- function(input_rhessys,
       std_pars_out = paste(std_pars_out, "-vgsen", std_pars$vgseng1, std_pars$vgseng2, std_pars$vgseng3)
     }
 
+  } else {
+    std_pars_out = NULL
   }
 
   # ------------------------------ Climate ------------------------------

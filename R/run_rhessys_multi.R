@@ -22,14 +22,15 @@
 
 run_rhessys_multi = function(input_rhessys,
                              hdr_files,
-                             std_pars,
                              tec_data,
+                             std_pars = NULL,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_method = NULL,
                              output_variables = NULL,
                              return_data = FALSE,
-                             runID = NULL) {
+                             runID = NULL,
+                             n_cores = 4) {
 
   # TODO add logic on how to combine scenarios/iterations/param sets ACROSS data objects
   # e.g. if def_pars has 10 values for each paramter, there shouldbe 10 RHESSys runs. but if std_pars has 5 values for each parameter
@@ -41,15 +42,22 @@ run_rhessys_multi = function(input_rhessys,
 
   # --- std pars ---
   # check that all required inputs are in the names
-  std_pars_df = as.data.frame(std_pars)
-  if (any(!c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2") %in% names(std_pars_df))) {
-    stop("Input standard paramters must include: 'm', 'k', 'm_v', 'k_v', 'pa', 'po', 'gw1', and 'gw2' ")
+  if (!is.null(std_pars)) {
+    stop("std pars aren't supported in run rhessys multi yet - just use def file pars")
+
+    std_pars_df = as.data.frame(std_pars)
+    if (any(!c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2") %in% names(std_pars_df))) {
+      stop("Input standard paramters must include: 'm', 'k', 'm_v', 'k_v', 'pa', 'po', 'gw1', and 'gw2' ")
+    }
+    # start list of dfs of inputs to include in making scenarios
+    dfs = list(std_pars_df)
+  } else {
+    dfs = NULL
   }
+
+
+
   # TODO add check for same number of std pars?
-
-
-  # start list of dfs of inputs to include in making scenarios
-  dfs = list(std_pars_df)
 
   # --- def pars ---
   # check if there are def pars
@@ -67,11 +75,8 @@ run_rhessys_multi = function(input_rhessys,
     # i think do nothing
   }
 
-
   # --- tec events ---
   # add here when tec event scenarios/iterations get added
-
-
 
 
   # get all combinations - expand grid but with dfs, take from reshape::expand.grid.df
@@ -82,31 +87,67 @@ run_rhessys_multi = function(input_rhessys,
   rownames(df) <- 1:nrow(df)
 
 
-  # as a for loop
-  for (i in nrow(df)) {
+  # # as a for loop
+  basic = T
+  if (basic) {
+    for (i in 1:nrow(df)) {
+      # if there's variation as far as what std pars can be included vs have to be, do a %in% w names()
+      # turned back into into a list to be safe
+      # if (!is.null(std_pars)) {
+      #   std_pars_i = as.list(df[i,c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2")])
+      # } else {
+      #   std_pars_i = NULL
+      # }
 
-    # if there's variation as far as what std pars can be included vs have to be, do a %in% w names()
-    # turned back into into a list to be safe
-    std_pars_i = as.list(df[i,c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2")])
+      if (!is.null(def_pars)) {
+        def_pars_values = as.list(df[i, names(df) %in% def_names])
+        def_pars_i = mapply(function(x, y) {x[[3]] = y; return(x)}, def_pars, def_pars_values, SIMPLIFY = F)
+      } else {
+        def_pars_i = NULL
+      }
 
-    if (!is.null(def_pars)) {
-      def_pars_values = as.list(df[i, names(df) %in% def_names])
-      def_pars_i = mapply(function(x, y) {x$Value = y; return(x)}, def_pars, def_pars_values, SIMPLIFY = F)
-    } else {
-      def_pars_i = NULL
+      run_rhessys_single(
+        input_rhessys = input_rhessys,
+        hdr_files = hdr_files,
+        tec_data = tec_data,
+        def_pars = def_pars_i,
+        runID = i
+      )
     }
-
-    run_rhessys_core(
-      input_rhessys = input_rhessys,
-      hdr_files = hdr_files,
-      std_pars = std_pars_i,
-      tec_data = tec_data,
-      def_pars =def_pars_i,
-      runID = i
-    )
   }
 
-  # as a lapply
+
+  parallel = F
+  if (parallel) {
+    # --- parallel across cores ---
+    run_parallel = function(i,
+                            input_rhessys,
+                            hdr_files ,
+                            tec_data,
+                            df,
+                            def_pars) {
+
+      if (!is.null(def_pars)) {
+        def_pars_i = mapply(function(x, y) {x[[3]] = y; return(x)}, def_pars, df[i, ], SIMPLIFY = F)
+      } else {
+        def_pars_i = NULL
+      }
+
+      run_rhessys_single(
+        input_rhessys = input_rhessys,
+        hdr_files = hdr_files,
+        tec_data = tec_data,
+        def_pars = def_pars_i,
+        runID = i
+      )
+
+    }
+
+    cl = parallel::makeCluster(n_cores)
+    parallel::clusterExport(cl, c("df", "input_rhessys", "hdr_files", "tec_data", "def_pars"))
+    parallel::parLapply(cl = cl, X = 1:nrow(df), fun = run_parallel(i, input_rhessys, hdr_files, tec_data, df, def_pars) )
+    parallel::stopCluster(cl)
+  }
 
 
 }

@@ -5,10 +5,6 @@ date: "9/7/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## RHESSysIOinR Input Functions
 
 This vignette shows example uses of the IOin\_X functions, which together construct input data objects used to run one or many RHESSys simulations.
@@ -22,150 +18,193 @@ This vignette shows example uses of the IOin\_X functions, which together constr
 -   IOin\_clim
 -   IOin\_def\_pars\_simple
 
+### Setup
+
+Using rhessys/Testing as example input data. If you don't already have develop branch of RHESsys cloned, get that now too.
+
+```{r, setup, include=FALSE}
+# to clone and checkout develop branch, a bit slow for some reason
+# gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
+#                 path = "~/Repos/rhessys-devtest",
+#                 branch = "develop")
+
+knitr::opts_knit$set(root.dir = "~/Repos/rhessys-devtest/Testing/")
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Compile RHESSys
+
+If needed
+
+```{r, echo=FALSE, results='hide'}
+library(RHESSysIOinR)
+# Should work for both Mac and WSL (Windows)
+#compile_rhessys(location = "../")
+```
+
 ### IOin\_rhessys\_input
 
-```{r eval=FALSE}
+This is the basic RHESSys information needed to run RHESSys from the command line.
 
+```{r }
 input_rhessys = IOin_rhessys_input(
-  version = file.path("bin", comp_ID, "rhessys7.2"),
-  tec_file = "tecfiles/BC.tec",
-  world_file = "worldfiles/no_multi/BC_conifer_S_2p.world",
-  world_hdr_prefix = "BC",
-  flowtable = "flowtables/BC_2p.flow",
-  start = "1943 10 01 01",
-  end = "1948 10 01 01",
-  output_folder = "output/",
-  output_prefix = "BC_2p",
-  commandline_options = c("-vmort_off -g -b -p -c -msr -v -6")
+  version = "../rhessys/rhessys7.3",
+  tec_file = "tecfiles/w8TC.tec",
+  world_file = "worldfiles/w8TC.world",
+  world_hdr_prefix = "w8TC",
+  flowtable = "flowtables/w8TC.flow",
+  start = "1988 10 1 1",
+  end = "2000 10 1 1",
+  output_folder = "out/",
+  output_prefix = "w8TC",
+  commandline_options = c("-g -b")
 )
-
 ```
 
 ### IOin\_tec\_std
 
-```{r eval=FALSE}
+This creates a tec file, automatically adding entries for print\_daily\_on and print\_daily\_growth\_on based on the start date, and adding output\_current\_state at the end date. output\_current\_state can be toggled off by setting output\_state=FALSE.
 
-tec_std = IOin_tec_std(start = "1943 10 01 01",
-                       end = "1948 10 01 01",
-                       output_state = TRUE
-)
-
-```
-
-### IOin\_std\_pars
-
-```{r eval=FALSE}
-
-std_pars = IOin_std_pars(
-  m = 2,
-  k = 2,
-  m_v = 2,
-  k_v = 2,
-  pa = 1.15,
-  po = 0.766,
-  gw1 = 0.24,
-  gw2 = 0.2 , 
-)
-
+```{r}
+input_tec_data = IOin_tec_std(start = "1988 10 1 1",
+                              end = "2000 10 1 1",
+                              output_state = TRUE)
 ```
 
 ### IOin\_hdr
 
-```{r eval=FALSE}
+This creates a header file in a folder using the world\_hdr\_prefix from IOin\_rhessys\_input and using the def files specified in the function below.
 
-input_hdr_list = IOin_hdr(basin = "defs/basin_p301.def",
-                          hillslope = "defs/hill_p301.def",
-                          zone = "defs/zone_p301.def",
-                          soil = "defs/soil_forestshrub.def",
-                          landuse = "defs/lu_p301.def",
-                          stratum = c("defs/veg_p301_shrub.def", "defs/veg_p301_conifer.def"),
-                          basestations = "clim/upGGmod.base")
-
+```{r}
+input_hdr = IOin_hdr(
+  basin = "defs/basin.def",
+  hillslope = "defs/hill.def",
+  zone = "defs/zone.def",
+  soil = "defs/soil_sandyloam.def",
+  landuse = "defs/lu_undev.def",
+  stratum = "defs/veg_douglasfir.def",
+  basestations = "clim/w8_base"
+)
 ```
 
 ### Run RHESSys
 
-Together, these inputs (IOin\_X) can be used to run RHESSys for a single simulation with very simple options.
+Together, these inputs (IOin\_X) can be used to run RHESSys for a single simulation with very simple options. Future additions will allow for pointing to already generated header and tec files.
 
-```{r eval=FALSE}
-
-# this is a nearly barebones run
-run_rhessys_core(
+```{r, echo=FALSE, results='hide'}
+run_rhessys_single(
   input_rhessys = input_rhessys,
-  hdr_files = input_hdr_list,
-  std_pars = input_std_pars,
+  hdr_files = input_hdr,
   tec_data = input_tec_data
 )
-
 ```
 
-### IOin\_clim
+### IOin\_std\_pars
 
-```{r eval=FALSE}
+Command line parameteres (standard paramters) are multipliers on some commonly varied exisitng paramter values (found in def files). Because it has become easier to modify the def file values directly, we are encoureging users to move away from this method of parameter variation, but this function is nonetheless how you would input/modify command line parameters.
 
-# this is a very simple case, just creating a basestation
-input_clim = IOin_clim(
-  base_station_id = 101,
-  x_coordinate = 100.0,
-  y_coordinate = 100.0,
-  z_coordinate = 1984,
-  effective_lai = 3.5,
-  screen_height = 160,
-  daily_prefix = "clim/upGGmod"
+```{r, echo=FALSE, results='hide'}
+input_std_pars = IOin_std_pars(
+  m = 0.355794,
+  k = 651.390265,
+  m_v = 0.355794,
+  k_v = 651.390265,
+  pa = 1.083102,
+  po = 1.193924,
+  gw1 = 0.116316,
+  gw2 = 0.916922
 )
 
+run_rhessys_single(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr,
+  tec_data = input_tec_data,
+  std_pars = input_std_pars
+)
 ```
 
 ### IOin\_def\_pars
 
-```{r eval=FALSE}
+This function modifies def file parameters. This is done by creating modifed def files with the altered paramters, and pointing to that new def file in the header file. This allows for many parameter sets to be generated through many def files and associated header files.
 
+```{r, echo=FALSE, results='hide'}
 input_def_pars = IOin_def_pars_simple(
-  list("defs/veg_p301_conifer.def", "epc.allocation_flag","dickenson"),
-  list("defs/veg_p301_conifer.def", "epc.alloc_frootc_leafc", 1),
-  list("defs/veg_p301_conifer.def", "epc.alloc_stemc_leafc", 0.6),
-  list("defs/veg_p301_conifer.def", "epc.netpabs_shade", 0.2),
-  list("defs/soil_forestshrub.def", "soil_depth", 1),
-  list("defs/soil_forestshrub.def", "pore_size_index", 0.15),
-  list("defs/soil_forestshrub.def", "sat_to_gw_coeff", 0.12),
-  list("defs/soil_forestshrub.def", "psi_air_entry", 0.15)
+  list("defs/soil_sandyloam.def", "m", (0.12 * 0.355794)),
+  list("defs/soil_sandyloam.def", "Ksat_0", (3 * 651.390265)),
+  list("defs/soil_sandyloam.def", "m_z", (0.4 * 0.355794)),
+  list("defs/soil_sandyloam.def", "pore_size_index", (0.195750 * 1.193924)),
+  list("defs/soil_sandyloam.def", "psi_air_entry", (0.798750 * 1.083102)),
+  list("defs/soil_sandyloam.def", "sat_to_gw_coeff",(0 * 0.116316)),
+  list("defs/hill.def", "gw_loss_coeff", (0 *  0.916922))
 )
 
+run_rhessys_single(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr,
+  tec_data = input_tec_data,
+  def_pars = input_def_pars
+)
+```
+
+### IOin\_clim
+
+This is just to generate a basestation on the fly, but can be useful when running across multiple climate series, and to ensure the paths in the base station file are correct.
+
+```{r eval=FALSE}
+input_clim = IOin_clim(
+  base_station_id = 101,
+  x_coordinate = 100.0,
+  y_coordinate = 100.0,
+  z_coordinate = 975,
+  effective_lai = 3.5,
+  screen_height = 160,
+  daily_prefix = "clim/w8_daily"
+)
 ```
 
 ### Output Variables
 
-```{r eval=FALSE}
+This will be supplanted by the new output filters method.
 
+```{r eval=FALSE}
   # to use native R-based subsetting
   output_method = "r"
-
   my_vars = data.frame(c("pd", "Qout"),
                        c("pd", "psn"),
                        c("pdg", "lai"),
                        c("pdg", "plantc"),
                        c("cd", "height"))
-  
   output_vars = IOin_output_vars(my_vars)
-
 ```
 
-### Run RHESSys with more options
+## Running Multiple Scenarios
 
-This runs RHESSys for a single simulation with a few more options.
+The above input functions all generate RHESSys inputs for a single RHESSys run. With additional options, or different IOin\_X functions, multiple RHESSys scenarios can be generated, and run via `run_rhessys_multi()`.
 
-```{r eval=FALSE}
+The method for generating those multiple scenarios is flexible,, as long as the output data format adheres to what is expected input for `run_rhessys_multi()`. See the code/documentation/comments on `IOin_def_pars_simple()` for more info on the data format.
 
-output_data = run_rhessys_core(
+### IOin\_def\_pars\_sobol
+
+This is still work in progress, but shows how sobol paramter sampling can be used to generate RHESSys inputs.
+
+```{r, echo=FALSE, results='hide'}
+
+# this gives the most flexibility to how users want to generate a distribution
+n = 10
+pars = list(
+  list("defs/veg_douglasfir.def", "epc.waring_pa", runif(n, 0.1, 0.4)),
+  list("defs/veg_douglasfir.def", "epc.proj_sla", runif(n, 2, 6)),
+  list("defs/soil_sandyloam.def", "pore_size_index", runif(n, 0.2, 0.5)),
+  list("defs/soil_sandyloam.def", "psi_air_entry", runif(n, 0.5, 8))
+)
+
+input_def_pars_sobol = IOin_def_pars_sobol(pars, nboot = 100)
+
+run_rhessys_multi(
   input_rhessys = input_rhessys,
-  hdr_files = input_hdr_list,
-  def_pars = input_def_pars,
-  std_pars = input_std_pars,
+  hdr_files = input_hdr,
   tec_data = input_tec_data,
-  clim_base = input_clim,
-  output_method = output_method,
-  output_variables = output_vars,
-  return_data = T
+  def_pars = input_def_pars_sobol
 )
 
 ```

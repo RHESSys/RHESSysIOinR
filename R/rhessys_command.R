@@ -30,6 +30,19 @@ rhessys_command <- function(rhessys_version,
                             prefix_command = NULL) {
 
   # assemble RHESSys command call
+  # tmp = paste0(
+  #   rhessys_version,
+  #   " -w ", world_file,
+  #   " -whdr ", world_hdr_file,
+  #   " -t ", tec_file,
+  #   " -r ", flow_file,
+  #   " -st ", start_date,
+  #   " -ed ", end_date,
+  #   " -pre ", output_file,
+  #   " ", input_parameters,
+  #   " ", command_options
+  # )
+
   tmp = paste0(
     rhessys_version,
     " -w ", world_file,
@@ -38,10 +51,16 @@ rhessys_command <- function(rhessys_version,
     " -r ", flow_file,
     " -st ", start_date,
     " -ed ", end_date,
-    " -pre ", output_file,
-    " ", input_parameters,
-    " ", command_options
+    " -pre ", output_file
   )
+
+  if (!is.null(input_parameters)) {
+    tmp = paste0(tmp, " ", input_parameters)
+  }
+
+  if (length(command_options) > 0) {
+    tmp = paste0(tmp, " ", command_options)
+  }
 
   # add prefix command optionally
   if (!is.null(prefix_command)) {

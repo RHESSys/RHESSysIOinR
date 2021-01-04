@@ -41,8 +41,10 @@ make_hdr_file2 = function(input_rhessys,
 
   # replace with modified defs where needed
   # dumb loop
-  for (i in seq_along(def_files$old)) {
-    hdr_df[,1] = gsub(def_files$old[i], def_files$new[i], hdr_df[,1])
+  if (!is.null(def_files)) {
+    for (i in seq_along(def_files$old)) {
+      hdr_df[,1] = gsub(def_files$old[i], def_files$new[i], hdr_df[,1])
+    }
   }
 
   world_hdr_name_out <- file.path(world_hdr_path, paste(input_rhessys$world_hdr_prefix,".hdr",sep=""))
