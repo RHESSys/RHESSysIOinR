@@ -2,6 +2,8 @@
 #'
 #' Runs RHESSys simulations.
 #' @inheritParams run_rhessys_single
+#' @param parallel Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.
+#' @param n_cores The number of cores to use in a parallelized cluster.
 #' @author Will Burke
 #'
 #' @export
@@ -24,12 +26,9 @@ run_rhessys_multi = function(input_rhessys,
                              hdr_files,
                              tec_data,
                              def_pars = NULL,
-                             clim_base = NULL,
-                             output_method = NULL,
-                             output_variables = NULL,
-                             return_data = FALSE,
                              runID = NULL,
-                             n_cores = 4) {
+                             parallel = TRUE,
+                             n_cores = 2) {
 
   # TODO add logic on how to combine scenarios/iterations/param sets ACROSS data objects
   # TODO add option to only aggregate to a table and output as R object, add opposite - to use input R object
@@ -54,6 +53,7 @@ run_rhessys_multi = function(input_rhessys,
 
   # ---------- clim sequences ----------
 
+  # ---------- combine scenarios ----------
   # get all combinations - expand grid but with dfs, taken from reshape::expand.grid.df
   indexes <- lapply(dfs, function(x) 1:nrow(x))
   grid <- do.call(expand.grid, indexes)
@@ -61,10 +61,8 @@ run_rhessys_multi = function(input_rhessys,
   colnames(df) <- unlist(lapply(dfs, colnames))
   rownames(df) <- 1:nrow(df)
 
-
-  # # as a for loop
-  basic = T
-  if (basic) {
+  # ---------- dumb for loop ----------
+  if (!parallel) {
     for (i in 1:nrow(df)) {
 
       if (!is.null(def_pars)) {
@@ -85,15 +83,16 @@ run_rhessys_multi = function(input_rhessys,
   }
 
 
-  parallel = F
+  # ---------- parallelized ----------
   if (parallel) {
-    # --- parallel across cores ---
+
     run_parallel = function(i,
                             input_rhessys,
                             hdr_files ,
                             tec_data,
                             df,
                             def_pars) {
+      library(RHESSysIOinR)
 
       if (!is.null(def_pars)) {
         def_pars_i = mapply(function(x, y) {x[[3]] = y; return(x)}, def_pars, df[i, ], SIMPLIFY = F)
@@ -113,7 +112,7 @@ run_rhessys_multi = function(input_rhessys,
 
     cl = parallel::makeCluster(n_cores)
     parallel::clusterExport(cl, c("df", "input_rhessys", "hdr_files", "tec_data", "def_pars"))
-    parallel::parLapply(cl = cl, X = 1:nrow(df), fun = run_parallel(i, input_rhessys, hdr_files, tec_data, df, def_pars) )
+    parallel::parLapply(cl = cl, X = 1:nrow(df), fun = run_parallel, input_rhessys, hdr_files, tec_data, df, def_pars)
     parallel::stopCluster(cl)
   }
 
