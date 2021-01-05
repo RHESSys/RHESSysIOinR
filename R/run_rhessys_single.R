@@ -109,20 +109,19 @@ run_rhessys_single <- function(input_rhessys,
     if (std_pars[["vgseng1"]] != 1 | std_pars[["vgseng2"]] != 1 | std_pars[["vgseng3"]] != 1) {
       std_pars_out = paste(std_pars_out, "-vgsen", std_pars$vgseng1, std_pars$vgseng2, std_pars$vgseng3)
     }
-
   } else {
     std_pars_out = NULL
   }
 
   # ------------------------------ Climate ------------------------------
   # TODO add climate and dated seqeunce functionality in here
-  # if (!is.null(clim)) {
+  # if (!is.null(clim_base)) {
   #
   # }
 
   # ------------------------------ Header file ------------------------------
   # TODO add check for single path to existing hdr file
-  world_hdr_name_out = make_hdr_file2(input_rhessys, hdr_files, def_files)
+  world_hdr_name_out = make_hdr_file2(input_rhessys, hdr_files, def_files, runID)
 
   # ------------------------------ Temporal event control (tec) file ------------------------------
   if (!is.null(tec_data)) {
@@ -132,6 +131,9 @@ run_rhessys_single <- function(input_rhessys,
 
   # ------------------------------ Call RHESSys ------------------------------
   output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
+  if (!is.null(runID)) {
+    output_path = paste0(output_path, "_run", runID)
+  }
 
   rhessys_command(rhessys_version = input_rhessys$rhessys_version,
                   world_file = input_rhessys$world_file,
@@ -144,6 +146,10 @@ run_rhessys_single <- function(input_rhessys,
                   input_parameters = std_pars_out,
                   command_options = input_rhessys$command_options,
                   prefix_command = input_rhessys$prefix_command)
+
+  if (!is.null(runID)) {
+    cat("\n===== Wrote output to: '",output_path ,"' =====\n", sep = "")
+  }
 
   # ------------------------------ Process Output ------------------------------
   data_out = output_control(output_method,

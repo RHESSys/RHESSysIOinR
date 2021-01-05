@@ -8,14 +8,16 @@
 
 make_hdr_file2 = function(input_rhessys,
                           hdr_files,
-                          def_files) {
+                          def_files,
+                          runID) {
 
   # Create hdr output folder
   world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix)
   if (!dir.exists(world_hdr_path)) {dir.create(world_hdr_path)}
 
   # check the hdr items being used
-  hdr_def_opts = c("basin_def", "hillslope_def", "zone_def", "soil_def", "landuse_def", "stratum_def", "fire_def", "fire_grid_prefix", "spinup_def", "base_stations")
+  hdr_def_opts = c("basin_def", "hillslope_def", "zone_def", "soil_def", "landuse_def",
+                   "stratum_def", "fire_def", "fire_grid_prefix", "spinup_def", "base_stations")
   if (any(!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts)) {
     warning("header definition for ",
             names(hdr_files[!is.null(hdr_files)])[!names(hdr_files[!is.null(hdr_files)]) %in% hdr_def_opts],
@@ -30,7 +32,7 @@ make_hdr_file2 = function(input_rhessys,
     x[1] =  paste0("num_", y)
     x[2:length(x)] = y
     return(x)
-  }, hdr_values, names(hdr_values))
+  }, hdr_values, names(hdr_values), SIMPLIFY = F)
 
   # make combined df
   hdr_df = data.frame(unlist(hdr_values), unlist(hdr_vars), row.names = NULL)
@@ -40,15 +42,16 @@ make_hdr_file2 = function(input_rhessys,
   hdr_df[,2][startsWith(hdr_df[,2], "num")] = paste0(hdr_df[,2][startsWith(hdr_df[,2], "num")],"s")
 
   # replace with modified defs where needed
-  # dumb loop
   if (!is.null(def_files)) {
-    for (i in seq_along(def_files$old)) {
-      hdr_df[,1] = gsub(def_files$old[i], def_files$new[i], hdr_df[,1])
-    }
+    rep_ind = lapply(def_files$old, function(x, y) {which(y == x)}, hdr_df[,1])
+    hdr_df[unlist(rep_ind),1] = def_files$new
   }
 
-  world_hdr_name_out <- file.path(world_hdr_path, paste(input_rhessys$world_hdr_prefix,".hdr",sep=""))
-  write.table(hdr_df, file = world_hdr_name_out, col.names = FALSE, row.names=FALSE, quote = FALSE, sep="\t\t")
+  if (!is.null(runID)) {
+    runID = paste0("_",runID)
+  }
+  world_hdr_name_out <- file.path(world_hdr_path, paste0(input_rhessys$world_hdr_prefix, runID, ".hdr"))
+  write.table(hdr_df, file = world_hdr_name_out, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\t\t")
   cat("\n===== Wrote hdr file '",world_hdr_name_out,"' =====", sep = "")
 
   # NOTE ON WRITE SPEEDS

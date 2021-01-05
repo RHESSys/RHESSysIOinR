@@ -23,7 +23,6 @@
 run_rhessys_multi = function(input_rhessys,
                              hdr_files,
                              tec_data,
-                             std_pars = NULL,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_method = NULL,
@@ -33,37 +32,14 @@ run_rhessys_multi = function(input_rhessys,
                              n_cores = 4) {
 
   # TODO add logic on how to combine scenarios/iterations/param sets ACROSS data objects
-  # e.g. if def_pars has 10 values for each paramter, there shouldbe 10 RHESSys runs. but if std_pars has 5 values for each parameter
-  # do we multiply to cover all combinations to make 50 total iterations, or repeat the std_pars to only have 10?
-  # Should proabaly default to all combinations but allow user control
-
-  # TODO add option to only aggregate to a table and output as R object (with a custom attribute), add opposite - to use input R object
+  # TODO add option to only aggregate to a table and output as R object, add opposite - to use input R object
   # to run scenarios
 
-  # --- std pars ---
-  # check that all required inputs are in the names
-  if (!is.null(std_pars)) {
-    stop("std pars aren't supported in run rhessys multi yet - just use def file pars")
+  # list of data frames, each containing nrows where n is number of sims for each data object
+  dfs = NULL
 
-    std_pars_df = as.data.frame(std_pars)
-    if (any(!c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2") %in% names(std_pars_df))) {
-      stop("Input standard paramters must include: 'm', 'k', 'm_v', 'k_v', 'pa', 'po', 'gw1', and 'gw2' ")
-    }
-    # start list of dfs of inputs to include in making scenarios
-    dfs = list(std_pars_df)
-  } else {
-    dfs = NULL
-  }
-
-
-
-  # TODO add check for same number of std pars?
-
-  # --- def pars ---
-  # check if there are def pars
+  # ---------- def pars ----------
   if (!is.null(def_pars)) {
-    # TODO check that there are same number of def pars
-
     # transform into dataframe, both for convenience and storing, tho will need to go back to list form
     def_pars_df = as.data.frame(lapply(def_pars, "[[", 3))
     def_names = sapply(def_pars, function(x) paste(x[[1]], x[[2]], sep = "::"))
@@ -71,15 +47,14 @@ run_rhessys_multi = function(input_rhessys,
 
     dfs <- c(dfs, list(def_pars_df))
 
-  } else {
-    # i think do nothing
   }
 
-  # --- tec events ---
+  # ---------- tec events ----------
   # add here when tec event scenarios/iterations get added
 
+  # ---------- clim sequences ----------
 
-  # get all combinations - expand grid but with dfs, take from reshape::expand.grid.df
+  # get all combinations - expand grid but with dfs, taken from reshape::expand.grid.df
   indexes <- lapply(dfs, function(x) 1:nrow(x))
   grid <- do.call(expand.grid, indexes)
   df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs, grid))
@@ -91,13 +66,6 @@ run_rhessys_multi = function(input_rhessys,
   basic = T
   if (basic) {
     for (i in 1:nrow(df)) {
-      # if there's variation as far as what std pars can be included vs have to be, do a %in% w names()
-      # turned back into into a list to be safe
-      # if (!is.null(std_pars)) {
-      #   std_pars_i = as.list(df[i,c("m", "k", "m_v", "k_v", "pa", "po", "gw1", "gw2")])
-      # } else {
-      #   std_pars_i = NULL
-      # }
 
       if (!is.null(def_pars)) {
         def_pars_values = as.list(df[i, names(df) %in% def_names])
