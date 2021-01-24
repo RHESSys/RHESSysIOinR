@@ -4,12 +4,9 @@
 \alias{IOin_tec_std}
 \title{IOin_tec_std}
 \usage{
-IOin_tec_std(start_end = NULL, start = NULL, end = NULL, output_state = TRUE)
+IOin_tec_std(start, end, output_state = TRUE)
 }
 \arguments{
-\item{start_end}{Vector of two charaters, indicating start and end dates, same as used to input start and end date for input_rhessys.
-Used to auto generate tec events for printing (normal and grow), and output current state at end}
-
 \item{start}{start date of run - used along with 'end' arg}
 
 \item{end}{End date of run}

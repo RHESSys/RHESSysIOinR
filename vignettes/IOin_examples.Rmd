@@ -7,16 +7,16 @@ output: html_document
 
 ## RHESSysIOinR Input Functions
 
-This vignette shows example uses of the IOin\_X functions, which together construct input data objects used to run one or many RHESSys simulations.
+This vignette shows example uses of the IOin_X functions, which together construct input data objects used to run one or many RHESSys simulations.
 
 #### New/renamed input functions:
 
--   IOin\_rhessys\_input
--   IOin\_tec\_std
--   IOin\_cmd\_pars
--   IOin\_hdr
--   IOin\_clim
--   IOin\_def\_pars\_simple
+-   IOin_rhessys_input
+-   IOin_tec_std
+-   IOin_cmd_pars
+-   IOin_hdr
+-   IOin_clim
+-   IOin_def_pars_simple
 
 ### Setup
 
@@ -42,7 +42,7 @@ library(RHESSysIOinR)
 #compile_rhessys(location = "../")
 ```
 
-### IOin\_rhessys\_input
+### IOin_rhessys_input
 
 This is the basic RHESSys information needed to run RHESSys from the command line.
 
@@ -61,9 +61,9 @@ input_rhessys = IOin_rhessys_input(
 )
 ```
 
-### IOin\_tec\_std
+### IOin_tec_std
 
-This creates a tec file, automatically adding entries for print\_daily\_on and print\_daily\_growth\_on based on the start date, and adding output\_current\_state at the end date. output\_current\_state can be toggled off by setting output\_state=FALSE.
+This creates a tec file, automatically adding entries for print_daily_on and print_daily_growth_on based on the start date, and adding output_current_state at the end date. output_current_state can be toggled off by setting output_state=FALSE.
 
 ```{r}
 input_tec_data = IOin_tec_std(start = "1988 10 1 1",
@@ -71,9 +71,9 @@ input_tec_data = IOin_tec_std(start = "1988 10 1 1",
                               output_state = TRUE)
 ```
 
-### IOin\_hdr
+### IOin_hdr
 
-This creates a header file in a folder using the world\_hdr\_prefix from IOin\_rhessys\_input and using the def files specified in the function below.
+This creates a header file in a folder using the world_hdr_prefix from IOin_rhessys_input and using the def files specified in the function below.
 
 ```{r}
 input_hdr = IOin_hdr(
@@ -89,7 +89,7 @@ input_hdr = IOin_hdr(
 
 ### Run RHESSys
 
-Together, these inputs (IOin\_X) can be used to run RHESSys for a single simulation with very simple options. Future additions will allow for pointing to already generated header and tec files.
+Together, these inputs (IOin_X) can be used to run RHESSys for a single simulation with very simple options. Future additions will allow for pointing to already generated header and tec files.
 
 ```{r, echo=FALSE, results='hide'}
 run_rhessys_single(
@@ -99,7 +99,7 @@ run_rhessys_single(
 )
 ```
 
-### IOin\_std\_pars
+### IOin_std_pars
 
 Command line parameteres (standard paramters) are multipliers on some commonly varied exisitng paramter values (found in def files). Because it has become easier to modify the def file values directly, we are encoureging users to move away from this method of parameter variation, but this function is nonetheless how you would input/modify command line parameters.
 
@@ -123,7 +123,7 @@ run_rhessys_single(
 )
 ```
 
-### IOin\_def\_pars
+### IOin_def_pars
 
 This function modifies def file parameters. This is done by creating modifed def files with the altered paramters, and pointing to that new def file in the header file. This allows for many parameter sets to be generated through many def files and associated header files.
 
@@ -142,14 +142,13 @@ run_rhessys_single(
   input_rhessys = input_rhessys,
   hdr_files = input_hdr,
   tec_data = input_tec_data,
-  def_pars = input_def_pars,
-  runID = 11
+  def_pars = input_def_pars
 )
 ```
 
-### IOin\_clim
+### IOin_clim
 
-This is just to generate a basestation on the fly, but can be useful when running across multiple climate series, and to ensure the paths in the base station file are correct.
+This is just to generate a basestation on the fly, but can be useful when running across multiple climate series, and to ensure the paths in the base station file are correct. Future additions will support more complex modification of climate sequences and more.
 
 ```{r eval=FALSE}
 input_clim = IOin_clim(
@@ -163,7 +162,63 @@ input_clim = IOin_clim(
 )
 ```
 
-### Output Variables
+## Output
+
+### Output Filters
+
+Output filters require a output filter file in yaml format, containing any number of filters. `run_rhessys_single()` can write a filter file based on an input R data object (list). The functions below allow for reading of existing output filters, modification, and creation of new output filters.
+
+```{r }
+# read an existing filter file
+filter = read_output_filter(filter_in = "tecfiles/testing_filter.yml")
+# equivilent
+filter = IOin_output_filters(filter_in = "tecfiles/testing_filter.yml")
+
+# create a new filter R object
+filter = build_output_filter(
+  timestep = "daily",
+  output_format = "csv",
+  output_path = "./out",
+  output_filename = "basin_daily",
+  spatial_level = "basin",
+  spatial_ID = "1",
+  variables = c("patch.total_water_in", "patch.streamflow")
+)
+
+# modify an existing filter, either from file or R object, and return R obj
+# all options left null (the default) will use the existing value.
+filter = modify_output_filter(
+  filter_in = "tecfiles/testing_filter.yml",
+  timestep = NULL,
+  output_format = NULL,
+  output_path = NULL,
+  output_filename = NULL,
+  spatial_level = NULL,
+  spatial_ID = NULL,
+  variables = c("patch.streamflow", "patch.evaporation")
+)
+
+# combine output filters and create object ready to input to run_rhessys_single/multi
+multi_filter = IOin_output_filters(filter, filter_in = "tecfiles/testing_filter2.yml", file_name = "test_output_filters")
+
+# for just a single filter with named filter file
+filter = IOin_output_filters(filter, file_name = "tecfiles/test_output_filter2.yml")
+
+# adjust core rhessys inputs - can't have -b -p etc with output filters
+input_rhessys$command_options = NULL
+
+run_rhessys_single(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr,
+  tec_data = input_tec_data,
+  def_pars = input_def_pars,
+  output_filter = "tecfiles/test_output_filter2.yml"
+)
+
+
+```
+
+### Output Subsetting
 
 This will be supplanted by the new output filters method.
 
@@ -180,11 +235,11 @@ This will be supplanted by the new output filters method.
 
 ## Running Multiple Scenarios
 
-The above input functions all generate RHESSys inputs for a single RHESSys run. With additional options, or different IOin\_X functions, multiple RHESSys scenarios can be generated, and run via `run_rhessys_multi()`.
+The above input functions all generate RHESSys inputs for a single RHESSys run. With additional options, or different IOin_X functions, multiple RHESSys scenarios can be generated, and run via `run_rhessys_multi()`.
 
 The method for generating those multiple scenarios is flexible,, as long as the output data format adheres to what is expected input for `run_rhessys_multi()`. See the code/documentation/comments on `IOin_def_pars_simple()` for more info on the data format.
 
-### IOin\_def\_pars\_sobol
+### IOin_def_pars_sobol
 
 This is still work in progress, but shows how sobol paramter sampling can be used to generate RHESSys inputs.
 

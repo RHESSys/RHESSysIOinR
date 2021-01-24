@@ -4,7 +4,7 @@
 \alias{make_hdr_file2}
 \title{Write Header File}
 \usage{
-make_hdr_file2(input_rhessys, hdr_files, def_files)
+make_hdr_file2(input_rhessys, hdr_files, def_files, runID)
 }
 \arguments{
 \item{input_rhessys}{List containing the following named elements: "rhessys_version" (path to rhessys binary),
@@ -14,6 +14,8 @@ make_hdr_file2(input_rhessys, hdr_files, def_files)
 
 \item{hdr_files}{List of named elements, named for each def file type (basin_def, hillslope_def, zone_def, soil_def, landuse_def, patch_def,
 stratum_def) as well as an element named "base_stations". Each element should contain the path to the corresponding def file.}
+
+\item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 
 \item{def_pars_df}{Data frame of def file parameter changes}
 }

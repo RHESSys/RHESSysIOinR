@@ -12,8 +12,9 @@ rhessys_command(
   flow_file,
   start_date,
   end_date,
-  output_file,
+  output_file = NULL,
   input_parameters,
+  output_filter = NULL,
   command_options,
   prefix_command = NULL
 )
@@ -36,6 +37,8 @@ rhessys_command(
 \item{output_file}{Path and base file name of RHESSys output}
 
 \item{input_parameters}{Soil parameters passed to RHESSys command line.}
+
+\item{output_filter}{Path to a yaml formatted output filter.}
 
 \item{command_options}{RHESSys command line options, ex. '-g' or '-p'.}
 

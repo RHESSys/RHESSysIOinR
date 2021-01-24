@@ -13,6 +13,9 @@
 #' list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL
 #' @param clim_base Data for input climate basestation to be written. Defaults to NULL, which assumes you havean existing basestation pointed
 #' to in input_rhessys.
+#' @param output_filter An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
+#' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
+#' existing output filter.
 #' @param output_method "awk" will use awk, any other non NULL input will use R based output selection
 #' @param output_variables List of output variables to subset via the indicated method, Defaults to NULL
 #' @param return_data TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run
@@ -25,6 +28,7 @@ run_rhessys_single <- function(input_rhessys,
                                std_pars = NULL,
                                def_pars = NULL,
                                clim_base = NULL,
+                               output_filter = NULL,
                                output_method = NULL,
                                output_variables = NULL,
                                return_data = FALSE,
@@ -32,7 +36,7 @@ run_rhessys_single <- function(input_rhessys,
 
   # ------------------------------ Input checks ------------------------------
   req_rhessys_input = c( "rhessys_version", "tec_file", "world_file", "world_hdr_prefix", "flow_file",
-                          "start_date", "end_date", "output_folder", "output_filename", "command_options")
+                          "start_date", "end_date")
   if (any(!req_rhessys_input %in% names(input_rhessys))) {
     stop(paste0("Missing rhessys_input(s):", names(input_rhessys)[!req_rhessys_input %in% names(input_rhessys)]))
   }
@@ -41,13 +45,14 @@ run_rhessys_single <- function(input_rhessys,
   if (!file.exists(input_rhessys$world_file)) { stop(paste("World file", input_rhessys$world_file, "does not exist."))}
   if (!file.exists(input_rhessys$flow_file)) { stop(paste("Flow table", input_rhessys$flow_file, "does not exist."))}
   # auto generate output folder
-  if (!dir.exists(input_rhessys$output_folder)) {
+  if (!is.null(input_rhessys$output_folder) && !dir.exists(input_rhessys$output_folder)) {
     dir.create(input_rhessys$output_folder)
     cat("Created output folder: ", input_rhessys$output_folder)
   }
-  # just for safety since this is optional
-  if (is.null(input_rhessys$prefix_command)) {
-    input_rhessys$prefix_command = NULL
+
+  # output filters don't work with the output subsetting
+  if (!is.null(output_filter) & !is.null(output_method)) {
+    stop("Cannot use both output filters and a output subsetting method.")
   }
 
   # ------------------------------ Def file parameters ------------------------------
@@ -115,9 +120,12 @@ run_rhessys_single <- function(input_rhessys,
 
   # ------------------------------ Climate ------------------------------
   # TODO add climate and dated seqeunce functionality in here
-  # if (!is.null(clim_base)) {
-  #
-  # }
+  if (!is.null(clim_base)) {
+    # Output standard clim file
+    cat("\n===== Wrote clim base station file =====\n")
+    write.table(clim_base, file = hdr_files$base_stations, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
+
+  }
 
   # ------------------------------ Header file ------------------------------
   # TODO add check for single path to existing hdr file
@@ -129,12 +137,20 @@ run_rhessys_single <- function(input_rhessys,
     cat("\n===== Wrote tec file =====\n")
   }
 
-  # ------------------------------ Call RHESSys ------------------------------
-  output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
-  if (!is.null(runID)) {
-    output_path = paste0(output_path, "_run", runID)
+  # ------------------------------ Output Filters ------------------------------
+  if (!is.null(output_filter)) {
+    filter_path = write_output_filter(output_filter, runID)
+    output_path = NULL
+
+  } else {
+    output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
+    if (!is.null(runID)) {
+      output_path = paste0(output_path, "_run", runID)
+    }
+    filter_path = NULL
   }
 
+  # ------------------------------ Call RHESSys ------------------------------
   rhessys_command(rhessys_version = input_rhessys$rhessys_version,
                   world_file = input_rhessys$world_file,
                   world_hdr_file = world_hdr_name_out,
@@ -144,6 +160,7 @@ run_rhessys_single <- function(input_rhessys,
                   end_date = input_rhessys$end_date,
                   output_file = output_path,
                   input_parameters = std_pars_out,
+                  output_filter = filter_path,
                   command_options = input_rhessys$command_options,
                   prefix_command = input_rhessys$prefix_command)
 

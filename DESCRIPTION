@@ -21,10 +21,14 @@ Imports:
     readr,
     tibble,
     data.table,
-    sensitivity
+    sensitivity,
+    yaml
 RoxygenNote: 7.1.1
-Suggests: testthat,
+Suggests: 
+    testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    gert
 VignetteBuilder: knitr
 Encoding: UTF-8
+Config/testthat/edition: 3

@@ -11,6 +11,7 @@ run_rhessys_single(
   std_pars = NULL,
   def_pars = NULL,
   clim_base = NULL,
+  output_filter = NULL,
   output_method = NULL,
   output_variables = NULL,
   return_data = FALSE,
@@ -35,6 +36,10 @@ list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <va
 
 \item{clim_base}{Data for input climate basestation to be written. Defaults to NULL, which assumes you havean existing basestation pointed
 to in input_rhessys.}
+
+\item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
+(or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
+existing output filter.}
 
 \item{output_method}{"awk" will use awk, any other non NULL input will use R based output selection}
 

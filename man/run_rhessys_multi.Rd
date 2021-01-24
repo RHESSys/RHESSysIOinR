@@ -7,14 +7,12 @@
 run_rhessys_multi(
   input_rhessys,
   hdr_files,
-  std_pars,
   tec_data,
   def_pars = NULL,
-  clim_base = NULL,
-  output_method = NULL,
-  output_variables = NULL,
-  return_data = FALSE,
-  runID = NULL
+  output_filter = NULL,
+  runID = NULL,
+  parallel = TRUE,
+  n_cores = 2
 )
 }
 \arguments{
@@ -26,23 +24,20 @@ run_rhessys_multi(
 \item{hdr_files}{List of named elements, named for each def file type (basin_def, hillslope_def, zone_def, soil_def, landuse_def, patch_def,
 stratum_def) as well as an element named "base_stations". Each element should contain the path to the corresponding def file.}
 
-\item{std_pars}{List of standard (command line) parameters.}
-
 \item{tec_data}{Input tec events, see input_tec function}
 
 \item{def_pars}{To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
 list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL}
 
-\item{clim_base}{Data for input climate basestation to be written. Defaults to NULL, which assumes you havean existing basestation pointed
-to in input_rhessys.}
-
-\item{output_method}{"awk" will use awk, any other non NULL input will use R based output selection}
-
-\item{output_variables}{List of output variables to subset via the indicated method, Defaults to NULL}
-
-\item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
+\item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
+(or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
+existing output filter.}
 
 \item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
+
+\item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
+
+\item{n_cores}{The number of cores to use in a parallelized cluster.}
 }
 \description{
 Runs RHESSys simulations.

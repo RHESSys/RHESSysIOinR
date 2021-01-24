@@ -11,6 +11,7 @@
 #' @param end_date End date character vector, same format as start_date
 #' @param output_file Path and base file name of RHESSys output
 #' @param input_parameters Soil parameters passed to RHESSys command line.
+#' @param output_filter Path to a yaml formatted output filter.
 #' @param command_options RHESSys command line options, ex. '-g' or '-p'.
 #' @param prefix_command A shell command to be run previous to the RHESSys command line call.
 #' This can be used to source a shell script, which itself can run multiple commands if needed.
@@ -24,24 +25,11 @@ rhessys_command <- function(rhessys_version,
                             flow_file,
                             start_date,
                             end_date,
-                            output_file,
+                            output_file = NULL,
                             input_parameters,
+                            output_filter = NULL,
                             command_options,
                             prefix_command = NULL) {
-
-  # assemble RHESSys command call
-  # tmp = paste0(
-  #   rhessys_version,
-  #   " -w ", world_file,
-  #   " -whdr ", world_hdr_file,
-  #   " -t ", tec_file,
-  #   " -r ", flow_file,
-  #   " -st ", start_date,
-  #   " -ed ", end_date,
-  #   " -pre ", output_file,
-  #   " ", input_parameters,
-  #   " ", command_options
-  # )
 
   tmp = paste0(
     rhessys_version,
@@ -50,9 +38,15 @@ rhessys_command <- function(rhessys_version,
     " -t ", tec_file,
     " -r ", flow_file,
     " -st ", start_date,
-    " -ed ", end_date,
-    " -pre ", output_file
+    " -ed ", end_date
   )
+
+  if (!is.null(output_file)) {
+    tmp = paste0(tmp, " -pre ", output_file)
+  }
+  if (!is.null(output_filter)) {
+    tmp = paste0(tmp, " -of ", output_filter)
+  }
 
   if (!is.null(input_parameters)) {
     tmp = paste0(tmp, " ", input_parameters)

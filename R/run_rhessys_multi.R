@@ -9,23 +9,12 @@
 #' @export
 #'
 
-# --- NOTES ---
-# Feel free to change the name and really anytthing about this function, it's mostly here to show the hypothetical structure -WB
-
-
-# some testing
-# def_pars = input_def_pars
-# def_pars = input_def_parsx1
-# def_pars = NULL
-#
-# std_pars = input_std_pars
-# std_pars = input_std_parsx1
-
 
 run_rhessys_multi = function(input_rhessys,
                              hdr_files,
                              tec_data,
                              def_pars = NULL,
+                             output_filter = NULL,
                              runID = NULL,
                              parallel = TRUE,
                              n_cores = 2) {
@@ -77,6 +66,7 @@ run_rhessys_multi = function(input_rhessys,
         hdr_files = hdr_files,
         tec_data = tec_data,
         def_pars = def_pars_i,
+        output_filter = output_filter,
         runID = i
       )
     }
@@ -91,7 +81,9 @@ run_rhessys_multi = function(input_rhessys,
                             hdr_files ,
                             tec_data,
                             df,
-                            def_pars) {
+                            def_pars,
+                            output_filter) {
+
       library(RHESSysIOinR)
 
       if (!is.null(def_pars)) {
@@ -105,6 +97,7 @@ run_rhessys_multi = function(input_rhessys,
         hdr_files = hdr_files,
         tec_data = tec_data,
         def_pars = def_pars_i,
+        output_filter = output_filter,
         runID = i
       )
 

@@ -35,30 +35,67 @@ IOin_clim = function(base_station_id,
                      hourly_prefix = "hourly",
                      num_non_critical_hourly_sequences = 0) {
 
-  input_clim_base_list <- list(
-    list(
-      core = data.frame(
-        values = c(base_station_id, x_coordinate, y_coordinate, effective_lai, screen_height),
-        vars = c("base_station_id", "x_coordinate", "y_coordinate", "effective_lai", "screen_height")
-      ),
-      annual = data.frame(
-        values = c(annual_prefix, num_non_critical_annual_sequences),
-        vars = c("annual_climate_prefix","number_non_critical_annual_sequences")
-      ),
-      monthly = data.frame(
-        values = c(monthly_prefix, num_non_critical_monthly_sequences),
-        vars = c("monthly_climate_prefix","number_non_critical_monthly_sequences")
-      ),
-      daily = data.frame(
-        values = c(daily_prefix, num_non_critical_daily_sequences),
-        vars = c("daily_climate_prefix","number_non_critical_daily_sequences")
-      ),
-      hourly = data.frame(
-        values = c(hourly_prefix, num_non_critical_hourly_sequences),
-        vars = c("hourly_climate_prefix","number_non_critical_hourly_sequences")
-      )
+
+
+  output_clim_base = data.frame(
+    "values" = c(
+      base_station_id,
+      x_coordinate,
+      y_coordinate,
+      z_coordinate,
+      effective_lai,
+      screen_height,
+      annual_prefix,
+      num_non_critical_annual_sequences,
+      monthly_prefix,
+      num_non_critical_monthly_sequences,
+      daily_prefix,
+      num_non_critical_daily_sequences,
+      hourly_prefix,
+      num_non_critical_hourly_sequences
+    ),
+    "vars" = c(
+      "base_station_id",
+      "x_coordinate",
+      "y_coordinate",
+      "z_coordinate",
+      "effective_lai",
+      "screen_height",
+      "annual_climate_prefix",
+      "number_non_critical_annual_sequences",
+      "monthly_climate_prefix",
+      "number_non_critical_monthly_sequences",
+      "daily_climate_prefix",
+      "number_non_critical_daily_sequences",
+      "hourly_climate_prefix",
+      "number_non_critical_hourly_sequences"
     )
   )
 
-  return(input_clim_base_list)
+  # input_clim_base_list <- list(
+  #   list(
+  #     core = data.frame(
+  #       values = c(base_station_id, x_coordinate, y_coordinate, effective_lai, screen_height),
+  #       vars = c("base_station_id", "x_coordinate", "y_coordinate", "effective_lai", "screen_height")
+  #     ),
+  #     annual = data.frame(
+  #       values = c(annual_prefix, num_non_critical_annual_sequences),
+  #       vars = c("annual_climate_prefix","number_non_critical_annual_sequences")
+  #     ),
+  #     monthly = data.frame(
+  #       values = c(monthly_prefix, num_non_critical_monthly_sequences),
+  #       vars = c("monthly_climate_prefix","number_non_critical_monthly_sequences")
+  #     ),
+  #     daily = data.frame(
+  #       values = c(daily_prefix, num_non_critical_daily_sequences),
+  #       vars = c("daily_climate_prefix","number_non_critical_daily_sequences")
+  #     ),
+  #     hourly = data.frame(
+  #       values = c(hourly_prefix, num_non_critical_hourly_sequences),
+  #       vars = c("hourly_climate_prefix","number_non_critical_hourly_sequences")
+  #     )
+  #   )
+  # )
+
+  return(output_clim_base)
 }
