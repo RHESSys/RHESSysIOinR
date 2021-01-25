@@ -67,7 +67,13 @@ rhessys_command <- function(rhessys_version,
     tmp = noquote(paste("bash -c \"", tmp, "\"", sep = ""))
   }
 
-  print(paste("Command line echo:", tmp), quote = FALSE)
+  cat("Command line echo:", tmp, "\n")
+  #print(paste("Command line echo:", tmp), quote = FALSE)
+
+  cat("\n----------------------------------------\n")
+  cat("===== Beginning RHESSys Simulation =====\n")
+  cat("----------------------------------------\n\n")
+
   system(tmp)
 
 }

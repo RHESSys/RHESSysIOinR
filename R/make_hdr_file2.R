@@ -52,7 +52,7 @@ make_hdr_file2 = function(input_rhessys,
   }
   world_hdr_name_out <- file.path(world_hdr_path, paste0(input_rhessys$world_hdr_prefix, runID, ".hdr"))
   write.table(hdr_df, file = world_hdr_name_out, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\t\t")
-  cat("\n===== Wrote hdr file '",world_hdr_name_out,"' =====", sep = "")
+  cat("===== Wrote hdr file '",world_hdr_name_out,"' =====\n", sep = "")
 
   # NOTE ON WRITE SPEEDS
   # write times w data.table::fwrite is only ~100 microsec faster for the header

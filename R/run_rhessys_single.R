@@ -34,6 +34,9 @@ run_rhessys_single <- function(input_rhessys,
                                return_data = FALSE,
                                runID = NULL) {
 
+  cat("\n--------------------------------------------\n")
+  cat("===== Beginning RHESSysIO file writing =====\n")
+  cat("--------------------------------------------\n\n")
   # ------------------------------ Input checks ------------------------------
   req_rhessys_input = c( "rhessys_version", "tec_file", "world_file", "world_hdr_prefix", "flow_file",
                           "start_date", "end_date")
@@ -56,9 +59,12 @@ run_rhessys_single <- function(input_rhessys,
   }
 
   # ------------------------------ Def file parameters ------------------------------
-  # check the def files all exist - except for the fire grid prefix
-  if (any(!file.exists(unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"] )))) {
-    stop("Def file(s) '", unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"])[!file.exists(unlist(hdr_files[names(hdr_files) != "fire_grid_prefix"]))],"' is/are not exist at specified path." )
+  # check the def files all exist - except for the fire grid prefix, and clim if clim is also given as input
+  not_check = 'fire_grid_prefix'
+  if (!is.null(clim_base)) {not_check = c(not_check, 'base_stations')}
+
+  if (any(!file.exists(unlist(hdr_files[!names(hdr_files) %in% not_check])))) {
+    stop("Def file(s) '", unlist(hdr_files[!names(hdr_files) %in% not_check])[!file.exists(unlist(hdr_files[!names(hdr_files) %in% not_check]))],"' is/are not exist at specified path." )
   }
   # TODO if keeping the fire grid header method - add check for those files if header is included
 
@@ -83,7 +89,7 @@ run_rhessys_single <- function(input_rhessys,
       new_file = change_def_file(def_file = f, par_sets = def_par_subset, file_name_ext = runID)
       def_files[def_files[,1] == f, 2] = new_file
     }
-    cat("\n===== Wrote def files =====")
+    cat("===== Wrote def files =====\n")
   } else {
     def_files = NULL
   }
@@ -122,7 +128,7 @@ run_rhessys_single <- function(input_rhessys,
   # TODO add climate and dated seqeunce functionality in here
   if (!is.null(clim_base)) {
     # Output standard clim file
-    cat("\n===== Wrote clim base station file =====\n")
+    cat("===== Wrote clim base station file =====\n")
     write.table(clim_base, file = hdr_files$base_stations, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
 
   }
@@ -134,7 +140,7 @@ run_rhessys_single <- function(input_rhessys,
   # ------------------------------ Temporal event control (tec) file ------------------------------
   if (!is.null(tec_data)) {
     write.table(tec_data, file = input_rhessys$tec_file, col.names = FALSE, row.names = FALSE, quote = FALSE)
-    cat("\n===== Wrote tec file =====\n")
+    cat("===== Wrote tec file =====\n")
   }
 
   # ------------------------------ Output Filters ------------------------------
@@ -149,6 +155,12 @@ run_rhessys_single <- function(input_rhessys,
     }
     filter_path = NULL
   }
+
+
+  cat("\n-------------------------------------------\n")
+  cat("===== Finished RHESSysIO file writing =====\n")
+  cat("-------------------------------------------\n\n")
+
 
   # ------------------------------ Call RHESSys ------------------------------
   rhessys_command(rhessys_version = input_rhessys$rhessys_version,

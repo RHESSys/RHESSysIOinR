@@ -41,7 +41,17 @@ write_output_filter = function(output_filter, runID = NULL) {
     file_name = paste0(file_name, "_", runID)
   }
   # write the output filter
-  yaml::write_yaml(x = output_filter, file = file_name)
+  #yaml::write_yaml(x = output_filter, file = file_name)
+
+  # workaround beacuse brians code assumes integers
+  yaml_out = yaml::as.yaml(x = output_filter)
+  yaml_out = gsub("\\.0", "", yaml_out)
+
+  file = file(file_name, "w")
+  cat(yaml_out, file = file, sep = "")
+  close(file)
+
+  cat("===== Wrote output filter file =====\n")
 
   return(file_name)
 

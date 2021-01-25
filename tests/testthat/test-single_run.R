@@ -110,4 +110,7 @@ test_that("Simplest RHSSys run options run successfully (core rhessys info, tec 
   expect_file_sizeKB_gt(path = "out/w8TC_grow_basin.daily", size_KB = 5)
 })
 
+# should add cleanup here if more tests are going to be run that depend on the file system state - otherwise doesn't really matter
+
+
 

@@ -40,7 +40,7 @@ modify_output_filter = function(filter_in,
 
     filter[[1]][names(filter[[1]]) %in% c('basin', 'hillslope', 'zone', 'patch', 'stratum')] = NULL
 
-    filter[[1]]$tmp = list("ids" = spatial_ID, "variables" = variables)
+    filter[[1]]$tmp = list("ids" = spatial_ID, "variables" = paste(variables, collapse = ", "))
 
     names(filter[[1]])[names(filter[[1]]) == "tmp"] = spatial_level
 
@@ -51,7 +51,8 @@ modify_output_filter = function(filter_in,
   }
 
   if (!is.null(variables)) {
-    filter[[1]][[which(names(filter[[1]]) %in% c('basin', 'hillslope', 'zone', 'patch', 'stratum'))]]$variables = variables
+    filter[[1]][[which(names(filter[[1]]) %in% c('basin', 'hillslope', 'zone', 'patch', 'stratum'))]]$variables = paste(variables, collapse = ", ")
+
   }
 
   return(filter)

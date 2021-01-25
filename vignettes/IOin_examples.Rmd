@@ -150,7 +150,7 @@ run_rhessys_single(
 
 This is just to generate a basestation on the fly, but can be useful when running across multiple climate series, and to ensure the paths in the base station file are correct. Future additions will support more complex modification of climate sequences and more.
 
-```{r eval=FALSE}
+```{r, echo=FALSE, results='hide'}
 input_clim = IOin_clim(
   base_station_id = 101,
   x_coordinate = 100.0,
@@ -160,6 +160,16 @@ input_clim = IOin_clim(
   screen_height = 160,
   daily_prefix = "clim/w8_daily"
 )
+# if set to existing file name, existing base station will be overwritten.
+input_hdr$base_stations = "clim/w8_base_test"
+
+run_rhessys_single(
+  input_rhessys = input_rhessys,
+  hdr_files = input_hdr,
+  tec_data = input_tec_data,
+  clim_base = input_clim
+)
+
 ```
 
 ## Output
@@ -168,51 +178,46 @@ input_clim = IOin_clim(
 
 Output filters require a output filter file in yaml format, containing any number of filters. `run_rhessys_single()` can write a filter file based on an input R data object (list). The functions below allow for reading of existing output filters, modification, and creation of new output filters.
 
-```{r }
+```{r, echo=FALSE, results='hide'}
 # read an existing filter file
-filter = read_output_filter(filter_in = "tecfiles/testing_filter.yml")
-# equivilent
-filter = IOin_output_filters(filter_in = "tecfiles/testing_filter.yml")
+filter1 = read_output_filter(filter_in = "tecfiles/testing_filter.yml")
+# equivalent
+# filter = IOin_output_filters(filter_in = "tecfiles/testing_filter.yml")
 
 # create a new filter R object
-filter = build_output_filter(
+filter2 = build_output_filter(
   timestep = "daily",
   output_format = "csv",
-  output_path = "./out",
+  output_path = "../Testing/out",
   output_filename = "basin_daily",
   spatial_level = "basin",
-  spatial_ID = "1",
-  variables = c("patch.total_water_in", "patch.streamflow")
+  spatial_ID = as.integer("1"),
+  variables = c("patch.total_water_in", "patch.streamflow", "patch.evaporation")
 )
 
 # modify an existing filter, either from file or R object, and return R obj
 # all options left null (the default) will use the existing value.
-filter = modify_output_filter(
+filter3 = modify_output_filter(
   filter_in = "tecfiles/testing_filter.yml",
-  timestep = NULL,
-  output_format = NULL,
-  output_path = NULL,
-  output_filename = NULL,
-  spatial_level = NULL,
-  spatial_ID = NULL,
-  variables = c("patch.streamflow", "patch.evaporation")
+  variables = c("patch.total_water_in", "patch.streamflow", "patch.evaporation")
 )
 
 # combine output filters and create object ready to input to run_rhessys_single/multi
-multi_filter = IOin_output_filters(filter, filter_in = "tecfiles/testing_filter2.yml", file_name = "test_output_filters")
+filter4 = IOin_output_filters(filter, filter_in = "tecfiles/testing_filter2.yml", file_name = "test_output_filters")
 
 # for just a single filter with named filter file
-filter = IOin_output_filters(filter, file_name = "tecfiles/test_output_filter2.yml")
+input_filter = IOin_output_filters(filter2, file_name = "tecfiles/test_output_filter.yml")
 
-# adjust core rhessys inputs - can't have -b -p etc with output filters
+# adjust core rhessys inputs - can't have -b -p etc output along with output filters
 input_rhessys$command_options = NULL
+
 
 run_rhessys_single(
   input_rhessys = input_rhessys,
   hdr_files = input_hdr,
   tec_data = input_tec_data,
   def_pars = input_def_pars,
-  output_filter = "tecfiles/test_output_filter2.yml"
+  output_filter = input_filter
 )
 
 
@@ -220,7 +225,7 @@ run_rhessys_single(
 
 ### Output Subsetting
 
-This will be supplanted by the new output filters method.
+This is being deprecated and though it should still function, will not be supported as new features get added.
 
 ```{r eval=FALSE}
   # to use native R-based subsetting
