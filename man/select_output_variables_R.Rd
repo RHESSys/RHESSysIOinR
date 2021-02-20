@@ -16,18 +16,26 @@ select_output_variables_R(
 )
 }
 \arguments{
-\item{output_variables}{Datafrane with named columns: "variables" containing variables matching variables of interest
+\item{output_variables}{Datafrane with named columns: "variables" containing variables of interest
 found in the header of rhessys output files, "out_file" points to the files containing the associated variables,
-this can be either the path to that file, can use the abbreviation for the different output types (patch daily = pd, patch daily grow = pdg etc.)
-and the files in output_folder will be parsed appropriately, or can use the fully written out space.time suffix, e.g. "patch.daily" or "grow_patch.daily"}
+this can be either the path to that file, can use the abbreviation for the different output types
+(patch daily = pd, patch daily grow = pdg etc.) and the files in output_folder will be parsed appropriately,
+or can use the fully written out space.time suffix, e.g. "patch.daily" or "grow_patch.daily"}
 
 \item{output_folder}{Folder where rhessys output is located (e.g. 'out')}
 
+\item{output_filename}{Base file name of standard rhessys output}
+
 \item{run}{Simulation number. Used to reset files in allsim at beginning of simulation}
+
+\item{max_run}{Max number of runs to collect output for - at run == max run, output will be pivoted from long to wide,
+and date and spatial info will be added.}
 
 \item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
 
 \item{out}{Output location, if not will use default "allsim" within output folder}
+
+\item{no_write}{TRUE/FALSE to only return data within R, and not write any data. Only works is return_data == TRUE}
 }
 \description{
 Somewhat optimized R-based read and subsetting of RHESSys output

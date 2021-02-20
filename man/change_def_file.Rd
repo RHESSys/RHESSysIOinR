@@ -14,5 +14,5 @@ change_def_file(def_file, par_sets, file_name_ext = NULL)
 \item{file_name_ext}{Optional extension to add to file name}
 }
 \description{
-This function imports a def file, replaces the values of selected parameters, and exports a def file.
+This function reads a def file, replaces the values of selected parameters, and writes a new def file.
 }

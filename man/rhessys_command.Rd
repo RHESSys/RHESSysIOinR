@@ -12,37 +12,40 @@ rhessys_command(
   flow_file,
   start_date,
   end_date,
-  output_file,
+  output_file = NULL,
   input_parameters,
-  command_options
+  output_filter = NULL,
+  command_options,
+  prefix_command = NULL
 )
 }
 \arguments{
-\item{rhessys_version}{path and file of compiled version of RHESSys.}
+\item{rhessys_version}{Path and file name of compiled version of RHESSys.}
 
-\item{world_file}{path and file of world_file. World_file is produced using
-grass-to-world}
+\item{world_file}{Oath and file name of RHESSys world_file.}
 
-\item{world_hdr_file}{???}
+\item{world_hdr_file}{Path and file name of RHESSys header file}
 
-\item{tec_file}{???}
+\item{tec_file}{Path and file name of RHESSys temporal event control (tec) file}
 
-\item{flow_file}{???}
+\item{flow_file}{Path and file name of RHESSys flow table file}
 
-\item{start_date}{???}
+\item{start_date}{Start date character vector in format <year> <month> <day> <hour>, delimited by spaces. Ex. '1990 12 30 01'}
 
-\item{end_date}{???}
+\item{end_date}{End date character vector, same format as start_date}
 
-\item{output_file}{???}
+\item{output_file}{Path and base file name of RHESSys output}
 
-\item{input_parameters}{???}
+\item{input_parameters}{Soil parameters passed to RHESSys command line.}
 
-\item{command_options}{???}
+\item{output_filter}{Path to a yaml formatted output filter.}
+
+\item{command_options}{RHESSys command line options, ex. '-g' or '-p'.}
+
+\item{prefix_command}{A shell command to be run previous to the RHESSys command line call.
+This can be used to source a shell script, which itself can run multiple commands if needed.}
 }
 \description{
-\code{rhessys_command} calls rhessys on the command line.
-}
-\details{
-Requires that supporting files be developed prior to running RHESSys. These
-include ...
+\code{rhessys_command} Assembles command line RHESSys call, and runs it. See the RHESSys wiki:
+https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options
 }

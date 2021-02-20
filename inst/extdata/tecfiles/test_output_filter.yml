@@ -1,0 +1,9 @@
+filter:
+  timestep: daily
+  output:
+    format: csv
+    path: ./out
+    filename: basin_daily
+  basin:
+    ids: 1
+    variables: patch.total_water_in, patch.streamflow

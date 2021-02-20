@@ -49,3 +49,7 @@ inst/doc
 # prevent readme html from accidentally getting pushed
 README.html
 .Rproj.user
+
+# ignore test stuff
+inst/extdata/out/w8*
+inst/extdata/rh_dev

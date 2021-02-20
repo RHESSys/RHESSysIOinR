@@ -1,9 +1,9 @@
 Package: RHESSysIOinR
 Type: Package
 Title: Tools for Running RHESSys from R
-Version: 0.0.0.9001
+Version: 2.0.0
 Date: 2016-09-11
-Author: Ryan R. Bart
+Author: Ryan R. Bart, Will Burke
 Maintainer: Ryan R. Bart <ryanrbart@ucsb.edu>
 Description: This package contains functions for the setup of RHESSys files,
     calibration and simulation of RHESSys, and the analysis of RHESSys output.
@@ -20,10 +20,15 @@ Imports:
     lhs,
     readr,
     tibble,
-    data.table
-RoxygenNote: 7.1.0
-Suggests: testthat,
+    data.table,
+    sensitivity,
+    yaml
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    gert
 VignetteBuilder: knitr
 Encoding: UTF-8
+Config/testthat/edition: 3
