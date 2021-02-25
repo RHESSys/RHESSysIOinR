@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, comment = "#>", eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, comment = "#>", eval = F)
 ```
 
 ## RHESSysIOinR Input Functions
@@ -35,7 +35,9 @@ Using rhessys/Testing as example input data. If you don't already have develop b
 # to clone and checkout develop branch, a bit slow for some reason
 gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
                 path = "~/Repos/rhessys-devtest",
-                branch = "develop")
+                branch = "develop",
+                verbose = F)
+
 # Using the included testing data
 knitr::opts_knit$set(root.dir = "~/Repos/rhessys-devtest/Testing/")
 
