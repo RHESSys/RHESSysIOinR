@@ -32,11 +32,12 @@ This vignette shows example uses of the IOin_X functions, which together constru
 Using rhessys/Testing as example input data. If you don't already have develop branch of RHESsys cloned, get that now too.
 
 ```{r, echo=FALSE, results='hide'}
-# to clone and checkout develop branch, a bit slow for some reason
+library(RHESSysIOinR)
+
+#to clone and checkout develop branch, a bit slow for some reason
 gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
                 path = "~/Repos/rhessys-devtest",
-                branch = "develop",
-                verbose = F)
+                branch = "develop")
 
 # Using the included testing data
 knitr::opts_knit$set(root.dir = "~/Repos/rhessys-devtest/Testing/")
@@ -48,9 +49,8 @@ knitr::opts_knit$set(root.dir = "~/Repos/rhessys-devtest/Testing/")
 If needed compile RHESSys.
 
 ```{r, echo=FALSE, results='hide'}
-library(RHESSysIOinR)
 # This helper function should work for both Mac and WSL (Windows), and avoids dealing with obnoxious WSL paths on the command line
-compile_rhessys(location = "../")
+compile_rhessys(location = "~/Repos/rhessys-devtest/")
 ```
 
 ### IOin_rhessys_input

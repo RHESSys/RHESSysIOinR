@@ -148,6 +148,7 @@ run_rhessys_single <- function(input_rhessys,
     filter_path = write_output_filter(output_filter, runID)
     output_path = NULL
 
+
   } else {
     output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
     if (!is.null(runID)) {
