@@ -1,9 +1,18 @@
 ---
-title: "IOin_examples"
+title: "IOinR Example Usage"
 author: "Will Burke"
-date: "9/7/2020"
-output: html_document
+date: "2/24/2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{IOinR Example Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
 ---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, comment = "#>", eval = FALSE)
+```
 
 ## RHESSysIOinR Input Functions
 
@@ -22,31 +31,31 @@ This vignette shows example uses of the IOin_X functions, which together constru
 
 Using rhessys/Testing as example input data. If you don't already have develop branch of RHESsys cloned, get that now too.
 
-```{r, setup, include=FALSE}
+```{r, echo=FALSE, results='hide'}
 # to clone and checkout develop branch, a bit slow for some reason
-# gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
-#                 path = "~/Repos/rhessys-devtest",
-#                 branch = "develop")
-
+gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
+                path = "~/Repos/rhessys-devtest",
+                branch = "develop")
+# Using the included testing data
 knitr::opts_knit$set(root.dir = "~/Repos/rhessys-devtest/Testing/")
-knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ### Compile RHESSys
 
-If needed
+If needed compile RHESSys.
 
 ```{r, echo=FALSE, results='hide'}
 library(RHESSysIOinR)
-# Should work for both Mac and WSL (Windows)
-#compile_rhessys(location = "../")
+# This helper function should work for both Mac and WSL (Windows), and avoids dealing with obnoxious WSL paths on the command line
+compile_rhessys(location = "../")
 ```
 
 ### IOin_rhessys_input
 
 This is the basic RHESSys information needed to run RHESSys from the command line.
 
-```{r }
+```{r}
 input_rhessys = IOin_rhessys_input(
   version = "../rhessys/rhessys7.3",
   tec_file = "tecfiles/w8TC.tec",

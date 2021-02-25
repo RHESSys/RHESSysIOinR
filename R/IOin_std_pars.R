@@ -69,7 +69,7 @@ IOin_std_pars = function(m = 1,
   )
 
   if (n > 1) {
-    std_pars = lapply(std_pars, function(x) runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
+    std_pars = lapply(std_pars, function(x) stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
   }
 
   return(std_pars)

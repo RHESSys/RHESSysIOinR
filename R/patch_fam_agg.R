@@ -36,7 +36,7 @@ patch_fam_agg = function(X, areas = NULL, na.rm = FALSE) {
 
   patch_area = X[, sum(area), by = group_cols]
   X = data.table::merge.data.table(x = X, y = patch_area, by = group_cols)
-  pfam = X[, lapply(.SD, weighted.mean, area/V1, na.rm = na.rm), by = group_cols, .SDcols = agg_cols]
+  pfam = X[, lapply(.SD, stats::weighted.mean, area/V1, na.rm = na.rm), by = group_cols, .SDcols = agg_cols]
 
   return(pfam)
 }

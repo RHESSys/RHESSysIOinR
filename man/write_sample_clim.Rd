@@ -35,7 +35,3 @@ This function is used to generate new (artifical) RHESSys climate inputs from
 existing climate data the function returns a new climate data frame in R and
 writes .tmax, .tmin, .rain files for RHESSys met input
 }
-\examples{
-TBD
-
-}

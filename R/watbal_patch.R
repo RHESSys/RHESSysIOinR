@@ -25,39 +25,42 @@
 #' @param pd Patch daily rhessys output, read into R with a funciton like `readin_rhessys_output()`
 #' @param cd Canopy daily rhessys output, read into R with a funciton like `readin_rhessys_output()`
 #'
+#' @importFrom magrittr %>%
+#'
 #' @export
 
 watbal_patch = function(pd, cd) {
 
-  library(tidyverse)
-    qouta = ifelse(pd$streamflow > 0, pd$streamflow, pd$Qout)
-  pd$watbal.tmp=with(pd,pcp+Qin-qouta-trans_sat-trans_unsat-evap-evap_surface-soil_evap)
-  pd$sd=with(pd,sat_def-rz_storage-unsat_stor)
+  qouta = ifelse(pd$streamflow > 0, pd$streamflow, pd$Qout)
+  pd$watbal.tmp = with(pd, pcp + Qin - qouta - trans_sat - trans_unsat - evap - evap_surface - soil_evap)
+  pd$sd = with(pd, sat_def - rz_storage - unsat_stor)
 
   cd$weighted_snow_stored = cd$snow_stored * cd$covfrac
   cd$weighted_rain_stored = cd$rain_stored * cd$covfrac
-  tmp = cd %>% group_by(zoneID, hillID, basinID, patchID, day, month, year) %>% summarize(can_snow_stored = sum(weighted_snow_stored), can_rain_stored = sum(weighted_rain_stored) )
+  tmp = cd %>% dplyr::group_by(zoneID, hillID, basinID, patchID, day, month, year) %>%
+    dplyr::summarize(can_snow_stored = sum(weighted_snow_stored), can_rain_stored = sum(weighted_rain_stored) )
 
-  pd = left_join(pd, tmp[,c("basinID","hillID","zoneID","patchID","day","month","year","can_snow_stored","can_rain_stored")])
+  pd = dplyr::left_join(pd, tmp[,c("basinID","hillID","zoneID","patchID","day","month","year","can_snow_stored","can_rain_stored")])
 
-  pd$can_water_stored = pd$can_rain_stored+pd$can_snow_stored
+  pd$can_water_stored = pd$can_rain_stored + pd$can_snow_stored
 
-  tmp=diff(pd$sd)
-  tmp=c(0,tmp)
-  pd$sddiff=tmp
-  tmp=diff(pd$snow)
-  tmp=c(0,tmp)
-  pd$snodiff=tmp
-  tmp=diff(pd$detention_store)
-  tmp=c(0,tmp)
-  pd$detdiff=tmp
-  tmp=diff(pd$litter.rain_stor)
-  tmp=c(0,tmp)
-  pd$litdiff=tmp
-  tmp=diff(pd$can_water_stored)
-  tmp=c(0,tmp)
-  pd$candiff=tmp
-  pd$watbal=with(pd,watbal.tmp+sddiff-snodiff-detdiff-litdiff-candiff)
-  pd$watbal[1]=0.0
+  tmp = diff(pd$sd)
+  tmp = c(0, tmp)
+  pd$sddiff = tmp
+  tmp = diff(pd$snow)
+  tmp = c(0, tmp)
+  pd$snodiff = tmp
+  tmp = diff(pd$detention_store)
+  tmp = c(0, tmp)
+  pd$detdiff = tmp
+  tmp = diff(pd$litter.rain_stor)
+  tmp = c(0, tmp)
+  pd$litdiff = tmp
+  tmp = diff(pd$can_water_stored)
+  tmp = c(0, tmp)
+  pd$candiff = tmp
+  pd$watbal = with(pd, watbal.tmp + sddiff - snodiff - detdiff - litdiff - candiff)
+  pd$watbal[1] = 0.0
+
   return(pd)
 }

@@ -17,8 +17,8 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
 
   # Read in 'allsim' output into list
   a <- var_names %>%
-    sapply(., function(., path) file.path(path, .), path=path) %>%
-    lapply(., read_tsv, col_names = FALSE, skip = 2, col_types = cols(X1 = col_skip()))
+    sapply(., function(., path) file.path(path, .), path = path) %>%
+    lapply(., readr::read_tsv, col_names = FALSE, skip = 2, col_types = readr::cols(X1 = readr::col_skip()))
 
   # Inputs for processing
   dates <- rep(seq(initial_date, initial_date + lubridate::days(length(a[[1]][[1]])/num_layers) - 1, by = "day"), times = num_layers)
@@ -26,7 +26,7 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
   # Process data to tidy data frame (part 1)
   b <- a %>%
     lapply(., separate_canopy_output, num_canopies = num_layers) %>%       # Add variable to signify if output has multiple layers
-    lapply(., function(., dates) cbind(dates, .), dates=dates) %>%           # Add dates column to data frames
+    lapply(., function(., dates) cbind(dates, .), dates = dates) %>%           # Add dates column to data frames
     lapply(., function(.) tidyr::gather(., run, value, c(-dates,-canopy_layer)))    # Rearrange data frame
 
   # Process data to tidy data frame (part 2)
@@ -36,10 +36,10 @@ readin_rhessys_output_cal <- function(var_names, path, initial_date, parameter_f
     Reduce(rbind, .)                                                     # rbind the data frames together
 
   # Add all variables related to run (e.g. parameters, dated_seq)
-  if (is.null(parameter_file) == FALSE){
+  if (is.null(parameter_file) == FALSE) {
     parameter_output <- parameter_file %>%
-      read.csv(., header = TRUE) %>%
-      cbind(run = sapply(seq_len(length(.[,1])),function (x) paste("X",as.character(x+1),sep="")),.)
+      utils::read.csv(., header = TRUE) %>%
+      cbind(run = sapply(seq_len(length(.[,1])),function(x) paste("X",as.character(x + 1),sep = "")),.)
     parameter_output$run <- as.character(parameter_output$run)
     done <- dplyr::left_join(c, parameter_output, by = "run")
   } else {

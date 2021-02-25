@@ -62,7 +62,7 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   file_name_out <- file.path(path_new, paste(name_no_ext,file_name_ext,".def",sep = ""))
   # if there are comments, this should remove extra NAs
   def_table[def_table == "NA"] = " "
-  write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
+  utils::write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
 
   return(file_name_out)
 

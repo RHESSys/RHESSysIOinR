@@ -19,6 +19,8 @@ of interest.}
 \item{output_folder}{Folder where rhessys output is located (e.g. 'out')}
 
 \item{run}{Simulation number. Used to reset files in allsim at beginning of simulation}
+
+\item{output_initiation}{For multiple scenarios}
 }
 \description{
 for now simply paralleling the approach used with awks but with R input

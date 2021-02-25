@@ -49,9 +49,9 @@ output_control = function(output_method,
     } else {
       select_output_variables(
         output_variables = output_variables,
-        output_folder = input_rhessys$output_folder,
+        output_folder = output_folder,
         run = runID,
-        output_initiation = output_initiation
+        output_initiation = 1
       )
 
     }

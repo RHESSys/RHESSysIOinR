@@ -1,7 +1,7 @@
 Package: RHESSysIOinR
 Type: Package
 Title: Tools for Running RHESSys from R
-Version: 2.0.0
+Version: 2.0.1
 Date: 2016-09-11
 Author: Ryan R. Bart, Will Burke
 Maintainer: Ryan R. Bart <ryanrbart@ucsb.edu>
@@ -10,19 +10,18 @@ Description: This package contains functions for the setup of RHESSys files,
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:
-    hydroGOF,
     chron,
     dplyr,
     tidyr,
     lubridate,
     tools,
-    purrr,
-    lhs,
-    readr,
-    tibble,
     data.table,
     sensitivity,
-    yaml
+    yaml,
+    zoo,
+    magrittr,
+    readr,
+    rlang
 RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 3.0.0),

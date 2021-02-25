@@ -15,9 +15,9 @@ make_hdr_file2(input_rhessys, hdr_files, def_files, runID)
 \item{hdr_files}{List of named elements, named for each def file type (basin_def, hillslope_def, zone_def, soil_def, landuse_def, patch_def,
 stratum_def) as well as an element named "base_stations". Each element should contain the path to the corresponding def file.}
 
-\item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
+\item{def_files}{Data frame of def file parameter changes}
 
-\item{def_pars_df}{Data frame of def file parameter changes}
+\item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 }
 \description{
 New version of header file creation function.

@@ -2,7 +2,7 @@
 #'
 #' Compiles rhessys, with options to delete objects and move resulting RHESSys executable
 #' @param location The file patch to where the rhessys makefile or folder is
-#' @param delete_obj TRUE/FALSE to delete objects (before and after)
+#' @param delete_objs TRUE/FALSE to delete objects (before and after)
 #' @param destination Optional input of where to move resulting RHESSys executable
 #' @param make_args Arguments passed to the end of the make commandline call (examples: "wmfire='T'", "clean", or "clobber", )
 #' @param CFLAGS Overwrite CFLAGS in the makefile
