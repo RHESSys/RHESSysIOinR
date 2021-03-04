@@ -7,8 +7,8 @@
 run_rhessys_single(
   input_rhessys,
   hdr_files,
-  tec_data,
-  std_pars = NULL,
+  tec_data = NULL,
+  cmd_pars = NULL,
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
@@ -29,7 +29,7 @@ stratum_def) as well as an element named "base_stations". Each element should co
 
 \item{tec_data}{Input tec events, see input_tec function}
 
-\item{std_pars}{List of standard (command line) parameters.}
+\item{cmd_pars}{List of standard (command line) parameters.}
 
 \item{def_pars}{To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
 list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL}

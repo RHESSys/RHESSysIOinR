@@ -6,10 +6,10 @@
 #'
 #' @author Will Burke
 
-make_hdr_file2 = function(input_rhessys,
-                          hdr_files,
-                          def_files,
-                          runID) {
+make_hdr_file = function(input_rhessys,
+                         hdr_files,
+                         def_files,
+                         runID) {
 
   # Create hdr output folder
   world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix)
