@@ -10,15 +10,6 @@
 #'
 #' @export
 
-
-start = "1988 10 1 1"
-
-start = as.Date("1988-10-1")
-
-end = "2000 9 30 24"
-
-end = as.Date("2000-9-30")
-
 IOin_tec_std = function(start, end, output_state = TRUE) {
 
   # if inputs are rhessys format

@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = F, results = 'hide', eval = F)
+knitr::opts_chunk$set(echo = F, results = 'hide', eval = T)
 ```
 
 ## RHESSysIOinR Input Functions
@@ -132,7 +132,7 @@ filter3 = modify_output_filter(
 )
 
 # combine output filters and create object ready to input to run_rhessys_single/multi
-filter4 = IOin_output_filters(filter, filter_in = "tecfiles/testing_filter.yml", file_name = "test_output_filters")
+filter4 = IOin_output_filters(filter2, filter_in = "tecfiles/testing_filter.yml", file_name = "test_output_filters")
 
 # for just a single filter with named filter file
 output_filter = IOin_output_filters(filter2, file_name = "tecfiles/test_output_filter.yml")
@@ -242,7 +242,10 @@ pars = list(
   list("defs/soil_sandyloam.def", "psi_air_entry", runif(n, 0.5, 8))
 )
 
-input_def_pars_sobol = IOin_def_pars_sobol(pars, nboot = 100)
+input_def_pars_sobol = IOin_def_pars_sobol(pars)
+
+# For speed of the example...
+input_def_pars_sobol = lapply(input_def_pars_sobol, FUN = function(x) {x[[3]] = x[[3]][1:5]; return(x)})
 
 run_rhessys_multi(
   input_rhessys = input_rhessys,
