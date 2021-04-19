@@ -59,9 +59,10 @@ compile_rhessys = function(location,
 
   if (!is.null(CFLAGS)) {
     # if the CFLAGS have an override, use that, otherwise make a temp makefile with changed cflags
+    CFLAGS_override = NULL
     if (any(startsWith(read_make, "override CFLAGS"))) {
       if (!startsWith(CFLAGS,"CFLAGS=")) {
-        CFLAGS = paste0(" CFLAGS=", shQuote(trimws(CFLAGS), type = "sh"))
+        CFLAGS_override = paste0(" CFLAGS=", shQuote(trimws(CFLAGS), type = "sh"))
       }
     } else {
       new_makefile = read_make
@@ -76,7 +77,7 @@ compile_rhessys = function(location,
     make_args = paste0(" ", trimws(make_args))
   }
 
-  make_cmd = paste0("make -C ", dirname(makefile), " -f ", basename(makefile), make_args, CFLAGS)
+  make_cmd = paste0("make -C ", dirname(makefile), " -f ", basename(makefile), make_args, CFLAGS_override)
 
   if (.Platform$OS.type == "windows") {
     make_cmd2 = paste0("wsl ", make_cmd)
@@ -94,7 +95,7 @@ compile_rhessys = function(location,
   }
 
   if (!is.null(CFLAGS)) {
-    if (!any(startsWith(read_make, "override CFLAGS")) ) {
+    if (is.null(CFLAGS_override)) {
       out_rm = file.remove(makefile)
       cat("Removed temporary makefile: '", makefile, "'","\n", sep = "")
     }

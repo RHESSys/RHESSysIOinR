@@ -30,13 +30,17 @@
 #     <chr, length n> 'variables' - the rhessys internal variable names,
 #         if aggregating up to a larger spatial level, use <spatial>.<varaible> format.
 
-build_output_filter = function(timestep,
-                               output_format,
+build_output_filter = function(timestep = c('daily', 'monthly', 'annual', 'hourly'),
+                               output_format = c('csv', 'netcdf'),
                                output_path,
                                output_filename,
-                               spatial_level,
+                               spatial_level = c('basin', 'hillslope', 'zone', 'patch', 'stratum'),
                                spatial_ID,
                                variables) {
+
+  if (is.null(spatial_ID)) {
+    spatial_ID = ""
+  }
 
   filter_obj = list("filter" = list(
     "timestep" = timestep,
@@ -45,7 +49,7 @@ build_output_filter = function(timestep,
       "path" = output_path,
       "filename" = output_filename
     ),
-    list("ids" = as.numeric(spatial_ID),
+    list("ids" = spatial_ID,
          "variables" = paste(variables, collapse = ", "))
   ))
   names(filter_obj$filter)[3] = spatial_level

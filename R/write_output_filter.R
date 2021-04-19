@@ -44,8 +44,12 @@ write_output_filter = function(output_filter, runID = NULL) {
   #yaml::write_yaml(x = output_filter, file = file_name)
 
   # workaround beacuse brians code assumes integers
-  yaml_out = yaml::as.yaml(x = output_filter)
+  yaml_out = yaml::as.yaml(x = output_filter, line.sep = "\n")
   yaml_out = gsub("\\.0", "", yaml_out)
+
+  # TODO remove all of this when formally fixed
+  # hacky solution but works
+  yaml_out = gsub(",\\n\\s+",", ", yaml_out)
 
   file = file(file_name, "w")
   cat(yaml_out, file = file, sep = "")
