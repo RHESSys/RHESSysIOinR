@@ -5,11 +5,11 @@
 \title{build_output_filter}
 \usage{
 build_output_filter(
-  timestep,
-  output_format,
+  timestep = c("daily", "monthly", "annual", "hourly"),
+  output_format = c("csv", "netcdf"),
   output_path,
   output_filename,
-  spatial_level,
+  spatial_level = c("basin", "hillslope", "zone", "patch", "stratum"),
   spatial_ID,
   variables
 )

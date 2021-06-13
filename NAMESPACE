@@ -2,6 +2,7 @@
 
 export(IOin_clim)
 export(IOin_cmd_pars)
+export(IOin_def_pars_latin_hypercube)
 export(IOin_def_pars_simple)
 export(IOin_def_pars_sobol)
 export(IOin_hdr)
