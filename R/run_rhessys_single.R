@@ -91,7 +91,7 @@ run_rhessys_single <- function(input_rhessys,
 
     # check the def files to change are in the list of existing ones - warning only since maybe this is intentional?
     if (any(!unique(def_pars_df$X1) %in% unlist(hdr_files))) {
-      warning("Def file '",unique(def_pars_df$X1)[!unique(def_pars_df$X1) %in% unlist(hdr_files)],"' is not included in header def files." )
+      stop("Def file '",unique(def_pars_df$X1)[!unique(def_pars_df$X1) %in% unlist(hdr_files)],"' being modified is not included in the input header list of def files (input_hdr)." )
     }
 
     def_files = data.frame(old = unique(def_pars_df$X1), new = NA)
