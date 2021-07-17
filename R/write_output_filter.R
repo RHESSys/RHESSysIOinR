@@ -40,6 +40,11 @@ write_output_filter = function(output_filter, runID = NULL) {
     output_filter = lapply(output_filter, FUN = function(X, runID) {X$output$filename = paste0(X$output$filename, "_", runID); return(X)}, runID = runID)
     file_name = paste0(file_name, "_", runID)
   }
+
+  # Add quotes around path and filename, which are now required for output filter.
+  output_filter$filter$output$path <- paste0("\"", output_filter$filter$output$path, "\"")
+  output_filter$filter$output$filename <- paste0("\"", output_filter$filter$output$filename, "\"")
+
   # write the output filter
   #yaml::write_yaml(x = output_filter, file = file_name)
 
@@ -50,6 +55,9 @@ write_output_filter = function(output_filter, runID = NULL) {
   # TODO remove all of this when formally fixed
   # hacky solution but works
   yaml_out = gsub(",\\n\\s+",", ", yaml_out)
+
+  # Remove single quotes that as.yaml function adds to quoted strings (hopefully no single quotes in file are used for legitimate reasons)
+  yaml_out = gsub("'", "", yaml_out)
 
   file = file(file_name, "w")
   cat(yaml_out, file = file, sep = "")
