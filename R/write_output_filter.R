@@ -42,8 +42,11 @@ write_output_filter = function(output_filter, runID = NULL) {
   }
 
   # Add quotes around path and filename, which are now required for output filter.
-  output_filter$filter$output$path <- paste0("\"", output_filter$filter$output$path, "\"")
-  output_filter$filter$output$filename <- paste0("\"", output_filter$filter$output$filename, "\"")
+  output_filter <- lapply(output_filter, FUN = function(X){
+    X$output$path <- paste0("\"", X$output$path, "\"")
+    X$output$filename <- paste0("\"", X$output$filename, "\"")
+    return(X)
+  })
 
   # write the output filter
   #yaml::write_yaml(x = output_filter, file = file_name)
