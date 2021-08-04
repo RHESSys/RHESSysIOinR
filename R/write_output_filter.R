@@ -11,12 +11,10 @@ write_output_filter = function(output_filter, runID = NULL) {
   # if it's just a path to an existing filter for a single run
   if (is.character(output_filter) && is.null(runID)) {
     return(output_filter)
-
   } else if (is.character(output_filter) && !is.null(runID)) {
     # if it's a path but there's multi runs - need to read in so output name can be iterated
     file_name = output_filter
     output_filter = read_output_filter(output_filter)
-
   }
   # if it's an r list object
   # if there's a file name, remove it
@@ -40,19 +38,38 @@ write_output_filter = function(output_filter, runID = NULL) {
     output_filter = lapply(output_filter, FUN = function(X, runID) {X$output$filename = paste0(X$output$filename, "_", runID); return(X)}, runID = runID)
     file_name = paste0(file_name, "_", runID)
   }
+
+  # creating the output string manually now
+  indent = "  "
+  format_filter = function(f, indent) {
+    level = names(f)[!names(f) %in% c("timestep", "output")]
+    # to automate a check for existing quotes
+    # (!grepl("\"|\'", f$output$path))
+    fpath = shQuote(f$output$path)
+    fname = shQuote(f$output$filename)
+    fout = paste0("filter:\n", indent, "timestep: ", f$timestep, "\n", indent, "output:\n", indent, indent, "format: ", f$output$format, "\n",
+                  indent, indent, "path: ", fpath, "\n", indent, indent, "filename: ", fname, "\n",
+                  indent, level, ":\n", indent, indent, "ids: ", f[[level]]$ids, "\n", indent, indent, "variables: ", f[[level]]$variables)
+    return(fout)
+  }
+
+  filter_strings = sapply(output_filter, format_filter, indent)
+  filter_string = paste0(filter_strings, collapse = "\n")
+
   # write the output filter
   #yaml::write_yaml(x = output_filter, file = file_name)
 
   # workaround beacuse brians code assumes integers
-  yaml_out = yaml::as.yaml(x = output_filter, line.sep = "\n")
-  yaml_out = gsub("\\.0", "", yaml_out)
+  # yaml_out = yaml::as.yaml(x = output_filter, line.sep = "\n" )
+  # yaml_out = gsub("\\.0", "", yaml_out)
+  # yaml_out = gsub("\'\"|\"\'", "\'", yaml_out)
 
   # TODO remove all of this when formally fixed
   # hacky solution but works
-  yaml_out = gsub(",\\n\\s+",", ", yaml_out)
+  # yaml_out = gsub(",\\n\\s+",", ", yaml_out)
 
   file = file(file_name, "w")
-  cat(yaml_out, file = file, sep = "")
+  cat(filter_string, file = file, sep = "")
   close(file)
 
   cat("===== Wrote output filter file =====\n")
