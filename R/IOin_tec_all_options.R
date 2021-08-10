@@ -87,6 +87,10 @@ IOin_tec_all_options = function(print_hourly_on = NULL,
     input_tec_df <- as.data.frame(do.call(rbind, input_tec_df))
     input_tec_df <- cbind(input_tec_df, rep_len(tec_command_name, length.out = nrow(input_tec_df)))
     names(input_tec_df) <- c("year", "month", "day", "hour", "name")
+    input_tec_df$year <- as.integer(input_tec_df$year)
+    input_tec_df$month <- as.integer(input_tec_df$month)
+    input_tec_df$day <- as.integer(input_tec_df$day)
+    input_tec_df$hour <- as.integer(input_tec_df$hour)
     return(input_tec_df)
   }
 
