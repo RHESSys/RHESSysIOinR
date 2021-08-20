@@ -19,13 +19,14 @@ write_output_filter = function(output_filter, runID = NULL) {
   # if it's an r list object
   # if there's a file name, remove it
   file_name = NULL
-  if ("file_name" %in% names(output_filter)) {
-    file_name = output_filter[[which(names(output_filter) == "file_name")]]
-    output_filter = output_filter[-which(names(output_filter) == "file_name")]
-  }
-  # test the filters are valid
-  testvalid = lapply(X = output_filter, FUN = valid_filter)
-  # check for and remove duplicates
+  aa = function(x) { return(x$output$filename)}
+ if ("file_name" %in% names(output_filter)) {
+    file_name = lapply(output_filter,aa)
+   output_filter = output_filter[-which(names(output_filter) == "file_name")]
+ }
+# test the filters are valid
+#testvalid = lapply(X = output_filter, FUN = valid_filter)
+# check for and remove duplicates
   if (any(duplicated(output_filter))) {
     output_filter = output_filter[!duplicated(output_filter)]
   }
@@ -41,19 +42,21 @@ write_output_filter = function(output_filter, runID = NULL) {
 
   # creating the output string manually now
   indent = "  "
-  format_filter = function(f, indent) {
+  format_filter = function(fb, indent) {
+    f =fb$filter
     level = names(f)[!names(f) %in% c("timestep", "output")]
     # to automate a check for existing quotes
     # (!grepl("\"|\'", f$output$path))
-    fpath = shQuote(f$output$path)
-    fname = shQuote(f$output$filename)
+    fpath = (f$output$path)
+    fname = (f$output$filename)
     fout = paste0("filter:\n", indent, "timestep: ", f$timestep, "\n", indent, "output:\n", indent, indent, "format: ", f$output$format, "\n",
-                  indent, indent, "path: ", fpath, "\n", indent, indent, "filename: ", fname, "\n",
+                  indent, indent, "path: ", dQuote(fpath), "\n", indent, indent, "filename: ", dQuote(fname), "\n",
                   indent, level, ":\n", indent, indent, "ids: ", f[[level]]$ids, "\n", indent, indent, "variables: ", f[[level]]$variables)
     return(fout)
+
   }
 
-  filter_strings = sapply(output_filter, format_filter, indent)
+  filter_strings = lapply(output_filter, format_filter, indent)
   filter_string = paste0(filter_strings, collapse = "\n")
 
   # write the output filter
@@ -72,7 +75,7 @@ write_output_filter = function(output_filter, runID = NULL) {
   cat(filter_string, file = file, sep = "")
   close(file)
 
-  cat("===== Wrote output filter file =====\n")
+  cat("===== Wrote output filter file new way =====\n")
 
   return(file_name)
 
