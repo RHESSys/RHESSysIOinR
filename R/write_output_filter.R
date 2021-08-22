@@ -44,6 +44,8 @@ write_output_filter = function(output_filter, runID = NULL) {
   indent = "  "
   format_filter = function(fb, indent) {
     f =fb$filter
+    if (is.null(f))
+       { f = fb }
     level = names(f)[!names(f) %in% c("timestep", "output")]
     # to automate a check for existing quotes
     # (!grepl("\"|\'", f$output$path))
