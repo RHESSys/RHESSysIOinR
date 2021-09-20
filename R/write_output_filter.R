@@ -20,13 +20,16 @@ write_output_filter = function(output_filter, runID = NULL) {
   # if there's a file name, remove it
   file_name = NULL
   aa = function(x) { return(x$output$filename)}
- if ("file_name" %in% names(output_filter)) {
-    file_name = lapply(output_filter,aa)
-   output_filter = output_filter[-which(names(output_filter) == "file_name")]
- }
-# test the filters are valid
-#testvalid = lapply(X = output_filter, FUN = valid_filter)
-# check for and remove duplicates
+  if ("file_name" %in% names(output_filter)) {
+    # file_name = lapply(output_filter,aa)
+    # output_filter = output_filter[-which(names(output_filter) == "file_name")]
+
+    file_name = output_filter[[which(names(output_filter) == "file_name")]]
+    output_filter = output_filter[-which(names(output_filter) == "file_name")]
+  }
+  # test the filters are valid
+  # testvalid = lapply(X = output_filter, FUN = valid_filter)
+  # check for and remove duplicates
   if (any(duplicated(output_filter))) {
     output_filter = output_filter[!duplicated(output_filter)]
   }
@@ -34,7 +37,9 @@ write_output_filter = function(output_filter, runID = NULL) {
   if (is.null(file_name)) {
     file_name = "output_filter"
   }
-  # add run ID to output if needed
+
+
+  # add run ID to OUTPUT and FILTER filenames
   if (!is.null(runID)) {
     output_filter = lapply(output_filter, FUN = function(X, runID) {X$output$filename = paste0(X$output$filename, "_", runID); return(X)}, runID = runID)
     file_name = paste0(file_name, "_", runID)
@@ -52,7 +57,7 @@ write_output_filter = function(output_filter, runID = NULL) {
     fpath = (f$output$path)
     fname = (f$output$filename)
     fout = paste0("filter:\n", indent, "timestep: ", f$timestep, "\n", indent, "output:\n", indent, indent, "format: ", f$output$format, "\n",
-                  indent, indent, "path: ", dQuote(fpath), "\n", indent, indent, "filename: ", dQuote(fname), "\n",
+                  indent, indent, "path: ", dQuote(fpath, F), "\n", indent, indent, "filename: ", dQuote(fname, F), "\n",
                   indent, level, ":\n", indent, indent, "ids: ", f[[level]]$ids, "\n", indent, indent, "variables: ", f[[level]]$variables)
     return(fout)
 
@@ -73,7 +78,7 @@ write_output_filter = function(output_filter, runID = NULL) {
   # hacky solution but works
   # yaml_out = gsub(",\\n\\s+",", ", yaml_out)
 
-  file = file(file_name, "w")
+  file = file(file_name, "w", encoding = "UTF-8")
   cat(filter_string, file = file, sep = "")
   close(file)
 
