@@ -46,8 +46,7 @@ IOin_def_pars_latin_hypercube = function(..., rm_dup=TRUE) {
 
   # Create parameter values via latin hypercube
   grid <- lhs::randomLHS(n, k) # Generate generic hypercube
-  lhc_out <- mapply(function(w, x, y, z) qunif(w[,x], min=y, max=z), x=seq_len(k), y=min_par, z=max_par, MoreArgs = list(w=grid))
-  lhc_out <- as.data.frame(lhc_out)
+  lhc_out <- mapply(function(w, x, y, z) qunif(w[,x], min=y, max=z), x=seq_len(k), y=min_par, z=max_par, MoreArgs = list(w=grid), SIMPLIFY = FALSE)
 
   pars_out = mapply(function(x, y) {x[[3]] = y; return(x)}, x = pars, y = lhc_out, SIMPLIFY = F)
 
