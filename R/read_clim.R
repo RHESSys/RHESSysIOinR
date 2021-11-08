@@ -19,7 +19,7 @@ read_clim = function(clim_in, dates_out = FALSE) {
   opts = c(".rain", ".tmin", ".tmax", ".tavg", ".dayl", ".daytime_rain_duration",
   ".LAI_scalar", ".Ldown", ".Kdown_direct", ".Kdown_diffuse", ".ndep_NO3", ".ndep_NH4",
   ".PAR_direct", ".PAR_diffuse", ".relative_humidity", ".tday", ".tnightmax", ".tsoil",
-  ".vpd", ".wind", ".CO2", ".lapse_rate_tmin", ".lapse_rate_tmax")
+  ".vpd", ".wind", ".CO2", ".lapse_rate_tmin", ".lapse_rate_tmax",".tdewpoint")
 
   # for a single file ( or multiple maybe?)
   if (any(endsWith(clim_in, opts))) {
@@ -56,7 +56,9 @@ read_clim = function(clim_in, dates_out = FALSE) {
   premerge = mapply("data.frame", date = date_seqs, dataonly, stringsAsFactors = FALSE, SIMPLIFY = FALSE)
 
   clim = Reduce(function(x,y) merge(x = x, y = y, by = "date", all = TRUE), premerge)
-  names(clim)[2:ncol(clim)] = gsub("\\.","", opts[endsWith(files_in, opts)])
+  names(clim)[2:ncol(clim)] = gsub("\\.","", unlist(str_extract_all(files_in, str_c(opts,collapse="|"))))
+
+= gsub("\\.","", opts[endsWith(files_in, opts)])
 
   if (dates_out) {
     start_end = as.Date(c(min(clim$date), max(clim$date)), format = "%m/%d/%y")
