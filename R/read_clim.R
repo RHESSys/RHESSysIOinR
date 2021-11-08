@@ -58,8 +58,6 @@ read_clim = function(clim_in, dates_out = FALSE) {
   clim = Reduce(function(x,y) merge(x = x, y = y, by = "date", all = TRUE), premerge)
   names(clim)[2:ncol(clim)] = gsub("\\.","", unlist(str_extract_all(files_in, str_c(opts,collapse="|"))))
 
-= gsub("\\.","", opts[endsWith(files_in, opts)])
-
   if (dates_out) {
     start_end = as.Date(c(min(clim$date), max(clim$date)), format = "%m/%d/%y")
     start_end = gsub("-", " ",start_end)
