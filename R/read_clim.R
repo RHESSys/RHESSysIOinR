@@ -59,13 +59,14 @@ read_clim = function(clim_in, dates_out = FALSE) {
   names(clim)[2:ncol(clim)] = gsub("\\.","", unlist(str_extract_all(files_in, str_c(opts,collapse="|"))))
 
   if (dates_out) {
-    start_end = as.Date(c(min(clim$date), max(clim$date)), format = "%m/%d/%y")
+    start_end = as.Date(c(min(clim$date,na.rm=T), max(clim$date,na.rm=T)), format = "%m/%d/%y")
     start_end = gsub("-", " ",start_end)
     start_end = paste(start_end, c("01", "24"))
     return(start_end)
   }
 
   clim$date = as.POSIXlt(clim$date)
+  clim = clim %>% subset(!is.na(date))
   clim$year = clim$date$year + 1900
   clim$month = clim$date$mon + 1
   clim$day = clim$date$mday
@@ -76,6 +77,7 @@ read_clim = function(clim_in, dates_out = FALSE) {
   wy_date = c(clim$date[93:length(clim$date)], seq.POSIXt(from = clim$date[length(clim$date)], by = "DSTday", length.out = 93)[2:93])
   clim$wyd = lubridate::yday(wy_date)
 
+	
   return(clim)
 }
 
