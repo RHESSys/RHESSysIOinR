@@ -11,13 +11,13 @@ watbal_basin_of = function(bd) {
 
   # some error checks here
   req_cols = c("total_water_in", "evaporation", "evaporation_surf", "exfiltration_sat_zone",
-  "exfiltration_unsat_zone", "transpiration_sat_zone", "transpiration_unsat_zone", "streamflow", "gw.Qout", "trans", "evap", "sat_deficit", "rz_storage", "unsat_storage",
-               "detention_store", "litter.rain_stored", "gw.storage","rain_stored", "snow_stored","snowpack.water_equivalent_depth")
+  "exfiltration_unsat_zone", "transpiration_sat_zone", "transpiration_unsat_zone", "streamflow", "gw.Qout", "sat_deficit", "rz_storage", "unsat_storage",
+	 "detention_store", "litter.rain_stored", "gw.storage","canopy_rain_stored", "canopy_snow_stored","snowpack.water_equivalent_depth")
 
   bd$evap = with(bd, evaporation+evaporation_surf+exfiltration_sat_zone+exfiltration_unsat_zone)
   bd$trans = with(bd, transpiration_unsat_zone+transpiration_sat_zone )
   bd$streamflow = with(bd, streamflow+gw.Qout)
-  bd$canopy_store = with(bd, snow_stored+rain_stored )
+  bd$canopy_store = with(bd, canopy_snow_stored+canopy_rain_stored )
   if (!is.data.frame(bd) || any(!req_cols %in% colnames(bd))) {
     cat("Input is either not a data frame or is missing the correct columns")
     return(NA)
