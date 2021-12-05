@@ -59,9 +59,22 @@ run_rhessys_single <- function(input_rhessys,
   }
 
   # ------------------------------ Def file parameters ------------------------------
+
+  # Check whether the any hdr parameters need to be subdivided.
+  for (g in seq_along(hdr_files)){
+    # If there is more than one parameter, assume old approach to passing def file parameters and do nothing.
+    if (length(hdr_files[[g]]) == 1) {
+      # If a single string contains more than 1 parameter (separated by comma), split into components.
+      if (length(strsplit(hdr_files[[g]], ",")[[1]]) > 1){
+        hdr_files[[g]] <- strsplit(hdr_files[[g]], ",")[[1]]
+      }
+    }
+  }
+
   # if input hdr files are a data object
   if (!is.character(hdr_files)) {
     # check the def files all exist - except for the fire grid prefix, and clim if clim is also given as input
+
     not_check = 'fire_grid_prefix'
     if (!is.null(clim_base)) {not_check = c(not_check, 'base_stations')}
 

@@ -50,9 +50,10 @@ build_output_filter = function(timestep = c('daily', 'monthly', 'annual', 'hourl
       "filename" = output_filename
     ),
     list("ids" = spatial_ID,
-         "variables" = paste(variables, collapse = ", "))
+         "variables" = variables)
   ))
-  names(filter_obj$filter)[3] = spatial_level
+  # Possibly add check that all spatial_level (if more than one) are identical for each output filter
+  names(filter_obj$filter)[3] = spatial_level[[1]]
 
   # if you're allowed to have multiple spatial levels per filter, take the basin part out and append that
   return(filter_obj)
