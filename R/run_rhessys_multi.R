@@ -43,7 +43,7 @@ run_rhessys_multi = function(input_rhessys,
                              cpus_per_node = NULL,
                              rscript_path = NULL,
                              slurm_options = NULL
-                             ){
+){
 
   # NOTES ON ADDING TO THIS FUNCTION AND NEW SOURCES OF SCENARIO VARIATION
   # - if you're just adding a different means of varying def pars, that should be outside of the funciton,
@@ -70,23 +70,22 @@ run_rhessys_multi = function(input_rhessys,
   # ---------- rhessys inputs ----------
   if (!is.null(input_rhessys)) {
     rhessys_df <- as.data.frame(input_rhessys)
-
     dfs <- c(dfs, rhessys = list(rhessys_df))
   }
 
   # ---------- hdr files ----------
   if (!is.null(hdr_files)) {
     hdr_files_df = as.data.frame(hdr_files)
-
     dfs <- c(dfs, hdr = list(hdr_files_df))
   }
 
   # ---------- tec events ----------
-  if (length(tec_data) > 1) {
+  if(!is.data.frame(tec_data)){
     tec_names <- names(tec_data)
     tec_data_df <- as.data.frame(tec_names)
-
     dfs <- c(dfs, tec = list(tec_data_df))
+  } else {
+    dfs <- c(dfs, tec = list(as.data.frame("tec")))
   }
 
   # ---------- def pars ----------
@@ -95,7 +94,6 @@ run_rhessys_multi = function(input_rhessys,
     def_pars_df = as.data.frame(lapply(def_pars, "[[", 3))
     def_names = sapply(def_pars, function(x) paste(x[[1]], x[[2]], sep = "::"))
     names(def_pars_df) = def_names
-
     dfs <- c(dfs, def = list(def_pars_df))
   }
 
@@ -107,8 +105,6 @@ run_rhessys_multi = function(input_rhessys,
     df <- do.call(cbind, dfs_linked)
     colnames(df) <- unlist(lapply(dfs_linked, colnames))
     rownames(df) <- 1:nrow(df)
-  } else {
-    df <- NULL
   }
 
   # Combine by multiplicity (note that if tables are linked, they are automatically passed to combine_by_multiplicity)
@@ -311,100 +307,142 @@ run_rhessys_multi = function(input_rhessys,
   }
 
 
+  # # ---------- parallelized: slurm ----------
+  # if (parallel & parallel_method == "slurm") {
+  #
+  #   library(rslurm)
+  #
+  #   # Initial function
+  #   run_parallel_slurm_initial <- function(f,
+  #                                          params,
+  #                                          input_rhessys,
+  #                                          hdr_files ,
+  #                                          tec_data,
+  #                                          def_pars,
+  #                                          clim_base,
+  #                                          output_filter,
+  #                                          df,
+  #                                          def_names,
+  #                                          nodes,
+  #                                          cpus_per_node,
+  #                                          rscript_path,
+  #                                          slurm_options){
+  #
+  #     # Need to have an 'initial' slurm function because the params passed to
+  #     # slurm_apply must all be arguments in the passed function. rslurm_apply
+  #     # will parse slurm_initial_input into i, which can then be processed
+  #     # 'properly' in the primary function.
+  #
+  #     # Primary function
+  #     run_parallel_slurm = function(i,
+  #                                   input_rhessys,
+  #                                   hdr_files ,
+  #                                   tec_data,
+  #                                   def_pars,
+  #                                   clim_base,
+  #                                   output_filter,
+  #                                   df,
+  #                                   def_names = NULL,
+  #                                   nodes,
+  #                                   cpus_per_node,
+  #                                   rscript_path,
+  #                                   slurm_options){
+  #
+  #       library(RHESSysIOinR)
+  #
+  #       input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
+  #       hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
+  #       tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
+  #       def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
+  #
+  #       run_rhessys_single(
+  #         input_rhessys = input_rhessys_i,
+  #         hdr_files = hdr_files_i,
+  #         tec_data = tec_data_i,
+  #         def_pars = def_pars_i,
+  #         clim_base = clim_base,
+  #         output_filter = output_filter,
+  #         runID = i)
+  #     }
+  #
+  #     # Call function
+  #     run_parallel_slurm(i,
+  #                        input_rhessys = input_rhessys,
+  #                        hdr_files = hdr_files,
+  #                        tec_data = tec_data,
+  #                        def_pars = def_pars,
+  #                        clim_base = clim_base,
+  #                        output_filter = output_filter,
+  #                        df = df,
+  #                        def_names = def_names,
+  #                        nodes = nodes,
+  #                        cpus_per_node = cpus_per_node,
+  #                        rscript_path = rscript_path,
+  #                        slurm_options = slurm_options)
+  #   }
+  #
+  #   # ----
+  #
+  #   slurm_initial_input <- data.frame(i = seq_len(nrow(df)))
+  #
+  #   sjob <- rslurm::slurm_apply(f = run_parallel_slurm_initial,
+  #                               params = slurm_initial_input,
+  #                               nodes = nodes,
+  #                               cpus_per_node = cpus_per_node,
+  #                               rscript_path = rscript_path,
+  #                               global_objects = c("input_rhessys", "hdr_files",
+  #                                                  "tec_data", "def_pars",
+  #                                                  "clim_base", "output_filter",
+  #                                                  "df", "def_names",
+  #                                                  "parse_input_rhessys", "parse_hdr_files",
+  #                                                  "parse_tec_data", "parse_def_pars"),
+  #                               slurm_options = slurm_options)
+  #
+  # }
+
+
   # ---------- parallelized: slurm ----------
   if (parallel & parallel_method == "slurm") {
 
     library(rslurm)
 
     # Initial function
-    run_parallel_slurm_initial <- function(f,
-                                           params,
-                                           input_rhessys,
-                                           hdr_files ,
-                                           tec_data,
-                                           def_pars,
-                                           clim_base,
-                                           output_filter,
-                                           df,
-                                           def_names,
-                                           nodes,
-                                           cpus_per_node,
-                                           rscript_path,
-                                           slurm_options){
+    run_parallel_slurm <- function(i){
 
-      # Need to have an 'initial' slurm function because the params passed to
-      # slurm_apply must all be arguments in the passed function. rslurm_apply
-      # will parse slurm_initial_input into i, which can then be processed
-      # 'properly' in the primary function.
+      library(RHESSysIOinR)
 
-      # Primary function
-      run_parallel_slurm = function(i,
-                                    input_rhessys,
-                                    hdr_files ,
-                                    tec_data,
-                                    def_pars,
-                                    clim_base,
-                                    output_filter,
-                                    df,
-                                    def_names = NULL,
-                                    nodes,
-                                    cpus_per_node,
-                                    rscript_path,
-                                    slurm_options){
+      input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
+      hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
+      tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
+      def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
 
-        library(RHESSysIOinR)
-
-        input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
-        hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
-        tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
-        def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
-
-        run_rhessys_single(
-          input_rhessys = input_rhessys_i,
-          hdr_files = hdr_files_i,
-          tec_data = tec_data_i,
-          def_pars = def_pars_i,
-          clim_base = clim_base,
-          output_filter = output_filter,
-          runID = i)
-      }
-
-      # Call function
-      run_parallel_slurm(i,
-                         input_rhessys = input_rhessys,
-                         hdr_files = hdr_files,
-                         tec_data = tec_data,
-                         def_pars = def_pars,
-                         clim_base = clim_base,
-                         output_filter = output_filter,
-                         df = df,
-                         def_names = def_names,
-                         nodes = nodes,
-                         cpus_per_node = cpus_per_node,
-                         rscript_path = rscript_path,
-                         slurm_options = slurm_options)
+      run_rhessys_single(
+        input_rhessys = input_rhessys_i,
+        hdr_files = hdr_files_i,
+        tec_data = tec_data_i,
+        def_pars = def_pars_i,
+        clim_base = clim_base,
+        output_filter = output_filter,
+        runID = i)
     }
+
 
     # ----
 
     slurm_initial_input <- data.frame(i = seq_len(nrow(df)))
 
-    sjob <- rslurm::slurm_apply(f = run_parallel_slurm_initial,
+    sjob <- rslurm::slurm_apply(f = run_parallel_slurm,
                                 params = slurm_initial_input,
-                                input_rhessys = input_rhessys,
-                                hdr_files = hdr_files,
-                                tec_data = tec_data,
-                                def_pars = def_pars,
-                                clim_base = clim_base,
-                                output_filter = output_filter,
-                                df = df,
-                                def_names = def_names,
                                 nodes = nodes,
                                 cpus_per_node = cpus_per_node,
                                 rscript_path = rscript_path,
+                                global_objects = c("input_rhessys", "hdr_files",
+                                                   "tec_data", "def_pars",
+                                                   "clim_base", "output_filter",
+                                                   "df", "def_names",
+                                                   "parse_input_rhessys", "parse_hdr_files",
+                                                   "parse_tec_data", "parse_def_pars"),
                                 slurm_options = slurm_options)
-
   }
 }
-
 
