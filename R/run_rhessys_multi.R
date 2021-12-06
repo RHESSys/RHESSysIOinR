@@ -41,7 +41,8 @@ run_rhessys_multi = function(input_rhessys,
                              n_cores = NULL,
                              nodes = NULL,
                              cpus_per_node = NULL,
-                             rscript_path = NULL
+                             rscript_path = NULL,
+                             slurm_options = NULL
                              ){
 
   # NOTES ON ADDING TO THIS FUNCTION AND NEW SOURCES OF SCENARIO VARIATION
@@ -328,7 +329,8 @@ run_rhessys_multi = function(input_rhessys,
                                            def_names,
                                            nodes,
                                            cpus_per_node,
-                                           rscript_path){
+                                           rscript_path,
+                                           slurm_options){
 
       # Need to have an 'initial' slurm function because the params passed to
       # slurm_apply must all be arguments in the passed function. rslurm_apply
@@ -347,7 +349,8 @@ run_rhessys_multi = function(input_rhessys,
                                     def_names = NULL,
                                     nodes,
                                     cpus_per_node,
-                                    rscript_path){
+                                    rscript_path,
+                                    slurm_options){
 
         library(RHESSysIOinR)
 
@@ -378,7 +381,8 @@ run_rhessys_multi = function(input_rhessys,
                          def_names = def_names,
                          nodes = nodes,
                          cpus_per_node = cpus_per_node,
-                         rscript_path = rscript_path)
+                         rscript_path = rscript_path,
+                         slurm_options = slurm_options)
     }
 
     # ----
@@ -397,7 +401,8 @@ run_rhessys_multi = function(input_rhessys,
                                 def_names = def_names,
                                 nodes = nodes,
                                 cpus_per_node = cpus_per_node,
-                                rscript_path = rscript_path)
+                                rscript_path = rscript_path,
+                                slurm_options = slurm_options)
 
   }
 }
