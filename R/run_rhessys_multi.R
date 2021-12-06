@@ -270,7 +270,7 @@ run_rhessys_multi = function(input_rhessys,
         def_pars = def_pars_i,
         clim_base = clim_base,
         output_filter = output_filter,
-        runID = i
+        runID = i)
     }
 
     # make a psock cluster
@@ -363,7 +363,7 @@ run_rhessys_multi = function(input_rhessys,
           def_pars = def_pars_i,
           clim_base = clim_base,
           output_filter = output_filter,
-          runID = i
+          runID = i)
       }
 
       # Call function
