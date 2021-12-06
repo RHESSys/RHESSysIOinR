@@ -406,7 +406,6 @@ run_rhessys_multi = function(input_rhessys,
 
     library(rslurm)
 
-    # Initial function
     run_parallel_slurm <- function(i){
 
       library(RHESSysIOinR)
