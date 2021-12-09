@@ -85,7 +85,7 @@ run_rhessys_multi = function(input_rhessys,
     tec_data_df <- as.data.frame(tec_names)
     dfs <- c(dfs, tec = list(tec_data_df))
   } else {
-    dfs <- c(dfs, tec = list(as.data.frame("tec")))
+    dfs <- c(dfs, tec = list(data.frame(tec = "tec")))
   }
 
   # ---------- def pars ----------
@@ -173,17 +173,18 @@ run_rhessys_multi = function(input_rhessys,
     return(hdr_files_i)
   }
   parse_tec_data <- function(tec_data = NULL, df, i){
-    if (!is.null(tec_data)) {
-      if (length(tec_data) > 1) {
-        tec_data_i <- "[["(tec_data, df[i, "tec_names"])
-      } else {
-        tec_data_i <- tec_data
-      }
+  if (!is.null(tec_data)) {
+    if(!is.data.frame(tec_data)){
+      tec_data_i <- "[["(tec_data, df[i, "tec_names"])
     } else {
-      tec_data_i = NULL
+      tec_data_i <- tec_data
     }
-    return(tec_data_i)
+  } else {
+    tec_data_i = NULL
   }
+  return(tec_data_i)
+}
+
   parse_def_pars <- function(def_pars = NULL, df, i, def_names){
     if (!is.null(def_pars)) {
       def_pars_values = as.list(df[i, names(df) %in% def_names])
@@ -218,10 +219,10 @@ run_rhessys_multi = function(input_rhessys,
   if (!parallel) {
     for (i in 1:nrow(df)) {
 
-      input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
-      hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
-      tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
-      def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
+      input_rhessys_i <- parse_input_rhessys(input_rhessys = input_rhessys, df = df, i=i)
+      hdr_files_i <- parse_hdr_files(hdr_files = hdr_files, df = df, i=i)
+      tec_data_i <- parse_tec_data(tec_data = tec_data, df = df, i=i)
+      def_pars_i <- parse_def_pars(def_pars = def_pars, df = df, i=i, def_names = def_names)
 
       run_rhessys_single(
         input_rhessys = input_rhessys_i,
@@ -255,10 +256,10 @@ run_rhessys_multi = function(input_rhessys,
 
       library(RHESSysIOinR)
 
-      input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
-      hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
-      tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
-      def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
+      input_rhessys_i <- parse_input_rhessys(input_rhessys = input_rhessys, df = df, i=i)
+      hdr_files_i <- parse_hdr_files(hdr_files = hdr_files, df = df, i=i)
+      tec_data_i <- parse_tec_data(tec_data = tec_data, df = df, i=i)
+      def_pars_i <- parse_def_pars(def_pars = def_pars, df = df, i=i, def_names = def_names)
 
       run_rhessys_single(
         input_rhessys = input_rhessys_i,
@@ -410,10 +411,10 @@ run_rhessys_multi = function(input_rhessys,
 
       library(RHESSysIOinR)
 
-      input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
-      hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
-      tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
-      def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
+      input_rhessys_i <- parse_input_rhessys(input_rhessys = input_rhessys, df = df, i=i)
+      hdr_files_i <- parse_hdr_files(hdr_files = hdr_files, df = df, i=i)
+      tec_data_i <- parse_tec_data(tec_data = tec_data, df = df, i=i)
+      def_pars_i <- parse_def_pars(def_pars = def_pars, df = df, i=i, def_names = def_names)
 
       run_rhessys_single(
         input_rhessys = input_rhessys_i,
