@@ -11,8 +11,16 @@ run_rhessys_multi(
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
+  combine_by_linking = NULL,
+  combine_by_multiplicity = "def",
+  all_combinations_output_name = NULL,
   parallel = TRUE,
-  n_cores = NULL
+  parallel_method = "simple",
+  n_cores = NULL,
+  nodes = NULL,
+  cpus_per_node = NULL,
+  rscript_path = NULL,
+  slurm_options = NULL
 )
 }
 \arguments{
@@ -36,13 +44,64 @@ to in input_rhessys.}
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
 
-\item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
+\item{combine_by_linking}{Option for combining 'rhessys', 'tec', 'hdr',
+and/or 'def' files by linking files with of the same number of inputs.
+(e.g. with 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios
+total). Currently joined by a cbind, so the order of each variable must
+match.}
 
-\item{n_cores}{The number of cores to use in a parallelized cluster. If left NULL, will autodetect number of cores and use total - 1.}
+\item{combine_by_multiplicity}{Option for combining 'rhessys', 'tec', 'hdr',
+'def' and/or previous 'combine_by_linking' files by multiplicity, which
+combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
+tec file scenarios = 4 scenarios total).}
+
+\item{all_combinations_output_name}{Name for all-options dataframe that is
+exported. Null generates default name.}
+
+\item{parallel}{Defaults to TRUE. Should the parallel package be used to
+parallelize the rhessys runs. FALSE processes runs via a for loop.}
+
+\item{parallel_method}{Method for running rhessys in parallel. Default is
+'simple', which can be used for running on a local machine or equivalent.
+"slurm' allows direct access to slurm scheduler}
+
+\item{n_cores}{The number of cores to use in a parallelized cluster. If left
+NULL, will autodetect number of cores and use total - 1.}
+
+\item{nodes}{The number of cluster nodes to spread the calculation over.
+\code{slurm_apply} automatically divides \code{params} in chunks of
+approximately equal size to send to each node.}
+
+\item{cpus_per_node}{The number of CPUs requested per node.}
+
+\item{rscript_path}{The location of the Rscript command. If not specified,
+defaults to the location of Rscript within the R installation being run.}
+
+\item{slurm_options}{A named list of options recognized by \code{sbatch};
+see rslurm slurm_apply function for more details.}
 }
 \description{
-Runs RHESSys simulations.
+Runs multiple RHESSys simulations via for loop or in parallel
 }
+\section{Note}{
+ For multiple tec files, a named list of dataframes produced by
+  an IOin_tec function should be passed to tec_data. For hdr files, stratum
+  variables for each unique run must now be a single quoted string separated
+  by commas (e.g.
+  "path/veg_tree.def,path/veg_understory.def,path/veg_shrub.def")
+
+  The slurm option automatically enables processing with a slurm scheduler
+  via the r package rslurm. (https://github.com/SESYNC-ci/rslurm). In order
+  to run rhessys via rslurm, two templates within the rslurm package need to
+  be modified. First, in the submission template
+  (rslurm/templates/submit_sh.txt), optional environment variables may need
+  to be added between the 'options' and 'rscript' line (e.g. module load
+  anaconda3; conda activate <env>). Second, the r template
+  (rslurm/templates/slurm_run_R.txt) requires a 'setwd(“..”)' before the
+  do.call line. This will correct the home directory to be consistent with
+  the 'simple' parallel approach.
+}
+
 \author{
 Will Burke
 }
