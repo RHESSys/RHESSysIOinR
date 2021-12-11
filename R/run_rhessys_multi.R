@@ -1,25 +1,52 @@
 #' Run multiple RHESSys simulations
 #'
-#' Runs RHESSys simulations.
+#' Runs multiple RHESSys simulations via for loop or in parallel
+#'
+#' @section Note: For multiple tec files, a named list of dataframes produced by
+#'   an IOin_tec function should be passed to tec_data. For hdr files, stratum
+#'   variables for each unique run must now be a single quoted string separated
+#'   by commas (e.g.
+#'   "path/veg_tree.def,path/veg_understory.def,path/veg_shrub.def")
+#'
+#'   The slurm option automatically enables processing with a slurm scheduler
+#'   via the r package rslurm. (https://github.com/SESYNC-ci/rslurm). In order
+#'   to run rhessys via rslurm, two templates within the rslurm package need to
+#'   be modified. First, in the submission template
+#'   (rslurm/templates/submit_sh.txt), optional environment variables may need
+#'   to be added between the 'options' and 'rscript' line (e.g. module load
+#'   anaconda3; conda activate <env>). Second, the r template
+#'   (rslurm/templates/slurm_run_R.txt) requires a 'setwd(“..”)' before the
+#'   do.call line. This will correct the home directory to be consistent with
+#'   the 'simple' parallel approach.
+#'
 #' @inheritParams run_rhessys_single
+#' @param combine_by_linking Option for combining 'rhessys', 'tec', 'hdr',
+#'   and/or 'def' files by linking files with of the same number of inputs.
+#'   (e.g. with 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios
+#'   total). Currently joined by a cbind, so the order of each variable must
+#'   match.
+#' @param combine_by_multiplicity Option for combining 'rhessys', 'tec', 'hdr',
+#'   'def' and/or previous 'combine_by_linking' files by multiplicity, which
+#'   combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
+#'   tec file scenarios = 4 scenarios total).
+#' @param all_combinations_output_name Name for all-options dataframe that is
+#'   exported. Null generates default name.
 #' @param parallel Defaults to TRUE. Should the parallel package be used to
-#'   parallelize the rhessys runs.
+#'   parallelize the rhessys runs. FALSE processes runs via a for loop.
+#' @param parallel_method Method for running rhessys in parallel. Default is
+#'   'simple', which can be used for running on a local machine or equivalent.
+#'   "slurm' allows direct access to slurm scheduler
 #' @param n_cores The number of cores to use in a parallelized cluster. If left
 #'   NULL, will autodetect number of cores and use total - 1.
-#' @param parallel_method Method for running rhessys in parallel. Default is
-#'   'simple', which is used for running on a local machine or equivalent.
-#'   "slurm' allows direct access to slurm scheduler
-#' @param combine_by_linking The approach for combining multiple def files, tec
-#'   files, header files, etc. Default 'multiplicity' combines all unique
-#'   combinations (e.g. 2 def pars scenarios and 2 tec file scenarios = 4
-#'   scenarios total). 'recycling' will repeat shorter inputs to match longer
-#'   input (e.g. with 4 def_pars scenarios and 2 tec file scenarios, the 2 tec
-#'   file scenarios will be repeated for a total of 4 scenarios total).
-#' @param combine_by_multiplicity The approach for c
-#' @param combine_by_repeating There is no easy approach for combining this. May
-#'   need to be removed.
-#' @param output_table_name Name for all-options dataframe that is exported.
-#'   Default name is ...
+#' @params nodes The number of cluster nodes to spread the calculation over.
+#'   \code{slurm_apply} automatically divides \code{params} in chunks of
+#'   approximately equal size to send to each node.
+#' @params cpus_per_node The number of CPUs requested per node.
+#' @params rscript_path The location of the Rscript command. If not specified,
+#'   defaults to the location of Rscript within the R installation being run.
+#' @params slurm_options A named list of options recognized by \code{sbatch};
+#'   see rslurm slurm_apply function for more details.
+#'
 #' @author Will Burke
 #'
 #' @export
@@ -34,8 +61,7 @@ run_rhessys_multi = function(input_rhessys,
                              output_filter = NULL,
                              combine_by_linking = NULL,
                              combine_by_multiplicity = "def",
-                             combine_by_repeating = NULL,
-                             output_table_name = NULL,
+                             all_combinations_output_name = NULL,
                              parallel = TRUE,
                              parallel_method = "simple",
                              n_cores = NULL,
@@ -121,34 +147,11 @@ run_rhessys_multi = function(input_rhessys,
     df <- NULL
   }
 
-  # Combine by repeating
-  if (!is.null(combine_by_repeating)){
-    dfs_repeated <- c(df = list(df), dfs[names(dfs) %in% combine_by_repeating])
-    indexes <- lapply(dfs_repeated, function(x) 1:nrow(x))
-
-    # Identify the longest input and test if it is a multiple of the other inputs
-    l_max <- max(unlist(lapply(indexes, length)))
-    if (max(unlist(lapply(indexes, function(x) l_max%%length(x)))) > 0){
-      stop(paste("The length of the longest input is not a multiple of one (or more) of the others"))
-    }
-
-    # Make all inputs same length
-    dfs_repeated <- lapply(dfs_repeated, function(x){
-      tmp <- rep(list(x), (l_max / nrow(x)))
-      dfs_repeated <- do.call(rbind, tmp)
-      return(dfs_repeated)
-    })
-    # Combine all inputs via cbind
-    df <- do.call(cbind, dfs_repeated)
-    colnames(df) <- unlist(lapply(dfs_repeated, colnames))
-    rownames(df) <- 1:nrow(df)
-  }
-
 
   # ---------- Export df ----------
   # Maybe add date/time to name so default doesn't overwrite itself
-  if (!is.null(output_table_name)){
-    write.csv(df, file.path(input_rhessys$output_folder[1], output_table_name, ".csv"))
+  if (!is.null(all_combinations_output_name)){
+    write.csv(df, file.path(input_rhessys$output_folder[1], all_combinations_output_name, ".csv"))
   } else {
     write.csv(df, file.path(input_rhessys$output_folder[1],"df.csv"))
   }
@@ -195,24 +198,6 @@ run_rhessys_multi = function(input_rhessys,
     return(def_pars_i)
   }
 
-  # parse_output_filter <- function(output_filter = NULL, df, i){
-  #   if (!is.null(output_filter)) {
-  #     # Probably remove this section since output filter should have common name with attached numbers
-  #     output_filter_i <- output_filter
-  #     for (n in seq_len(length(output_filter) - 1)){
-  #       output_filter_i[[n]][[1]] <- output_filter[[n]][[1]][i]
-  #       output_filter_i[[n]][[2]][[1]] <- output_filter[[n]][[2]][[1]][i]
-  #       output_filter_i[[n]][[2]][[2]] <- output_filter[[n]][[2]][[2]][i]
-  #       output_filter_i[[n]][[2]][[3]] <- output_filter[[n]][[2]][[3]][i]
-  #       output_filter_i[[n]][[3]][[1]] <- output_filter[[n]][[3]][[1]][i]
-  #       output_filter_i[[n]][[3]][[2]] <- output_filter[[n]][[3]][[2]][i]
-  #     }
-  #     output_filter_i[[length(output_filter_i)]] <- output_filter[[length(output_filter)]][i]
-  #   } else {
-  #     output_filter_i = NULL
-  #   }
-  # }
-
 
   # ---------- dumb for loop ----------
 
@@ -237,7 +222,7 @@ run_rhessys_multi = function(input_rhessys,
   }
 
 
-  # ---------- parallelized: simple ----------
+  # ---------- parallelize: simple ----------
   if (parallel & parallel_method == "simple") {
 
     if (is.null(n_cores)) {
@@ -308,106 +293,13 @@ run_rhessys_multi = function(input_rhessys,
   }
 
 
-  # # ---------- parallelized: slurm ----------
-  # if (parallel & parallel_method == "slurm") {
-  #
-  #   library(rslurm)
-  #
-  #   # Initial function
-  #   run_parallel_slurm_initial <- function(f,
-  #                                          params,
-  #                                          input_rhessys,
-  #                                          hdr_files ,
-  #                                          tec_data,
-  #                                          def_pars,
-  #                                          clim_base,
-  #                                          output_filter,
-  #                                          df,
-  #                                          def_names,
-  #                                          nodes,
-  #                                          cpus_per_node,
-  #                                          rscript_path,
-  #                                          slurm_options){
-  #
-  #     # Need to have an 'initial' slurm function because the params passed to
-  #     # slurm_apply must all be arguments in the passed function. rslurm_apply
-  #     # will parse slurm_initial_input into i, which can then be processed
-  #     # 'properly' in the primary function.
-  #
-  #     # Primary function
-  #     run_parallel_slurm = function(i,
-  #                                   input_rhessys,
-  #                                   hdr_files ,
-  #                                   tec_data,
-  #                                   def_pars,
-  #                                   clim_base,
-  #                                   output_filter,
-  #                                   df,
-  #                                   def_names = NULL,
-  #                                   nodes,
-  #                                   cpus_per_node,
-  #                                   rscript_path,
-  #                                   slurm_options){
-  #
-  #       library(RHESSysIOinR)
-  #
-  #       input_rhessys_i <- parse_input_rhessys(input_rhessys = NULL, df = df, i=i)
-  #       hdr_files_i <- parse_hdr_files(hdr_files = NULL, df = df, i=i)
-  #       tec_data_i <- parse_tec_data(tec_data = NULL, df = df, i=i)
-  #       def_pars_i <- parse_def_pars(def_pars = NULL, df = df, i=i, def_names = def_names)
-  #
-  #       run_rhessys_single(
-  #         input_rhessys = input_rhessys_i,
-  #         hdr_files = hdr_files_i,
-  #         tec_data = tec_data_i,
-  #         def_pars = def_pars_i,
-  #         clim_base = clim_base,
-  #         output_filter = output_filter,
-  #         runID = i)
-  #     }
-  #
-  #     # Call function
-  #     run_parallel_slurm(i,
-  #                        input_rhessys = input_rhessys,
-  #                        hdr_files = hdr_files,
-  #                        tec_data = tec_data,
-  #                        def_pars = def_pars,
-  #                        clim_base = clim_base,
-  #                        output_filter = output_filter,
-  #                        df = df,
-  #                        def_names = def_names,
-  #                        nodes = nodes,
-  #                        cpus_per_node = cpus_per_node,
-  #                        rscript_path = rscript_path,
-  #                        slurm_options = slurm_options)
-  #   }
-  #
-  #   # ----
-  #
-  #   slurm_initial_input <- data.frame(i = seq_len(nrow(df)))
-  #
-  #   sjob <- rslurm::slurm_apply(f = run_parallel_slurm_initial,
-  #                               params = slurm_initial_input,
-  #                               nodes = nodes,
-  #                               cpus_per_node = cpus_per_node,
-  #                               rscript_path = rscript_path,
-  #                               global_objects = c("input_rhessys", "hdr_files",
-  #                                                  "tec_data", "def_pars",
-  #                                                  "clim_base", "output_filter",
-  #                                                  "df", "def_names",
-  #                                                  "parse_input_rhessys", "parse_hdr_files",
-  #                                                  "parse_tec_data", "parse_def_pars"),
-  #                               slurm_options = slurm_options)
-  #
-  # }
-
-
-  # ---------- parallelized: slurm ----------
+  # ---------- parallelize: slurm ----------
   if (parallel & parallel_method == "slurm") {
 
     library(rslurm)
 
     run_parallel_slurm <- function(i){
+      # Note: only i is passed directly as a parameter. All others passed via 'global objects'.
 
       library(RHESSysIOinR)
 
@@ -445,4 +337,5 @@ run_rhessys_multi = function(input_rhessys,
                                 slurm_options = slurm_options)
   }
 }
+
 
