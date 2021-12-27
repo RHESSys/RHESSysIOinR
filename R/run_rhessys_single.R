@@ -52,6 +52,11 @@ run_rhessys_single <- function(input_rhessys,
     dir.create(input_rhessys$output_folder)
     cat("Created output folder: ", input_rhessys$output_folder)
   }
+  # auto generate tec folder
+  if (!is.null(dirname(input_rhessys$tec_file)) && !dir.exists(dirname(input_rhessys$tec_file))) {
+    dir.create(dirname(input_rhessys$tec_file))
+    cat("Created tec folder: ", dirname(input_rhessys$tec_file))
+  }
 
   # output filters don't work with the output subsetting
   if (!is.null(output_filter) & !is.null(output_method)) {
