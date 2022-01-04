@@ -11,7 +11,7 @@ run_rhessys_multi(
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
-  combine_by_linking = NULL,
+  combine_by_linking = c("rhessys", "tec", "hdr"),
   combine_by_multiplicity = "def",
   all_combinations_output_name = NULL,
   parallel = TRUE,
@@ -77,8 +77,8 @@ approximately equal size to send to each node.}
 \item{rscript_path}{The location of the Rscript command. If not specified,
 defaults to the location of Rscript within the R installation being run.}
 
-\item{slurm_options}{A named list of options recognized by \code{sbatch};
-see rslurm slurm_apply function for more details.}
+\item{slurm_options}{A named list of options recognized by \code{sbatch}; see
+rslurm slurm_apply function for more details.}
 }
 \description{
 Runs multiple RHESSys simulations via for loop or in parallel
@@ -89,6 +89,11 @@ Runs multiple RHESSys simulations via for loop or in parallel
   variables for each unique run must now be a single quoted string separated
   by commas (e.g.
   "path/veg_tree.def,path/veg_understory.def,path/veg_shrub.def")
+
+  With the current code, All four options for combining ('rhessys', 'tec',
+  'hdr', and 'def') must be specified in either combine_by_linking or
+  combine_by_multiplicity. The default option is used when only def file
+  parameters are varied.
 
   The slurm option automatically enables processing with a slurm scheduler
   via the r package rslurm. (https://github.com/SESYNC-ci/rslurm). In order

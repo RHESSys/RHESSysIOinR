@@ -8,6 +8,11 @@
 #'   by commas (e.g.
 #'   "path/veg_tree.def,path/veg_understory.def,path/veg_shrub.def")
 #'
+#'   With the current code, All four options for combining ('rhessys', 'tec',
+#'   'hdr', and 'def') must be specified in either combine_by_linking or
+#'   combine_by_multiplicity. The default option is used when only def file
+#'   parameters are varied.
+#'
 #'   The slurm option automatically enables processing with a slurm scheduler
 #'   via the r package rslurm. (https://github.com/SESYNC-ci/rslurm). In order
 #'   to run rhessys via rslurm, two templates within the rslurm package need to
@@ -44,8 +49,8 @@
 #' @param cpus_per_node The number of CPUs requested per node.
 #' @param rscript_path The location of the Rscript command. If not specified,
 #'   defaults to the location of Rscript within the R installation being run.
-#' @param slurm_options A named list of options recognized by \code{sbatch};
-#'   see rslurm slurm_apply function for more details.
+#' @param slurm_options A named list of options recognized by \code{sbatch}; see
+#'   rslurm slurm_apply function for more details.
 #'
 #' @author Will Burke
 #'
@@ -59,7 +64,7 @@ run_rhessys_multi = function(input_rhessys,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_filter = NULL,
-                             combine_by_linking = NULL,
+                             combine_by_linking = c("rhessys", "tec", "hdr"),
                              combine_by_multiplicity = "def",
                              all_combinations_output_name = NULL,
                              parallel = TRUE,
@@ -92,6 +97,7 @@ run_rhessys_multi = function(input_rhessys,
 
   # list of data frames, each containing nrows where n is number of sims for each data object
   dfs = NULL
+  df = NULL
 
   # ---------- rhessys inputs ----------
   if (!is.null(input_rhessys)) {
@@ -135,7 +141,8 @@ run_rhessys_multi = function(input_rhessys,
 
   # Combine by multiplicity (note that if tables are linked, they are automatically passed to combine_by_multiplicity)
   if (!is.null(combine_by_multiplicity)){
-    dfs_multiplicity <- c(df = list(df), dfs[names(dfs) %in% combine_by_multiplicity])
+    if(is.null(df)){dfs_multiplicity <- c(dfs[names(dfs) %in% combine_by_multiplicity])}
+    if(!is.null(df)){dfs_multiplicity <- c(df = list(df), dfs[names(dfs) %in% combine_by_multiplicity])}
     indexes <- lapply(dfs_multiplicity, function(x) 1:nrow(x))
 
     # get all combinations - expand grid but with dfs_multiplicity, taken from reshape::expand.grid.df)
@@ -143,8 +150,6 @@ run_rhessys_multi = function(input_rhessys,
     df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs_multiplicity, grid))
     colnames(df) <- unlist(lapply(dfs_multiplicity, colnames))
     rownames(df) <- 1:nrow(df)
-  } else {
-    df <- NULL
   }
 
 
@@ -176,17 +181,17 @@ run_rhessys_multi = function(input_rhessys,
     return(hdr_files_i)
   }
   parse_tec_data <- function(tec_data = NULL, df, i){
-  if (!is.null(tec_data)) {
-    if(!is.data.frame(tec_data)){
-      tec_data_i <- "[["(tec_data, df[i, "tec_names"])
+    if (!is.null(tec_data)) {
+      if(!is.data.frame(tec_data)){
+        tec_data_i <- "[["(tec_data, df[i, "tec_names"])
+      } else {
+        tec_data_i <- tec_data
+      }
     } else {
-      tec_data_i <- tec_data
+      tec_data_i = NULL
     }
-  } else {
-    tec_data_i = NULL
+    return(tec_data_i)
   }
-  return(tec_data_i)
-}
 
   parse_def_pars <- function(def_pars = NULL, df, i, def_names){
     if (!is.null(def_pars)) {
@@ -237,7 +242,11 @@ run_rhessys_multi = function(input_rhessys,
                                    clim_base,
                                    output_filter,
                                    df,
-                                   def_names = NULL){
+                                   def_names = NULL,
+                                   parse_input_rhessys,
+                                   parse_hdr_files,
+                                   parse_tec_data,
+                                   parse_def_pars){
 
       library(RHESSysIOinR)
 
@@ -261,16 +270,12 @@ run_rhessys_multi = function(input_rhessys,
     # manually add objects to the cluster
     parallel::clusterExport(
       cl = cl,
-      varlist = c(
-        "input_rhessys",
-        "hdr_files",
-        "tec_data",
-        "def_pars",
-        "clim_base",
-        "output_filter",
-        "df",
-        "def_names"
-      ),
+      varlist = c("input_rhessys", "hdr_files",
+                  "tec_data", "def_pars",
+                  "clim_base", "output_filter",
+                  "df", "def_names",
+                  "parse_input_rhessys", "parse_hdr_files",
+                  "parse_tec_data", "parse_def_pars"),
       envir = environment()
     )
     # run run_parallel in function with parLapply
@@ -285,7 +290,11 @@ run_rhessys_multi = function(input_rhessys,
       clim_base = clim_base,
       output_filter = output_filter,
       df = df,
-      def_names = def_names
+      def_names = def_names,
+      parse_input_rhessys = parse_input_rhessys,
+      parse_hdr_files = parse_hdr_files,
+      parse_tec_data = parse_tec_data,
+      parse_def_pars = parse_def_pars
     )
     # stop the cluster
     parallel::stopCluster(cl)
