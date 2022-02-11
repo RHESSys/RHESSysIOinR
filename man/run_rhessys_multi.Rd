@@ -13,7 +13,7 @@ run_rhessys_multi(
   output_filter = NULL,
   combine_by_linking = c("rhessys", "tec", "hdr"),
   combine_by_multiplicity = "def",
-  all_combinations_output_name = NULL,
+  all_combinations_output_name = "all_combinations_table",
   parallel = TRUE,
   parallel_method = "simple",
   n_cores = NULL,
@@ -55,8 +55,9 @@ match.}
 combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
 tec file scenarios = 4 scenarios total).}
 
-\item{all_combinations_output_name}{Name for all-options dataframe that is
-exported. Null generates default name.}
+\item{all_combinations_output_name}{Name for all-options csv dataframe that
+is exported. Default name is "all_combinations_table" and is located in
+rhessys output folder.}
 
 \item{parallel}{Defaults to TRUE. Should the parallel package be used to
 parallelize the rhessys runs. FALSE processes runs via a for loop.}

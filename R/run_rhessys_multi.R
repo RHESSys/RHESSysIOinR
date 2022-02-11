@@ -34,8 +34,9 @@
 #'   'def' and/or previous 'combine_by_linking' files by multiplicity, which
 #'   combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
 #'   tec file scenarios = 4 scenarios total).
-#' @param all_combinations_output_name Name for all-options dataframe that is
-#'   exported. Null generates default name.
+#' @param all_combinations_output_name Name for all-options csv dataframe that
+#'   is exported. Default name is "all_combinations_table" and is located in
+#'   rhessys output folder.
 #' @param parallel Defaults to TRUE. Should the parallel package be used to
 #'   parallelize the rhessys runs. FALSE processes runs via a for loop.
 #' @param parallel_method Method for running rhessys in parallel. Default is
@@ -66,7 +67,7 @@ run_rhessys_multi = function(input_rhessys,
                              output_filter = NULL,
                              combine_by_linking = c("rhessys", "tec", "hdr"),
                              combine_by_multiplicity = "def",
-                             all_combinations_output_name = NULL,
+                             all_combinations_output_name = "all_combinations_table",
                              parallel = TRUE,
                              parallel_method = "simple",
                              n_cores = NULL,
@@ -154,12 +155,8 @@ run_rhessys_multi = function(input_rhessys,
 
 
   # ---------- Export df ----------
-  # Maybe add date/time to name so default doesn't overwrite itself
-  if (!is.null(all_combinations_output_name)){
-    write.csv(df, file.path(input_rhessys$output_folder[1], all_combinations_output_name, ".csv"))
-  } else {
-    write.csv(df, file.path(input_rhessys$output_folder[1],"df.csv"))
-  }
+  # Maybe add date/time to name so default doesn't overwrite itself?
+  write.csv(df, file.path(input_rhessys$output_folder[1], all_combinations_output_name, ".csv"))
 
 
   # ---------- parsing functions ----------
