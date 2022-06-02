@@ -5,7 +5,8 @@
 \title{IOin_clim}
 \usage{
 IOin_clim(
-  base_station_id,
+  base_station_id = NULL,
+  grid_cells = NULL,
   x_coordinate,
   y_coordinate,
   z_coordinate,
@@ -22,7 +23,9 @@ IOin_clim(
 )
 }
 \arguments{
-\item{base_station_id}{Base station ID.}
+\item{base_station_id}{Base station ID. Used for station-based meteorological inputs.}
+
+\item{grid_cells}{Number of grid cells. Used for gridded meteorological inputs.}
 
 \item{x_coordinate}{X coordinate.}
 

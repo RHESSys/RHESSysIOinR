@@ -1,7 +1,8 @@
 #' IOin_clim
 #'
 #' Generate input for run_rhessys climate basestation input
-#' @param base_station_id Base station ID.
+#' @param base_station_id Base station ID. Used for station-based meteorological inputs.
+#' @param grid_cells Number of grid cells. Used for gridded meteorological inputs.
 #' @param x_coordinate X coordinate.
 #' @param y_coordinate Y coordinate.
 #' @param z_coordinate Z coordinate.
@@ -20,7 +21,8 @@
 #'
 #' @export
 
-IOin_clim = function(base_station_id,
+IOin_clim = function(base_station_id = NULL,
+                     grid_cells = NULL,
                      x_coordinate,
                      y_coordinate,
                      z_coordinate,
@@ -35,42 +37,83 @@ IOin_clim = function(base_station_id,
                      hourly_prefix = "hourly",
                      num_non_critical_hourly_sequences = 0) {
 
+  if (!is.null(base_station_id) & !is.null(grid_cells)){
+    stop("Cannot use both base station and gridded meteorological inputs.")
+  }
 
-
-  output_clim_base = data.frame(
-    "values" = c(
-      base_station_id,
-      x_coordinate,
-      y_coordinate,
-      z_coordinate,
-      effective_lai,
-      screen_height,
-      annual_prefix,
-      num_non_critical_annual_sequences,
-      monthly_prefix,
-      num_non_critical_monthly_sequences,
-      daily_prefix,
-      num_non_critical_daily_sequences,
-      hourly_prefix,
-      num_non_critical_hourly_sequences
-    ),
-    "vars" = c(
-      "base_station_id",
-      "x_coordinate",
-      "y_coordinate",
-      "z_coordinate",
-      "effective_lai",
-      "screen_height",
-      "annual_climate_prefix",
-      "number_non_critical_annual_sequences",
-      "monthly_climate_prefix",
-      "number_non_critical_monthly_sequences",
-      "daily_climate_prefix",
-      "number_non_critical_daily_sequences",
-      "hourly_climate_prefix",
-      "number_non_critical_hourly_sequences"
+  if (!is.null(base_station_id)){
+    output_clim_base = data.frame(
+      "values" = c(
+        base_station_id,
+        x_coordinate,
+        y_coordinate,
+        z_coordinate,
+        effective_lai,
+        screen_height,
+        annual_prefix,
+        num_non_critical_annual_sequences,
+        monthly_prefix,
+        num_non_critical_monthly_sequences,
+        daily_prefix,
+        num_non_critical_daily_sequences,
+        hourly_prefix,
+        num_non_critical_hourly_sequences
+      ),
+      "vars" = c(
+        "base_station_id",
+        "x_coordinate",
+        "y_coordinate",
+        "z_coordinate",
+        "effective_lai",
+        "screen_height",
+        "annual_climate_prefix",
+        "number_non_critical_annual_sequences",
+        "monthly_climate_prefix",
+        "number_non_critical_monthly_sequences",
+        "daily_climate_prefix",
+        "number_non_critical_daily_sequences",
+        "hourly_climate_prefix",
+        "number_non_critical_hourly_sequences"
+      )
     )
-  )
+  }
+
+  if (!is.null(grid_cells)){
+    output_clim_base = data.frame(
+      "values" = c(
+        grid_cells,
+        x_coordinate,
+        y_coordinate,
+        z_coordinate,
+        effective_lai,
+        screen_height,
+        annual_prefix,
+        num_non_critical_annual_sequences,
+        monthly_prefix,
+        num_non_critical_monthly_sequences,
+        daily_prefix,
+        num_non_critical_daily_sequences,
+        hourly_prefix,
+        num_non_critical_hourly_sequences
+      ),
+      "vars" = c(
+        "grid_cells",
+        "x_coordinate",
+        "y_coordinate",
+        "z_coordinate",
+        "effective_lai",
+        "screen_height",
+        "annual_climate_prefix",
+        "number_non_critical_annual_sequences",
+        "monthly_climate_prefix",
+        "number_non_critical_monthly_sequences",
+        "daily_climate_prefix",
+        "number_non_critical_daily_sequences",
+        "hourly_climate_prefix",
+        "number_non_critical_hourly_sequences"
+      )
+    )
+  }
 
   return(output_clim_base)
 }
