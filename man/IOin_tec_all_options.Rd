@@ -104,6 +104,17 @@ init/construct_tec.c
  \href{https://github.com/RHESSys/RHESSys/wiki/Redefining-the-worldfile}{Redefining-the-worldfile}
 }
 
+\examples{
+
+# Use individual tec arguments
+IOin_tec_all_options(print_daily_on = "1950 10 1 1", redefine_world_thin_harvest = c("1960 10 1 1", "1970 10 1 1"))
+
+# Use data argument
+# Note that list-column can be generated using tibble but not data.frame
+tec_dataframe <- tibble::tibble(watershed = "rattlesnake", print_daily_on = "1950 10 1 1", redefine_world_thin_harvest = purrr::map(watershed, ~c("1960 10 1 1", "1970 10 1 1")))
+IOin_tec_all_options(data = tec_dataframe)
+
+}
 \author{
 Ryan R Bart
 }
