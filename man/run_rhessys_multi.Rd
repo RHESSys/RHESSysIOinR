@@ -66,8 +66,9 @@ parallelize the rhessys runs. FALSE processes runs via a for loop.}
 'simple', which can be used for running on a local machine or equivalent.
 "slurm' allows direct access to slurm scheduler}
 
-\item{n_cores}{The number of cores to use in a parallelized cluster. If left
-NULL, will autodetect number of cores and use total - 1.}
+\item{n_cores}{The number of cores to use when using a simple (local)
+parallelization. If left NULL, will autodetect number of cores and use
+total - 1.}
 
 \item{nodes}{The number of cluster nodes to spread the calculation over.
 \code{slurm_apply} automatically divides \code{params} in chunks of

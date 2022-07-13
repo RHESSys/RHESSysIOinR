@@ -27,7 +27,8 @@ IOin_tec_all_options(
   redefine_world_thin_snags = NULL,
   roads_on = NULL,
   roads_off = NULL,
-  output_current_state = NULL
+  output_current_state = NULL,
+  data = NULL
 )
 }
 \arguments{
@@ -80,6 +81,11 @@ where stems are left in place.}
 \item{roads_off}{Stop processing roads}
 
 \item{output_current_state}{Output worldfile}
+
+\item{data}{Optional dataframe containing tec arguments as column names and a
+single row containing dates. The dataframe may contain list-columns with
+vectors when more than one date is needed. All other arguments to the
+function are treated as null when data argument is not null.}
 }
 \description{
 Generic input function to construct a dataframe for all possible RHESSys
@@ -94,7 +100,8 @@ init/construct_tec.c
  All arguments accept a date or vector of dates in the format of
  "year month day hour" e.g. c("2000 10 1 1", "2001 9 30 1").
 
- For more information on redefine worlds, see wiki page \href{https://github.com/RHESSys/RHESSys/wiki/Redefining-the-worldfile}{Redefining-the-worldfile}
+ For more information on redefine worlds, see wiki page
+ \href{https://github.com/RHESSys/RHESSys/wiki/Redefining-the-worldfile}{Redefining-the-worldfile}
 }
 
 \author{

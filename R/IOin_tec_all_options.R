@@ -11,7 +11,8 @@
 #'@section Note: All arguments accept a date or vector of dates in the format of
 #'  "year month day hour" e.g. c("2000 10 1 1", "2001 9 30 1").
 #'
-#'  For more information on redefine worlds, see wiki page \href{https://github.com/RHESSys/RHESSys/wiki/Redefining-the-worldfile}{Redefining-the-worldfile}
+#'  For more information on redefine worlds, see wiki page
+#'  \href{https://github.com/RHESSys/RHESSys/wiki/Redefining-the-worldfile}{Redefining-the-worldfile}
 #'
 #'@param print_hourly_on Start printing hourly output data
 #'@param print_hourly_growth_on Start printing hourly carbon-related output data
@@ -40,6 +41,10 @@
 #'@param roads_on Start processing roads
 #'@param roads_off Stop processing roads
 #'@param output_current_state Output worldfile
+#'@param data Optional dataframe containing tec arguments as column names and a
+#'  single row containing dates. The dataframe may contain list-columns with
+#'  vectors when more than one date is needed. All other arguments to the
+#'  function are treated as null when data argument is not null.
 #'
 #'@author Ryan R Bart
 #'
@@ -67,7 +72,69 @@ IOin_tec_all_options = function(print_hourly_on = NULL,
                                 redefine_world_thin_snags = NULL,
                                 roads_on = NULL,
                                 roads_off = NULL,
-                                output_current_state = NULL) {
+                                output_current_state = NULL,
+                                data = NULL) {
+
+
+  # ---------------------------------------------------------------------
+  # Optional input dataframe
+
+  if (!is.null(data)){
+
+    print("Note: Using input dataframe. Ignoring any individual tec arguments")
+    # Null out individual tec arguments
+    print_hourly_on = NULL
+    print_hourly_growth_on = NULL
+    print_hourly_off = NULL
+    print_hourly_growth_off = NULL
+    print_daily_on = NULL
+    print_daily_growth_on = NULL
+    print_daily_off = NULL
+    print_daily_growth_off = NULL
+    print_monthly_on = NULL
+    print_monthly_off = NULL
+    print_yearly_on = NULL
+    print_yearly_growth_on = NULL
+    print_yearly_off = NULL
+    print_yearly_growth_off = NULL
+    redefine_strata = NULL
+    redefine_world = NULL
+    redefine_world_multiplier = NULL
+    redefine_world_thin_remain = NULL
+    redefine_world_thin_harvest = NULL
+    redefine_world_thin_snags = NULL
+    roads_on = NULL
+    roads_off = NULL
+    output_current_state = NULL
+
+    # Create tec arguments from columns of a dataframe
+    column_names <- names(data)
+    for(a in seq_along(column_names)){
+      if (column_names[a] == "print_hourly_on"){print_hourly_on = data$print_hourly_on[[1]]}
+      if (column_names[a] == "print_hourly_growth_on"){print_hourly_growth_on = data$print_hourly_growth_on[[1]]}
+      if (column_names[a] == "print_hourly_off"){print_hourly_off = data$print_hourly_off[[1]]}
+      if (column_names[a] == "print_hourly_growth_off"){print_hourly_growth_off = data$print_hourly_growth_off[[1]]}
+      if (column_names[a] == "print_daily_on"){print_daily_on = data$print_daily_on[[1]]}
+      if (column_names[a] == "print_daily_growth_on"){print_daily_growth_on = data$print_daily_growth_on[[1]]}
+      if (column_names[a] == "print_daily_off"){print_daily_off = data$print_daily_off[[1]]}
+      if (column_names[a] == "print_daily_growth_off"){print_daily_growth_off = data$print_daily_growth_off[[1]]}
+      if (column_names[a] == "print_monthly_on"){print_monthly_on = data$print_monthly_on[[1]]}
+      if (column_names[a] == "print_monthly_off"){print_monthly_off = data$print_monthly_off[[1]]}
+      if (column_names[a] == "print_yearly_on"){print_yearly_on = data$print_yearly_on[[1]]}
+      if (column_names[a] == "print_yearly_growth_on"){print_yearly_growth_on = data$print_yearly_growth_on[[1]]}
+      if (column_names[a] == "print_yearly_off"){print_yearly_off = data$print_yearly_off[[1]]}
+      if (column_names[a] == "print_yearly_growth_off"){print_yearly_growth_off = data$print_yearly_growth_off[[1]]}
+      if (column_names[a] == "redefine_strata"){redefine_strata = data$redefine_strata[[1]]}
+      if (column_names[a] == "redefine_world"){redefine_world = data$redefine_world[[1]]}
+      if (column_names[a] == "redefine_world_multiplier"){redefine_world_multiplier = data$redefine_world_multiplier[[1]]}
+      if (column_names[a] == "redefine_world_thin_remain"){redefine_world_thin_remain = data$redefine_world_thin_remain[[1]]}
+      if (column_names[a] == "redefine_world_thin_harvest"){redefine_world_thin_harvest = data$redefine_world_thin_harvest[[1]]}
+      if (column_names[a] == "redefine_world_thin_snags"){redefine_world_thin_snags = data$redefine_world_thin_snags[[1]]}
+      if (column_names[a] == "roads_on"){roads_on = data$roads_on[[1]]}
+      if (column_names[a] == "roads_off"){roads_off = data$roads_off[[1]]}
+      if (column_names[a] == "output_current_state"){output_current_state = data$output_current_state[[1]]}
+    }
+  }
 
 
   # ---------------------------------------------------------------------

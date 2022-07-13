@@ -42,8 +42,9 @@
 #' @param parallel_method Method for running rhessys in parallel. Default is
 #'   'simple', which can be used for running on a local machine or equivalent.
 #'   "slurm' allows direct access to slurm scheduler
-#' @param n_cores The number of cores to use in a parallelized cluster. If left
-#'   NULL, will autodetect number of cores and use total - 1.
+#' @param n_cores The number of cores to use when using a simple (local)
+#'   parallelization. If left NULL, will autodetect number of cores and use
+#'   total - 1.
 #' @param nodes The number of cluster nodes to spread the calculation over.
 #'   \code{slurm_apply} automatically divides \code{params} in chunks of
 #'   approximately equal size to send to each node.
