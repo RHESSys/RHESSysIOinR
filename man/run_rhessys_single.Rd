@@ -12,9 +12,7 @@ run_rhessys_single(
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
-  output_method = NULL,
-  output_variables = NULL,
-  return_data = FALSE,
+  return_cmd = FALSE,
   runID = NULL
 )
 }
@@ -41,11 +39,7 @@ to in input_rhessys.}
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
 
-\item{output_method}{"awk" will use awk, any other non NULL input will use R based output selection}
-
-\item{output_variables}{List of output variables to subset via the indicated method, Defaults to NULL}
-
-\item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
+\item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 
 \item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 }

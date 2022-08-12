@@ -14,6 +14,8 @@
 #' @param output_filter Path to a yaml formatted output filter.
 #' @param command_options RHESSys command line options, ex. '-g' or '-p'.
 #' @param prefix_command A shell command to be run previous to the RHESSys command line call.
+#' @param return_cmd true/false passed from run_rhessys_single
+# @param supress_console TRUE/FALSE if console output from system() should be supressed
 #' This can be used to source a shell script, which itself can run multiple commands if needed.
 #'
 #' @export
@@ -29,7 +31,8 @@ rhessys_command <- function(rhessys_version,
                             input_parameters,
                             output_filter = NULL,
                             command_options,
-                            prefix_command = NULL) {
+                            prefix_command = NULL,
+                            return_cmd = FALSE) {
 
   tmp = paste0(
     rhessys_version,
@@ -70,11 +73,17 @@ rhessys_command <- function(rhessys_version,
   cat("Command line echo:", tmp, "\n")
   #print(paste("Command line echo:", tmp), quote = FALSE)
 
-  cat("\n----------------------------------------\n")
-  cat("===== Beginning RHESSys Simulation =====\n")
-  cat("----------------------------------------\n\n")
+  if (return_cmd) {
+    return(tmp)
+  } else {
+    cat("\n----------------------------------------\n")
+    cat("===== Beginning RHESSys Simulation =====\n")
+    cat("----------------------------------------\n\n")
 
-  system(tmp)
+    system(tmp)
+
+    return(NULL)
+  }
 
 }
 

@@ -16,9 +16,7 @@
 #' @param output_filter An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 #' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 #' existing output filter.
-#' @param output_method "awk" will use awk, any other non NULL input will use R based output selection
-#' @param output_variables List of output variables to subset via the indicated method, Defaults to NULL
-#' @param return_data TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run
+#' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
 
@@ -29,9 +27,7 @@ run_rhessys_single <- function(input_rhessys,
                                def_pars = NULL,
                                clim_base = NULL,
                                output_filter = NULL,
-                               output_method = NULL,
-                               output_variables = NULL,
-                               return_data = FALSE,
+                               return_cmd = FALSE,
                                runID = NULL) {
 
   cat("\n--------------------------------------------\n")
@@ -51,11 +47,6 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(input_rhessys$output_folder) && !dir.exists(input_rhessys$output_folder)) {
     dir.create(input_rhessys$output_folder)
     cat("Created output folder: ", input_rhessys$output_folder)
-  }
-
-  # output filters don't work with the output subsetting
-  if (!is.null(output_filter) & !is.null(output_method)) {
-    stop("Cannot use both output filters and a output subsetting method.")
   }
 
   # ------------------------------ Def file parameters ------------------------------
@@ -186,7 +177,7 @@ run_rhessys_single <- function(input_rhessys,
 
 
   # ------------------------------ Call RHESSys ------------------------------
-  rhessys_command(rhessys_version = input_rhessys$rhessys_version,
+  rh_cmd = rhessys_command(rhessys_version = input_rhessys$rhessys_version,
                   world_file = input_rhessys$world_file,
                   world_hdr_file = world_hdr_name_out,
                   tec_file = input_rhessys$tec_file,
@@ -197,20 +188,17 @@ run_rhessys_single <- function(input_rhessys,
                   input_parameters = cmd_pars_out,
                   output_filter = filter_path,
                   command_options = input_rhessys$command_options,
-                  prefix_command = input_rhessys$prefix_command)
+                  prefix_command = input_rhessys$prefix_command,
+                  return_cmd = return_cmd)
+
+  if (return_cmd) {
+    return(rh_cmd)
+  }
 
   if (!is.null(runID)) {
     cat("\n===== Wrote output to: '",output_path ,"' =====\n", sep = "")
   }
 
-  # ------------------------------ Process Output ------------------------------
-  data_out = output_control(output_method,
-                            output_variables,
-                            return_data)
-
-  if (return_data) {
-    return(data_out)
-  }
   return()
 
 }

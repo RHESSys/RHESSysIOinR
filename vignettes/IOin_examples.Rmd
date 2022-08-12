@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(echo = F, results = 'hide', eval = T)
+knitr::opts_chunk$set(echo = F, results = 'hide', eval = F)
 ```
 
 ## RHESSysIOinR Input Functions
@@ -55,7 +55,7 @@ library(RHESSysIOinR)
 
 This is the basic information neeeded to construct a RHESSys command line call. For full details see: [RHESSys command line options](https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options). 
 
-```{r}
+```{r }
 input_rhessys = IOin_rhessys_input(
   version = "../rhessys/rhessys7.3",
   tec_file = "tecfiles/w8TC.tec",
