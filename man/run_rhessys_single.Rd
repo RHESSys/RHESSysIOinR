@@ -13,6 +13,7 @@ run_rhessys_single(
   clim_base = NULL,
   output_filter = NULL,
   return_cmd = FALSE,
+  write_run_metadata = FALSE,
   runID = NULL
 )
 }
@@ -40,6 +41,8 @@ to in input_rhessys.}
 existing output filter.}
 
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
+
+\item{write_run_metadata}{TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.}
 
 \item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 }

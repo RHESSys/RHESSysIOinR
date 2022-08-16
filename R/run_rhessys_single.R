@@ -184,7 +184,6 @@ run_rhessys_single <- function(input_rhessys,
                                    output_file = output_path,
                                    input_parameters = cmd_pars_out,
                                    output_filter = filter_path,
-                                   run_metadata_filename = NULL,
                                    command_options = input_rhessys$command_options,
                                    prefix_command = input_rhessys$prefix_command,
                                    return_cmd = return_cmds)

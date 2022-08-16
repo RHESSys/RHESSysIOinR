@@ -24,7 +24,7 @@ write_run_info = function (rhessys_version,
 
   # open output filter (maybe again) and get output location
   # TODO, get and pass this from earlier output filter processing, maybe better to separate tho?
-  output_filter = "~/Projects/P301/output/filters/p301_filter.yml"
+  #output_filter = "~/Projects/P301/output/filters/p301_filter.yml"
   filter_data = read_output_filter(output_filter)
   # TODO CHECK THIS WITH MULTIPLE FILTERS
   output_loc = filter_data$filter$output$path
