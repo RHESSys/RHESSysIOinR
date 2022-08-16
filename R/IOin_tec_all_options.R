@@ -72,6 +72,8 @@ IOin_tec_all_options = function(print_hourly_on = NULL,
 
   # ---------------------------------------------------------------------
 
+  options(stringsAsFactors = F)
+
   # Initialize data frame
   input_tec_data <- data.frame(
     year = integer(),
