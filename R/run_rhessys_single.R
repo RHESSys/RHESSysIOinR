@@ -17,6 +17,7 @@
 #' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 #' existing output filter.
 #' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
+#' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
 
@@ -28,6 +29,7 @@ run_rhessys_single <- function(input_rhessys,
                                clim_base = NULL,
                                output_filter = NULL,
                                return_cmd = FALSE,
+                               write_run_metadata = FALSE,
                                runID = NULL) {
 
   cat("\n--------------------------------------------\n")
@@ -170,6 +172,25 @@ run_rhessys_single <- function(input_rhessys,
     filter_path = NULL
   }
 
+  # ------------------------------ Write Run Info ------------------------------
+  if (write_run_metadata & is.null(runID)) {
+    run_info_file = write_run_info(rhessys_version = input_rhessys$rhessys_version,
+                                   world_file = input_rhessys$world_file,
+                                   world_hdr_file = world_hdr_name_out,
+                                   tec_file = input_rhessys$tec_file,
+                                   flow_file = input_rhessys$flow_file,
+                                   start_date = input_rhessys$start_date,
+                                   end_date = input_rhessys$end_date,
+                                   output_file = output_path,
+                                   input_parameters = cmd_pars_out,
+                                   output_filter = filter_path,
+                                   run_metadata_filename = NULL,
+                                   command_options = input_rhessys$command_options,
+                                   prefix_command = input_rhessys$prefix_command,
+                                   return_cmd = return_cmds)
+  } else {
+    run_info_file = NULL
+  }
 
   cat("\n-------------------------------------------\n")
   cat("===== Finished RHESSysIO file writing =====\n")

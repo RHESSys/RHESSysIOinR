@@ -8,7 +8,7 @@
 read_output_filter = function(filter_in) {
 
   # ----- handle tabs instead of spaces -----
-  read_try = try(yaml::yaml.load_file(filter_in), silent = T)
+  read_try = try(yaml::yaml.load_file(filter_in, readLines.warn = F), silent = T)
   if (class(read_try) == "try-error" && grepl("cannot open the connection", attr(read_try, 'condition'))) {
     stop("Could not load '", filter_in, "', no such file at the specified path.")
   }
@@ -40,7 +40,6 @@ read_output_filter = function(filter_in) {
 
   filter = read_try
   names(filter) = rep("filter", length(filter))
-
 
   return(filter)
 }
