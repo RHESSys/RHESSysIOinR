@@ -24,10 +24,10 @@
 run_rhessys_single <- function(input_rhessys,
                                hdr_files,
                                tec_data = NULL,
-                               cmd_pars = NULL,
                                def_pars = NULL,
                                clim_base = NULL,
                                output_filter = NULL,
+                               cmd_pars = NULL,
                                return_cmd = FALSE,
                                write_run_metadata = FALSE,
                                runID = NULL) {
@@ -181,12 +181,12 @@ run_rhessys_single <- function(input_rhessys,
                                    flow_file = input_rhessys$flow_file,
                                    start_date = input_rhessys$start_date,
                                    end_date = input_rhessys$end_date,
-                                   output_file = output_path,
+                                   output_path = output_path,
                                    input_parameters = cmd_pars_out,
                                    output_filter = filter_path,
                                    command_options = input_rhessys$command_options,
                                    prefix_command = input_rhessys$prefix_command,
-                                   return_cmd = return_cmds)
+                                   return_cmd = return_cmd)
   } else {
     run_info_file = NULL
   }
@@ -215,8 +215,39 @@ run_rhessys_single <- function(input_rhessys,
     return(rh_cmd)
   }
 
-  if (!is.null(runID)) {
+  if (!is.null(output_path)) {
     cat("\n===== Wrote output to: '",output_path ,"' =====\n", sep = "")
+  }
+
+  # check if output files were actually written + have more than header
+  # this will mostly just add notes in cases where RHESSys errored at start
+  # so that metadata from those runs won't be confused with metadata from successful runs
+  if (write_run_metadata & is.null(runID)) {
+    # this function is overbuilt but checks if there's more than just a single header/line
+    check_rh_output = function(filepath) {
+      if (!file.exists(filepath)) {
+        return(FALSE)
+      } else {
+        if (file.size(filepath) < 5000) {
+          f <- file(filepath, open="rb")
+          chunk <- readBin(f, "raw", 5000)
+          close(f)
+          nlines <- sum(chunk == as.raw(10L))
+          if (nlines > 1) {
+            return(TRUE)
+          } else {
+            return(FALSE)
+          }
+        } else {
+          return(TRUE)
+        }
+      }
+    }
+    fex = sapply(run_info_file$output_files, check_rh_output)
+    # fex = file.exists(run_info_file$output_files)
+    file = file(run_info_file$info_filepath, "a", encoding = "UTF-8")
+    cat(paste0("     Successful Output?:\t", paste0(fex, collapse = ", "), "\n"), file = file, sep = "")
+    close(file)
   }
 
   return()

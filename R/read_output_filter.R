@@ -13,7 +13,7 @@ read_output_filter = function(filter_in) {
     stop("Could not load '", filter_in, "', no such file at the specified path.")
   }
   if (class(read_try) == "try-error" && grepl("Scanner error", attr(read_try, 'condition'))) {
-    filter_tabs = readLines(filter_in)
+    filter_tabs = readLines(filter_in, warn = F)
     filter_clean = gsub(pattern = "\\t", replacement = "    ", x = filter_tabs)
 
     # ----- handle multiple filters mapped as 'filter' -----
@@ -30,7 +30,7 @@ read_output_filter = function(filter_in) {
 
   # ----- handle multiple filters mapped as 'filter' -----
   if (class(read_try) == "try-error" && grepl("Duplicate map key: 'filter'", attr(read_try, 'condition'))) {
-    filter_clean = readLines(filter_in)
+    filter_clean = readLines(filter_in, warn = F)
     filter_loc = grep("filter", filter_clean)
     replacement = paste0('filter', seq_along(filter_loc))
     filter_clean[filter_loc] = mapply(gsub, pattern = 'filter', replacement, filter_clean[filter_loc])

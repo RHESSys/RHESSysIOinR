@@ -82,7 +82,7 @@ write_output_filter = function(output_filter, runID = NULL) {
   cat(filter_string, file = file, sep = "")
   close(file)
 
-  cat("===== Wrote output filter file new way =====\n")
+  cat("===== Wrote output filter file '", file_name, "' =====\n", sep = "")
 
   return(file_name)
 
