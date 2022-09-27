@@ -8,10 +8,10 @@ run_rhessys_single(
   input_rhessys,
   hdr_files,
   tec_data = NULL,
-  cmd_pars = NULL,
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
+  cmd_pars = NULL,
   return_cmd = FALSE,
   write_run_metadata = FALSE,
   runID = NULL
@@ -28,8 +28,6 @@ stratum_def) as well as an element named "base_stations". Each element should co
 
 \item{tec_data}{Input tec events, see input_tec function}
 
-\item{cmd_pars}{List of standard (command line) parameters.}
-
 \item{def_pars}{To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
 list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL}
 
@@ -39,6 +37,8 @@ to in input_rhessys.}
 \item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
+
+\item{cmd_pars}{List of standard (command line) parameters.}
 
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 

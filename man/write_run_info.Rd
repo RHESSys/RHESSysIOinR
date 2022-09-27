@@ -12,13 +12,13 @@ write_run_info(
   flow_file,
   start_date,
   end_date,
-  output_file = NULL,
+  output_path = NULL,
   input_parameters,
   output_filter = NULL,
   run_metadata_basename = "run_metadata",
   command_options,
   prefix_command = NULL,
-  return_cmd = NULL
+  return_cmd = FALSE
 )
 }
 \description{
