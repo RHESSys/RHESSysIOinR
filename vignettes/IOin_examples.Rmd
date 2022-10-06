@@ -32,7 +32,7 @@ This vignette shows example uses of the IOin_X functions, which together constru
 Using rhessys/Testing as example input data. If you don't already have develop branch of RHESSys cloned, get that now too.
 
 ```{r setup}
-#to clone and checkout develop branch, a bit slow for some reason
+# to clone and checkout develop branch, a bit slow for some reason
 # gert::git_clone(url = "https://github.com/RHESSys/RHESSys",
 #                 path = "~/Repos/rhessys-devtest",
 #                 branch = "develop")
@@ -48,7 +48,7 @@ If needed, compile RHESSys.
 ```{r}
 library(RHESSysIOinR)
 # This helper function should work for both Mac and WSL (Windows), and avoids dealing with obnoxious WSL paths on the command line
-#compile_rhessys(location = "~/Repos/rhessys-devtest/")
+# compile_rhessys(location = "~/Repos/rhessys-devtest/")
 ```
 
 ### IOin_rhessys_input
@@ -57,8 +57,8 @@ This is the basic information neeeded to construct a RHESSys command line call. 
 
 ```{r }
 input_rhessys = IOin_rhessys_input(
-  version = "../rhessys/rhessys7.3",
-  tec_file = "tecfiles/w8TC.tec",
+  version = "../rhessys/rhessys7.4",
+  tec_file = "tecfiles/tec.test",
   world_file = "worldfiles/w8TC.world",
   world_hdr_prefix = "w8TC",
   flowtable = "flowtables/w8TC.flow",
@@ -73,7 +73,7 @@ input_rhessys = IOin_rhessys_input(
 run_rhessys_single(
   input_rhessys = input_rhessys,
   hdr_files = "worldfiles/w8TC.hdr",
-  output_filter = "tecfiles/test_output_filter.yml"
+  output_filter = "tecfiles/testing_filter.yml"
 )
 
 ```
@@ -82,7 +82,7 @@ run_rhessys_single(
 
 This assembles data for a tec file into a dataframe, automatically adding entries for print_daily_on and print_daily_growth_on based on the start date, and conditionally adding output_current_state at the end date. Start and end date can accept R Date formatted objects or RHESSys formatted date strings with hours (space delimited).
 ```{r}
-input_tec_data = IOin_tec_std(start = "1988 10 1 1",
+input_tec_data = IOin_tec_std(start = "1988 10 1 2",
                               end = "2000 9 30 24",
                               output_state = TRUE)
 ```

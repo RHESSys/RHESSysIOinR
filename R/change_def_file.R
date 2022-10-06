@@ -23,8 +23,12 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   names(def_table)[1:2] = c("pars", "names")
 
   # CUTTING OUT NOTES, FOR STABILITY AND TO REDUCE OUTPUT TABLE/FILE SIZE - add notes obj back in if needed
-  notes = def_table[,3:ncol(def_table)]
-  def_table = def_table[,1:2]
+  if (ncol(def_table) >= 3) {
+    notes = def_table[,3:ncol(def_table)]
+    def_table = def_table[,1:2]
+  } else {
+    notes = NA
+  }
 
   # ------------------------------ Replace parameters ------------------------------
   par_sets_df = data.frame(pars = as.vector(t(par_sets[1,])), names = colnames(par_sets), stringsAsFactors = FALSE)
