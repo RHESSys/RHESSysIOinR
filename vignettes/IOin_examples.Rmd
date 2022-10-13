@@ -48,7 +48,7 @@ If needed, compile RHESSys.
 ```{r}
 library(RHESSysIOinR)
 # This helper function should work for both Mac and WSL (Windows), and avoids dealing with obnoxious WSL paths on the command line
-# compile_rhessys(location = "~/Repos/rhessys-devtest/")
+compile_rhessys(location = "~/Repos/rhessys-devtest/")
 ```
 
 ### IOin_rhessys_input
@@ -62,7 +62,7 @@ input_rhessys = IOin_rhessys_input(
   world_file = "worldfiles/w8TC.world",
   world_hdr_prefix = "w8TC",
   flowtable = "flowtables/w8TC.flow",
-  start = "1988 10 1 1",
+  start = "1988 9 30 1",
   end = "2000 10 1 1",
   output_folder = "out/",
   output_prefix = "w8TC",
@@ -172,7 +172,8 @@ run_rhessys_single(
   hdr_files = input_hdr,
   tec_data = input_tec_data,
   def_pars = input_def_pars,
-  output_filter = output_filter
+  output_filter = output_filter,
+  return_cmd = T
 )
 ```
 
