@@ -16,6 +16,8 @@ run_rhessys_multi = function(input_rhessys,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_filter = NULL,
+                             return_cmd = FALSE,
+#                             write_cmd = NULL,
                              parallel = TRUE,
                              n_cores = NULL) {
 
@@ -103,7 +105,8 @@ run_rhessys_multi = function(input_rhessys,
                             df,
                             def_pars,
                             clim_base,
-                            output_filter) {
+                            output_filter,
+                            return_cmd) {
 
       library(RHESSysIOinR)
 
@@ -113,20 +116,28 @@ run_rhessys_multi = function(input_rhessys,
         def_pars_i = NULL
       }
 
-      run_rhessys_single(
+      rhout = run_rhessys_single(
         input_rhessys = input_rhessys,
         hdr_files = hdr_files,
         tec_data = tec_data,
         def_pars = def_pars_i,
         clim_base = clim_base,
         output_filter = output_filter,
+        return_cmd = return_cmd,
         runID = i
       )
+
+      if (return_cmd) {
+        return(rhout)
+      }
 
     }
 
     # make a psock cluster
     cl = parallel::makeCluster(n_cores)
+
+    #parallel::clusterEvalQ(cl, print)
+
     # manually add objects to the cluster
     parallel::clusterExport(
       cl = cl,
@@ -137,12 +148,13 @@ run_rhessys_multi = function(input_rhessys,
         "tec_data",
         "def_pars",
         "clim_base",
-        "output_filter"
+        "output_filter",
+        "return_cmd"
       ),
       envir = environment()
     )
     # run run_parallel in function with parLapply
-    parallel::parLapply(
+    parout = parallel::parLapply(
       cl = cl,
       X = 1:nrow(df),
       fun = run_parallel,
@@ -152,11 +164,15 @@ run_rhessys_multi = function(input_rhessys,
       df = df,
       def_pars = def_pars,
       clim_base = clim_base,
-      output_filter = output_filter
+      output_filter = output_filter,
+      return_cmd = return_cmd
     )
     # stop the cluster
     parallel::stopCluster(cl)
 
+    if (!is.null(parout)) {
+      return(parout)
+    }
 
   }
 

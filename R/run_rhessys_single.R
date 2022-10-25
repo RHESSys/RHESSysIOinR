@@ -17,6 +17,7 @@
 #' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 #' existing output filter.
 #' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
+# @param write_cmd Path to write the rhessys cmd call to. Will be appended with run # if needed.
 #' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
