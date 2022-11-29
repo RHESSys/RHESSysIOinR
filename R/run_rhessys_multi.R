@@ -17,6 +17,7 @@ run_rhessys_multi = function(input_rhessys,
                              clim_base = NULL,
                              output_filter = NULL,
                              return_cmd = FALSE,
+                             par_option = TRUE,
 #                             write_cmd = NULL,
                              parallel = TRUE,
                              n_cores = NULL) {
@@ -106,6 +107,7 @@ run_rhessys_multi = function(input_rhessys,
                             def_pars,
                             clim_base,
                             output_filter,
+                            par_option,
                             return_cmd) {
 
       library(RHESSysIOinR)
@@ -123,6 +125,7 @@ run_rhessys_multi = function(input_rhessys,
         def_pars = def_pars_i,
         clim_base = clim_base,
         output_filter = output_filter,
+        par_option = par_option,
         return_cmd = return_cmd,
         runID = i
       )
@@ -149,7 +152,8 @@ run_rhessys_multi = function(input_rhessys,
         "def_pars",
         "clim_base",
         "output_filter",
-        "return_cmd"
+        "return_cmd",
+        "par_option"
       ),
       envir = environment()
     )
@@ -165,7 +169,8 @@ run_rhessys_multi = function(input_rhessys,
       def_pars = def_pars,
       clim_base = clim_base,
       output_filter = output_filter,
-      return_cmd = return_cmd
+      return_cmd = return_cmd,
+      par_option = par_option
     )
     # stop the cluster
     parallel::stopCluster(cl)

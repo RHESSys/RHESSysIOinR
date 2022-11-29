@@ -30,6 +30,7 @@ rhessys_command <- function(rhessys_version,
                             output_file = NULL,
                             input_parameters,
                             output_filter = NULL,
+                            par_option_ID = NULL,
                             command_options,
                             prefix_command = NULL,
                             return_cmd = FALSE) {
@@ -49,6 +50,9 @@ rhessys_command <- function(rhessys_version,
   }
   if (!is.null(output_filter)) {
     tmp = paste0(tmp, " -of ", output_filter)
+  }
+  if (!is.null(par_option_ID)) {
+    tmp = paste0(tmp, " -par ", par_option_ID)
   }
 
   if (!is.null(input_parameters)) {

@@ -16,6 +16,8 @@
 #' @param output_filter An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 #' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 #' existing output filter.
+#' @param par_option TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+#' Can also just set as a number to set specific par ID.
 #' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
 # @param write_cmd Path to write the rhessys cmd call to. Will be appended with run # if needed.
 #' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
@@ -29,6 +31,7 @@ run_rhessys_single <- function(input_rhessys,
                                clim_base = NULL,
                                output_filter = NULL,
                                cmd_pars = NULL,
+                               par_option = TRUE,
                                return_cmd = FALSE,
                                write_run_metadata = FALSE,
                                runID = NULL) {
@@ -173,6 +176,15 @@ run_rhessys_single <- function(input_rhessys,
     filter_path = NULL
   }
 
+  # ------------------------------ Par option ------------------------------
+  par_option_ID = NULL
+  if (is.numeric(par_option)) {
+    par_option_ID = par_option
+  } else if (par_option & !is.null(runID)) {
+    par_option_ID = runID
+  }
+
+
   # ------------------------------ Write Run Info ------------------------------
   if (write_run_metadata & is.null(runID)) {
     run_info_file = write_run_info(rhessys_version = input_rhessys$rhessys_version,
@@ -208,6 +220,7 @@ run_rhessys_single <- function(input_rhessys,
                   output_file = output_path,
                   input_parameters = cmd_pars_out,
                   output_filter = filter_path,
+                  par_option_ID = par_option_ID,
                   command_options = input_rhessys$command_options,
                   prefix_command = input_rhessys$prefix_command,
                   return_cmd = return_cmd)
