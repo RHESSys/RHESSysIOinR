@@ -1,5 +1,5 @@
 #' check_params
-#' 
+#'
 #' Function to check if parameters are valid and compare them to default parameters from a version of RHESSys
 #' @param rh_file Path to the appropriate construct file in the RHESSys source code, e.g. construct_stratum_defaults.c
 #' @param def_file Path to a appropriate parameter definition file to be compared to the RHESSys defaults
@@ -20,6 +20,7 @@ check_params = function(rh_file, def_file) {
   return(combparams)
 }
 
+#' @export
 parse_rh_constr_func = function(rh_file) {
   rawlines = trimws(readLines(rh_file))
   i=1
