@@ -1,7 +1,7 @@
 Package: RHESSysIOinR
 Type: Package
 Title: Tools for Running RHESSys from R
-Version: 2.0.1
+Version: 2.1.0
 Date: 2016-09-11
 Author: Ryan R. Bart, Will Burke
 Maintainer: Ryan R. Bart <ryanrbart@ucsb.edu>
