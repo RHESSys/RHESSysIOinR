@@ -3,9 +3,10 @@
 #' Basic inputs to run RHESSys
 #'
 #' @param version Path to compiled RHESSys binary.
-#' @param tec_file Path and name of input tec file.
+#' @param tec_file Path and name of input tec file. If also supplying a dataframe of tec events as created via IOin_tec_std() to run_rhessys_single(), a new directory will be created
+#' at the supplied path and name, with a new tec file within it. If not supplying a dataframe of tec events, this input refers to an existing tec file to be used.
 #' @param world_file Path and name of input world file.
-#' @param world_hdr_prefix Prefix for folder and temporary header files to be written.
+#' @param world_hdr_prefix Path and name for new folder where newly created hdr files will go.
 #' @param flowtable Path and name of input tec file.
 #' @param start Start date of simulation.
 #' @param end End date of simulation.

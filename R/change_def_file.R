@@ -22,6 +22,14 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   def_table <- as.data.frame(do.call(rbind, lapply(def_table_list, `length<-`, list_lens)), stringsAsFactors = FALSE)
   names(def_table)[1:2] = c("pars", "names")
 
+  # CUTTING OUT NOTES, FOR STABILITY AND TO REDUCE OUTPUT TABLE/FILE SIZE - add notes obj back in if needed
+  if (ncol(def_table) >= 3) {
+    notes = def_table[,3:ncol(def_table)]
+    def_table = def_table[,1:2]
+  } else {
+    notes = NA
+  }
+
   # ------------------------------ Replace parameters ------------------------------
   par_sets_df = data.frame(pars = as.vector(t(par_sets[1,])), names = colnames(par_sets), stringsAsFactors = FALSE)
 
@@ -62,7 +70,7 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
   file_name_out <- file.path(path_new, paste(name_no_ext,file_name_ext,".def",sep = ""))
   # if there are comments, this should remove extra NAs
   def_table[def_table == "NA"] = " "
-  write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
+  utils::write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
 
   return(file_name_out)
 

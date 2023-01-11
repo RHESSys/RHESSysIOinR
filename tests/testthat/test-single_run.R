@@ -34,7 +34,7 @@ expect_file_sizeKB_gt = function(path, size_KB) {
 
 # PATHS - just setting wd to extdata at start and not doing any system.file() idk if its a problem
 #withr::local_dir(new = system.file("extdata", package = "RHESSysIOinR"))
-setwd("~/Repos/RHESSysIOinR/inst/extdata/")
+#setwd("~/Repos/RHESSysIOinR/inst/extdata/")
 setwd(system.file("extdata/", package = "RHESSysIOinR"))
 
 # no support for shallow clone depth so a little slow checking the commits
@@ -53,7 +53,6 @@ test_that("compile_rhessys works + rhessys compiles via R system", {
 })
 
 rh_path = file.path("rh_dev/rhessys/", rh_ver)
-
 
 # with new testthat 3 use withr:: -- https://testthat.r-lib.org/articles/test-fixtures.html
 # for file cleanup use local_file()
@@ -111,6 +110,4 @@ test_that("Simplest RHSSys run options run successfully (core rhessys info, tec 
 })
 
 # should add cleanup here if more tests are going to be run that depend on the file system state - otherwise doesn't really matter
-
-
-
+file.remove("rh_dev",file.path("out",list.files(path = "out/", pattern = "w8TC")))

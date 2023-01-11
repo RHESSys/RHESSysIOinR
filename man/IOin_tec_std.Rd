@@ -7,9 +7,9 @@
 IOin_tec_std(start, end, output_state = TRUE)
 }
 \arguments{
-\item{start}{start date of run - used along with 'end' arg}
+\item{start}{start date of run}
 
-\item{end}{End date of run}
+\item{end}{End date of run - the last entire day to be run}
 
 \item{output_state}{TRUE/FALSE if an output_current_state tec event should be scheduled at the end of the simulation}
 }

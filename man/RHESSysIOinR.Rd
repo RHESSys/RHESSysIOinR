@@ -12,9 +12,9 @@ An object of class \code{logical} of length 1.
 .datatable.aware
 }
 \description{
-RHESSysIOinR contains functions for running [RHESSys](https://github.com/RHESSys/RHESSys) in R 
-and processing output. The objective of this package is to clearly and efficiently produce R code 
-that can be used to setup RHESSys, conduct calibrations and simulations, and process output. This 
+RHESSysIOinR contains functions for running [RHESSys](https://github.com/RHESSys/RHESSys) in R
+and processing output. The objective of this package is to clearly and efficiently produce R code
+that can be used to setup RHESSys, conduct calibrations and simulations, and process output. This
 package supports a long(er)-term goal of having experiments involving RHESSys be reproducible.
 }
 \keyword{datasets}

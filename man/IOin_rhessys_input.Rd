@@ -21,11 +21,12 @@ IOin_rhessys_input(
 \arguments{
 \item{version}{Path to compiled RHESSys binary.}
 
-\item{tec_file}{Path and name of input tec file.}
+\item{tec_file}{Path and name of input tec file. If also supplying a dataframe of tec events as created via IOin_tec_std() to run_rhessys_single(), a new directory will be created
+at the supplied path and name, with a new tec file within it. If not supplying a dataframe of tec events, this input refers to an existing tec file to be used.}
 
 \item{world_file}{Path and name of input world file.}
 
-\item{world_hdr_prefix}{Prefix for folder and temporary header files to be written.}
+\item{world_hdr_prefix}{Path and name for new folder where newly created hdr files will go.}
 
 \item{flowtable}{Path and name of input tec file.}
 

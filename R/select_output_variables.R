@@ -7,6 +7,7 @@
 #' of interest.
 #' @param output_folder Folder where rhessys output is located (e.g. 'out')
 #' @param run Simulation number. Used to reset files in allsim at beginning of simulation
+#' @param output_initiation For multiple scenarios
 #' @export
 select_output_variables <- function(output_variables, output_folder,run,output_initiation){
 
@@ -22,7 +23,7 @@ select_output_variables <- function(output_variables, output_folder,run,output_i
       fin_name = sprintf("%s/%s", output_folder, output_variables$out_file[cc])
       results = read.table(fin_name, header=T)
       if (!length(output_variables$id_extract[cc] > 0) == 0) {
-        results = subset(results, stratumID==output_variables$id_extract[cc])
+        results = subset(results, stratumID == output_variables$id_extract[cc])
       }
       fout_name = sprintf("%s/allsim/t%s", output_folder, output_variables$variable[cc])
       write(signif(results[,output_variables$variable[cc]],5), ncolumns=1, file=fout_name)

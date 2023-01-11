@@ -2,7 +2,11 @@
 title: "RHESSysIOinR Utilities Examples"
 author: "Will Burke"
 date: "11/10/2020"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{RHESSysIOinR Utilities Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -29,8 +33,3 @@ The following are various utility functions included with RHESSysIOinR
 * `watbal_patch_multi()`: Calculate water balance for a multiple patches
 * `write_sample_clim()`: generate new climate based on existing climate
 
-## update_world
-
-```{r }
-
-```

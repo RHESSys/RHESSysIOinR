@@ -23,9 +23,8 @@
 #'   10/1/1998. startwyr is optional. If startwyr is not listed the program will
 #'   use the first water year of the original climate sequence (clim)
 #'
-#' @examples TBD
-#'
 #' @export
+
 write_sample_clim = function(prefix, clim, samplewyrs, reps=1, startwyr=0) {
 
   totalyrs = length(samplewyrs)

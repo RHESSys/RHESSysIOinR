@@ -39,6 +39,8 @@
 
 IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
 
+  options(stringsAsFactors = F)
+
   pars = list(...)
 
   # if ... is already a list of lists, ie you're inputting the output of this function, unlist to keep foramt correct
@@ -76,7 +78,7 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
       #cat() # idk guess doesn't matter
     #}
 
-    value_sets = lapply(values[!is.na(values)], function(x) runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
+    value_sets = lapply(values[!is.na(values)], function(x) stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
     pars[!is.na(values)] = mapply(function(x, y) {x[[3]] = y; return(x)}, x = pars[!is.na(values)], y = value_sets, SIMPLIFY = F)
 
     if (any(is.na(values))) {

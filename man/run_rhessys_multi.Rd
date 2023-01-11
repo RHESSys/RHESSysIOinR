@@ -9,10 +9,12 @@ run_rhessys_multi(
   hdr_files,
   tec_data,
   def_pars = NULL,
+  clim_base = NULL,
   output_filter = NULL,
-  runID = NULL,
+  return_cmd = FALSE,
+  par_option = TRUE,
   parallel = TRUE,
-  n_cores = 2
+  n_cores = NULL
 )
 }
 \arguments{
@@ -29,15 +31,21 @@ stratum_def) as well as an element named "base_stations". Each element should co
 \item{def_pars}{To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
 list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL}
 
+\item{clim_base}{Data for input climate basestation to be written. Defaults to NULL, which assumes you havean existing basestation pointed
+to in input_rhessys.}
+
 \item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
 
-\item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
+\item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
+
+\item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+Can also just set as a number to set specific par ID.}
 
 \item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
 
-\item{n_cores}{The number of cores to use in a parallelized cluster.}
+\item{n_cores}{The number of cores to use in a parallelized cluster. If left NULL, will autodetect number of cores and use total - 1.}
 }
 \description{
 Runs RHESSys simulations.

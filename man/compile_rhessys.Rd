@@ -9,22 +9,19 @@ compile_rhessys(
   delete_objs = TRUE,
   destination = NULL,
   make_args = NULL,
-  CFLAGS = NULL,
   ignore.stdout = FALSE
 )
 }
 \arguments{
 \item{location}{The file patch to where the rhessys makefile or folder is}
 
+\item{delete_objs}{TRUE/FALSE to delete objects (before and after)}
+
 \item{destination}{Optional input of where to move resulting RHESSys executable}
 
 \item{make_args}{Arguments passed to the end of the make commandline call (examples: "wmfire='T'", "clean", or "clobber", )}
 
-\item{CFLAGS}{Overwrite CFLAGS in the makefile}
-
 \item{ignore.stdout}{Passed through to system()}
-
-\item{delete_obj}{TRUE/FALSE to delete objects (before and after)}
 }
 \description{
 Compiles rhessys, with options to delete objects and move resulting RHESSys executable

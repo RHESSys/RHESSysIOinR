@@ -1,7 +1,7 @@
 #' watbal_patch_mult.R
 #'
-#' Water balance for multiple patches daily RHESSys output. 
-#' 
+#' Water balance for multiple patches daily RHESSys output.
+#'
 #' Before you run the water balance script below, you must have added a "rain" column to your patch daily output
 #' data that contains the patch-specific precipitation. Be careful to add the right precip values if your worldfile
 #' uses multiple base stations, isohyets, or a precip lapse rate.
@@ -26,18 +26,18 @@
 #' @export
 
 watbal_patch_mult = function(pd, cd) {
-  pids=unique(pd$patchID)
-  tmp=subset(pd,pd$patchID==pids[1])
-  wbp=tmp[c("day","month","year")]
-  wbp=mkdate(wbp)
-  n=ncol(wbp)+1
+  pids = unique(pd$patchID)
+  tmp = subset(pd, pd$patchID == pids[1])
+  wbp = tmp[c("day", "month", "year")]
+  wbp = add_dates(wbp)
+  n = ncol(wbp) + 1
   for (i in pids) {
-    tmpp=subset(pd,pd$patchID==i)
-    tmpc=subset(cd,cd$patchID==i)
-    tmpp=watbal_patch(tmpp,tmpc)
-    wbp[,n]=tmpp$watbal
-    names(wbp)[c(n)]=paste("P",i,sep="")
-    n=n+1
+    tmpp = subset(pd, pd$patchID == i)
+    tmpc = subset(cd, cd$patchID == i)
+    tmpp = watbal_patch(tmpp, tmpc)
+    wbp[, n] = tmpp$watbal
+    names(wbp)[c(n)] = paste("P", i, sep = "")
+    n = n + 1
   }
   return(wbp)
 }

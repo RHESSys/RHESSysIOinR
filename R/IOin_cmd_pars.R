@@ -1,6 +1,7 @@
-#' IOin_std_pars
+#' IOin_cmd_pars
 #'
-#' Input standard soil parameters for RHESSys, see https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options
+#' Input standard command line soil parameters for RHESSys, see https://github.com/RHESSys/RHESSys/wiki/RHESSys-command-line-options
+#' These parameters are MULTIPLIERS on the existing paramters in the definition files.
 #' @param m Decay of hydraulic conductivity with depth.
 #' @param k Hydraulic conductivity at the surface.
 #' @param soil_dep Soil depth.
@@ -35,7 +36,7 @@
 # default values will all be set to 1, and if left as 1 (but still passed the run_rhessys_single/multi), will be ignored, since
 # they would have no effect. Only non 1 parameters will be passed to the command line.
 
-IOin_std_pars = function(m = 1,
+IOin_cmd_pars = function(m = 1,
                          k = 1,
                          soil_dep = 1,
                          m_v = 1,
@@ -69,7 +70,7 @@ IOin_std_pars = function(m = 1,
   )
 
   if (n > 1) {
-    std_pars = lapply(std_pars, function(x) runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
+    std_pars = lapply(std_pars, function(x) stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
   }
 
   return(std_pars)

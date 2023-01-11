@@ -2,23 +2,26 @@
 % Please edit documentation in R/make_hdr_file.R
 \name{make_hdr_file}
 \alias{make_hdr_file}
-\title{Produces components of a hdr file}
+\title{Write Header File}
 \usage{
-make_hdr_file(master_table, path_initial, num_files, default_file)
+make_hdr_file(input_rhessys, hdr_files, def_files, runID)
 }
 \arguments{
-\item{master_table}{Data frame of a single row with references to def file
-number. A value of zero for the def file number indicates that the original
-def file is to be used. Higher numbers are added as a extension to the file
-name.}
+\item{input_rhessys}{List containing the following named elements: "rhessys_version" (path to rhessys binary),
+"tec_file"(name for tec file to be built), "world_file"(path to existing worldfile), "world_hdr_prefix"(prefix for headers to create),
+"flow_file"(path to existing flowtable), "start_date"(format c('yyyy mm dd hr')), "end_date"(format c('yyyy mm dd hr')),
+"output_folder"(path to output folder), "output_filename"(prefix for output files to create), "command_options"(additional commandline options)}
 
-\item{path_initial}{Path to the non-differiated def file}
+\item{hdr_files}{List of named elements, named for each def file type (basin_def, hillslope_def, zone_def, soil_def, landuse_def, patch_def,
+stratum_def) as well as an element named "base_stations". Each element should contain the path to the corresponding def file.}
 
-\item{num_files}{???}
+\item{def_files}{Data frame of def file parameter changes}
 
-\item{default_file}{???}
+\item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 }
 \description{
-This function generates the lines in a hdr file associated with a single def
-file.
+New version of header file creation function.
+}
+\author{
+Will Burke
 }

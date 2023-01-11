@@ -1,0 +1,11 @@
+filter:
+  timestep: daily
+  output:
+    format: csv
+    path: ./output/
+    filename: p301_h2_std
+  basin:
+    ids: 1
+    variables: patch.evaporation, patch.transpiration_sat_zone, patch.transpiration_unsat_zone,
+      patch.rz_storage, patch.rz_transfer, patch.totalc, stratum.cs.net_psn, patch.Qout,
+      patch.streamflow

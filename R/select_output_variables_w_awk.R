@@ -8,8 +8,10 @@
 #' of interest.
 #' @param output_folder Folder where rhessys output is located (e.g. 'out')
 #' @param run Simulation number. Used to reset files in allsim at beginning of simulation
-
+#' @param output_initiation For multiple scenarios
+#'
 #' @export
+
 select_output_variables_w_awk <- function(output_variables, output_folder, run, output_initiation){
 
   if (run == 1 && output_initiation == 1){

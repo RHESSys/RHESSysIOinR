@@ -7,14 +7,14 @@
 run_rhessys_single(
   input_rhessys,
   hdr_files,
-  tec_data,
-  std_pars = NULL,
+  tec_data = NULL,
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
-  output_method = NULL,
-  output_variables = NULL,
-  return_data = FALSE,
+  cmd_pars = NULL,
+  par_option = TRUE,
+  return_cmd = FALSE,
+  write_run_metadata = FALSE,
   runID = NULL
 )
 }
@@ -29,8 +29,6 @@ stratum_def) as well as an element named "base_stations". Each element should co
 
 \item{tec_data}{Input tec events, see input_tec function}
 
-\item{std_pars}{List of standard (command line) parameters.}
-
 \item{def_pars}{To overwrite def file parameters. Format is a list of lists, with each sub-list having the format:
 list(<path to def/just use the input_hdr_list$yourheader>, <parameter name>, <value>). Defaults to NULL}
 
@@ -41,11 +39,14 @@ to in input_rhessys.}
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
 
-\item{output_method}{"awk" will use awk, any other non NULL input will use R based output selection}
+\item{cmd_pars}{List of standard (command line) parameters.}
 
-\item{output_variables}{List of output variables to subset via the indicated method, Defaults to NULL}
+\item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+Can also just set as a number to set specific par ID.}
 
-\item{return_data}{TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run}
+\item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
+
+\item{write_run_metadata}{TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.}
 
 \item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
 }

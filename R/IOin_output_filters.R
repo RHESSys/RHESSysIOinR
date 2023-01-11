@@ -23,9 +23,11 @@ IOin_output_filters = function(...,
 
   # ---------- Combine filters ----------
   list_in = c(unlist(list(...), recursive = F))
-  if (length(list_in) > 0) {
+  if (length(list_in) > 0 && is.list(list_in)) {
     testvalid = lapply(X = list_in, FUN = valid_filter)
     filter = c(filter, list_in)
+  } else {
+    cat("Invalid input to '...' input argument.")
   }
 
   if (!is.null(file_name)) {
