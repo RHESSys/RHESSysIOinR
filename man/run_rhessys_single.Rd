@@ -12,6 +12,7 @@ run_rhessys_single(
   clim_base = NULL,
   output_filter = NULL,
   cmd_pars = NULL,
+  par_option = TRUE,
   return_cmd = FALSE,
   write_run_metadata = FALSE,
   runID = NULL
@@ -39,6 +40,9 @@ to in input_rhessys.}
 existing output filter.}
 
 \item{cmd_pars}{List of standard (command line) parameters.}
+
+\item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+Can also just set as a number to set specific par ID.}
 
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 

@@ -15,6 +15,7 @@ rhessys_command(
   output_file = NULL,
   input_parameters,
   output_filter = NULL,
+  par_option_ID = NULL,
   command_options,
   prefix_command = NULL,
   return_cmd = FALSE

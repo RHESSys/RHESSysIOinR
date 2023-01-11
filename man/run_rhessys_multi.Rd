@@ -11,6 +11,8 @@ run_rhessys_multi(
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
+  return_cmd = FALSE,
+  par_option = TRUE,
   parallel = TRUE,
   n_cores = NULL
 )
@@ -35,6 +37,11 @@ to in input_rhessys.}
 \item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
+
+\item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
+
+\item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+Can also just set as a number to set specific par ID.}
 
 \item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
 
