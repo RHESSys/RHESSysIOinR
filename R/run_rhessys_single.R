@@ -36,6 +36,11 @@ run_rhessys_single <- function(input_rhessys,
                                write_run_metadata = FALSE,
                                runID = NULL) {
 
+  if (is.null(runID)) {
+    # simple timer
+    start = Sys.time()
+  }
+
   cat("\n--------------------------------------------\n")
   cat("===== Beginning RHESSysIO file writing =====\n")
   cat("--------------------------------------------\n\n")
@@ -262,6 +267,15 @@ run_rhessys_single <- function(input_rhessys,
     file = file(run_info_file$info_filepath, "a", encoding = "UTF-8")
     cat(paste0("     Successful Output?:\t", paste0(fex, collapse = ", "), "\n"), file = file, sep = "")
     close(file)
+  }
+
+  if (is.null(runID)) {
+    # timer end
+    end = Sys.time()
+    difft = difftime(end,start)
+    cat("\nSimulation start:", as.character(start), "\n")
+    cat("Simulation end:", as.character(end), "\n")
+    cat("Total processing time: ",difft, units(difft),"\n")
   }
 
   return()

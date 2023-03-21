@@ -41,6 +41,9 @@ run_rhessys_multi = function(input_rhessys,
   # TODO add option to only aggregate to a table and output as R object, add opposite - to use input R object
   # to run scenarios
 
+  # simple timer
+  start = Sys.time()
+
   # list of data frames, each containing nrows where n is number of sims for each data object
   dfs = NULL
 
@@ -174,6 +177,12 @@ run_rhessys_multi = function(input_rhessys,
     )
     # stop the cluster
     parallel::stopCluster(cl)
+
+    end = Sys.time()
+    difft = difftime(end,start)
+    cat("\nSimulation start:", as.character(start), "\n")
+    cat("Simulation end:", as.character(end), "\n")
+    cat("Total processing time: ",difft, units(difft),"\n")
 
     if (!is.null(parout)) {
       return(parout)
