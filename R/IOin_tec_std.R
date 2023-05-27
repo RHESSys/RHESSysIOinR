@@ -15,6 +15,7 @@ IOin_tec_std = function(start, end, output_state = TRUE) {
   # if inputs are rhessys format
   # if (grepl(pattern = "\\d{4} \\d{1,2} \\d{1,2} \\d{1,2}", x = start)) {
   # }
+  options(stringsAsFactors = F)
 
   if (class(start) == "Date") {
     start_rh = format.Date(x = start, "%Y %m %d")

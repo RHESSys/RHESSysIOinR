@@ -16,23 +16,30 @@
 #' @param output_filter An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 #' (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 #' existing output filter.
-#' @param output_method "awk" will use awk, any other non NULL input will use R based output selection
-#' @param output_variables List of output variables to subset via the indicated method, Defaults to NULL
-#' @param return_data TRUE/FALSE if the function should return a data.table of the selected output - for now only works if doing 1 run
+#' @param par_option TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+#' Can also just set as a number to set specific par ID.
+#' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
+# @param write_cmd Path to write the rhessys cmd call to. Will be appended with run # if needed.
+#' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
 
 run_rhessys_single <- function(input_rhessys,
                                hdr_files,
                                tec_data = NULL,
-                               cmd_pars = NULL,
                                def_pars = NULL,
                                clim_base = NULL,
                                output_filter = NULL,
-                               output_method = NULL,
-                               output_variables = NULL,
-                               return_data = FALSE,
+                               cmd_pars = NULL,
+                               par_option = TRUE,
+                               return_cmd = FALSE,
+                               write_run_metadata = FALSE,
                                runID = NULL) {
+
+  if (is.null(runID)) {
+    # simple timer
+    start = Sys.time()
+  }
 
   cat("\n--------------------------------------------\n")
   cat("===== Beginning RHESSysIO file writing =====\n")
@@ -56,11 +63,6 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(dirname(input_rhessys$tec_file)) && !dir.exists(dirname(input_rhessys$tec_file))) {
     dir.create(dirname(input_rhessys$tec_file))
     cat("Created tec folder: ", dirname(input_rhessys$tec_file))
-  }
-
-  # output filters don't work with the output subsetting
-  if (!is.null(output_filter) & !is.null(output_method)) {
-    stop("Cannot use both output filters and a output subsetting method.")
   }
 
   # ------------------------------ Def file parameters ------------------------------
@@ -197,6 +199,33 @@ run_rhessys_single <- function(input_rhessys,
     filter_path = NULL
   }
 
+  # ------------------------------ Par option ------------------------------
+  par_option_ID = NULL
+  if (is.numeric(par_option)) {
+    par_option_ID = par_option
+  } else if (par_option & !is.null(runID)) {
+    par_option_ID = runID
+  }
+
+
+  # ------------------------------ Write Run Info ------------------------------
+  if (write_run_metadata & is.null(runID)) {
+    run_info_file = write_run_info(rhessys_version = input_rhessys$rhessys_version,
+                                   world_file = input_rhessys$world_file,
+                                   world_hdr_file = world_hdr_name_out,
+                                   tec_file = input_rhessys$tec_file,
+                                   flow_file = input_rhessys$flow_file,
+                                   start_date = input_rhessys$start_date,
+                                   end_date = input_rhessys$end_date,
+                                   output_path = output_path,
+                                   input_parameters = cmd_pars_out,
+                                   output_filter = filter_path,
+                                   command_options = input_rhessys$command_options,
+                                   prefix_command = input_rhessys$prefix_command,
+                                   return_cmd = return_cmd)
+  } else {
+    run_info_file = NULL
+  }
 
   cat("\n-------------------------------------------\n")
   cat("===== Finished RHESSysIO file writing =====\n")
@@ -204,7 +233,7 @@ run_rhessys_single <- function(input_rhessys,
 
 
   # ------------------------------ Call RHESSys ------------------------------
-  rhessys_command(rhessys_version = input_rhessys$rhessys_version,
+  rh_cmd = rhessys_command(rhessys_version = input_rhessys$rhessys_version,
                   world_file = input_rhessys$world_file,
                   world_hdr_file = world_hdr_name_out,
                   tec_file = input_rhessys$tec_file,
@@ -214,21 +243,59 @@ run_rhessys_single <- function(input_rhessys,
                   output_file = output_path,
                   input_parameters = cmd_pars_out,
                   output_filter = filter_path,
+                  par_option_ID = par_option_ID,
                   command_options = input_rhessys$command_options,
-                  prefix_command = input_rhessys$prefix_command)
+                  prefix_command = input_rhessys$prefix_command,
+                  return_cmd = return_cmd)
 
-  if (!is.null(runID)) {
+  if (return_cmd) {
+    return(rh_cmd)
+  }
+
+  if (!is.null(output_path)) {
     cat("\n===== Wrote output to: '",output_path ,"' =====\n", sep = "")
   }
 
-  # ------------------------------ Process Output ------------------------------
-  data_out = output_control(output_method,
-                            output_variables,
-                            return_data)
-
-  if (return_data) {
-    return(data_out)
+  # check if output files were actually written + have more than header
+  # this will mostly just add notes in cases where RHESSys errored at start
+  # so that metadata from those runs won't be confused with metadata from successful runs
+  if (write_run_metadata & is.null(runID)) {
+    # this function is overbuilt but checks if there's more than just a single header/line
+    check_rh_output = function(filepath) {
+      if (!file.exists(filepath)) {
+        return(FALSE)
+      } else {
+        if (file.size(filepath) < 5000) {
+          f <- file(filepath, open="rb")
+          chunk <- readBin(f, "raw", 5000)
+          close(f)
+          nlines <- sum(chunk == as.raw(10L))
+          if (nlines > 1) {
+            return(TRUE)
+          } else {
+            return(FALSE)
+          }
+        } else {
+          return(TRUE)
+        }
+      }
+    }
+    fex = sapply(run_info_file$output_files, check_rh_output)
+    # fex = file.exists(run_info_file$output_files)
+    file = file(run_info_file$info_filepath, "a", encoding = "UTF-8")
+    cat(paste0("     Successful Output?:\t", paste0(fex, collapse = ", "), "\n"), file = file, sep = "")
+    close(file)
   }
+
+  if (is.null(runID)) {
+    # timer end
+    end = Sys.time()
+    difft = difftime(end,start)
+    cat("\nSimulation start:", as.character(start), "\n")
+    cat("Simulation end:", as.character(end), "\n")
+    cat("Total processing time: ",difft, units(difft),"\n")
+  }
+
   return()
 
 }

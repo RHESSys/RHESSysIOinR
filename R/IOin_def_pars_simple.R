@@ -39,6 +39,8 @@
 
 IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
 
+  options(stringsAsFactors = F)
+
   pars = list(...)
 
   # if ... is already a list of lists, ie you're inputting the output of this function, unlist to keep foramt correct

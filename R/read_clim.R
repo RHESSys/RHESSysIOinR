@@ -19,7 +19,7 @@ read_clim = function(clim_in, dates_out = FALSE) {
   opts = c(".rain", ".tmin", ".tmax", ".tavg", ".dayl", ".daytime_rain_duration",
   ".LAI_scalar", ".Ldown", ".Kdown_direct", ".Kdown_diffuse", ".ndep_NO3", ".ndep_NH4",
   ".PAR_direct", ".PAR_diffuse", ".relative_humidity", ".tday", ".tnightmax", ".tsoil",
-  ".vpd", ".wind", ".CO2", ".lapse_rate_tmin", ".lapse_rate_tmax")
+  ".vpd", ".wind", ".CO2", ".lapse_rate_tmin", ".lapse_rate_tmax",".tdewpoint")
 
   # for a single file ( or multiple maybe?)
   if (any(endsWith(clim_in, opts))) {
@@ -55,26 +55,40 @@ read_clim = function(clim_in, dates_out = FALSE) {
 
   premerge = mapply("data.frame", date = date_seqs, dataonly, stringsAsFactors = FALSE, SIMPLIFY = FALSE)
 
-  clim = Reduce(function(x,y) merge(x = x, y = y, by = "date", all = TRUE), premerge)
-  names(clim)[2:ncol(clim)] = gsub("\\.","", opts[endsWith(files_in, opts)])
+  # old ver
+  #clim = Reduce(function(x,y) merge(x = x, y = y, by = "date", all = TRUE), premerge)
+  #names(clim)[2:ncol(clim)] = gsub("\\.","", unlist(str_extract_all(files_in, str_c(opts,collapse="|"))))
 
+  clim = Reduce(function(x,y) {
+    tmp =  merge(x = x, y = y, by = "date", all = TRUE)
+    tmp2 = subset(tmp, !is.na(date))
+    return(tmp2)
+  }, premerge)
+
+  nm = stringr::str_remove(files_in, clim_in)
+  nm = stringr::str_remove(nm,".")
+  names(clim)[2:ncol(clim)] = nm
+
+  clim = subset(clim, !is.na(date))
   if (dates_out) {
-    start_end = as.Date(c(min(clim$date), max(clim$date)), format = "%m/%d/%y")
+    start_end = as.Date(c(min(clim$date,na.rm=T), max(clim$date,na.rm=T)), format = "%m/%d/%y")
     start_end = gsub("-", " ",start_end)
     start_end = paste(start_end, c("01", "24"))
     return(start_end)
   }
 
   clim$date = as.POSIXlt(clim$date)
+  clim = clim %>% subset(!is.na(date))
   clim$year = clim$date$year + 1900
   clim$month = clim$date$mon + 1
   clim$day = clim$date$mday
   #clim$day_of_year = clim$date$yday
-  clim$date = as.POSIXct(clim$date)
-  clim$wy = data.table::fifelse(clim$month >= 10, clim$year + 1, clim$year)
+
+  clim$wy = ifelse(clim$month >= 10, clim$year + 1, clim$year)
   clim$yd = lubridate::yday(clim$date)
-  wy_date = c(clim$date[93:length(clim$date)], seq.POSIXt(from = clim$date[length(clim$date)], by = "DSTday", length.out = 93)[2:93])
-  clim$wyd = lubridate::yday(wy_date)
+
+  clim$wyd = get_waterYearDay(clim$date)
+
 
   return(clim)
 }

@@ -11,6 +11,8 @@ run_rhessys_multi(
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
+  par_option = TRUE,
+  return_cmd = FALSE,
   combine_by_linking = c("rhessys", "tec", "hdr"),
   combine_by_multiplicity = "def",
   all_combinations_output_name = "all_combinations_table",
@@ -43,6 +45,11 @@ to in input_rhessys.}
 \item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R
 (or associated functions - build_output_filter.R, read_output_filter.R, modify_output_filter.R), or a file path pointing to an
 existing output filter.}
+
+\item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
+Can also just set as a number to set specific par ID.}
+
+\item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 
 \item{combine_by_linking}{Option for combining 'rhessys', 'tec', 'hdr',
 and/or 'def' files by linking files with of the same number of inputs.

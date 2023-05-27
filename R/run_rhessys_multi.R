@@ -62,6 +62,9 @@ run_rhessys_multi = function(input_rhessys,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_filter = NULL,
+                             par_option = TRUE,
+                             return_cmd = FALSE,
+#                            write_cmd = NULL,
                              combine_by_linking = c("rhessys", "tec", "hdr"),
                              combine_by_multiplicity = "def",
                              all_combinations_output_name = "all_combinations_table",
@@ -97,6 +100,10 @@ run_rhessys_multi = function(input_rhessys,
   #   alternatively, add slurm_ prefix to all slurm related functions. This
   #   could be helpful when additional schedulers are added, but could also
   #   produce redundancy.
+
+
+  # simple timer
+  start = Sys.time()
 
   # list of data frames, each containing nrows where n is number of sims for each data object
   dfs = NULL
@@ -241,6 +248,8 @@ run_rhessys_multi = function(input_rhessys,
                                    def_pars,
                                    clim_base,
                                    output_filter,
+                                   par_option,
+                                   return_cmd,
                                    df,
                                    def_names = NULL,
                                    parse_input_rhessys,
@@ -255,31 +264,41 @@ run_rhessys_multi = function(input_rhessys,
       tec_data_i <- parse_tec_data(tec_data = tec_data, df = df, i=i)
       def_pars_i <- parse_def_pars(def_pars = def_pars, df = df, i=i, def_names = def_names)
 
-      run_rhessys_single(
+      rhout = run_rhessys_single(
         input_rhessys = input_rhessys_i,
         hdr_files = hdr_files_i,
         tec_data = tec_data_i,
         def_pars = def_pars_i,
         clim_base = clim_base,
         output_filter = output_filter,
+        par_option = par_option,
+        return_cmd = return_cmd,
         runID = i)
+
+      if (return_cmd) {
+        return(rhout)
+      }
     }
 
     # make a psock cluster
     cl = parallel::makeCluster(n_cores)
+
+    #parallel::clusterEvalQ(cl, print)
+
     # manually add objects to the cluster
     parallel::clusterExport(
       cl = cl,
       varlist = c("input_rhessys", "hdr_files",
                   "tec_data", "def_pars",
                   "clim_base", "output_filter",
+                  "par_option", "return_cmd",
                   "df", "def_names",
                   "parse_input_rhessys", "parse_hdr_files",
                   "parse_tec_data", "parse_def_pars"),
       envir = environment()
     )
     # run run_parallel in function with parLapply
-    parallel::parLapply(
+    parout = parallel::parLapply(
       cl = cl,
       X = 1:nrow(df),
       fun = run_parallel_simple,
@@ -289,6 +308,8 @@ run_rhessys_multi = function(input_rhessys,
       def_pars = def_pars,
       clim_base = clim_base,
       output_filter = output_filter,
+      par_option = par_option,
+      return_cmd = return_cmd,
       df = df,
       def_names = def_names,
       parse_input_rhessys = parse_input_rhessys,
@@ -299,6 +320,15 @@ run_rhessys_multi = function(input_rhessys,
     # stop the cluster
     parallel::stopCluster(cl)
 
+    end = Sys.time()
+    difft = difftime(end,start)
+    cat("\nSimulation start:", as.character(start), "\n")
+    cat("Simulation end:", as.character(end), "\n")
+    cat("Total processing time: ",difft, units(difft),"\n")
+
+    if (!is.null(parout)) {
+      return(parout)
+    }
   }
 
 

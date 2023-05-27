@@ -15,8 +15,10 @@ rhessys_command(
   output_file = NULL,
   input_parameters,
   output_filter = NULL,
+  par_option_ID = NULL,
   command_options,
-  prefix_command = NULL
+  prefix_command = NULL,
+  return_cmd = FALSE
 )
 }
 \arguments{
@@ -42,7 +44,9 @@ rhessys_command(
 
 \item{command_options}{RHESSys command line options, ex. '-g' or '-p'.}
 
-\item{prefix_command}{A shell command to be run previous to the RHESSys command line call.
+\item{prefix_command}{A shell command to be run previous to the RHESSys command line call.}
+
+\item{return_cmd}{true/false passed from run_rhessys_single
 This can be used to source a shell script, which itself can run multiple commands if needed.}
 }
 \description{
