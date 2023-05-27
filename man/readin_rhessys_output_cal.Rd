@@ -8,6 +8,7 @@ readin_rhessys_output_cal(
   var_names,
   path,
   initial_date,
+  timestep = "daily",
   parameter_file = NULL,
   num_layers = 1
 )
@@ -18,6 +19,8 @@ readin_rhessys_output_cal(
 \item{path}{Path to the directory containing data}
 
 \item{initial_date}{Initial date for the data e.g. lubridate::ymd("1941-10-01")}
+
+\item{timestep}{Timestep used for modeling (e.g. yearly, monthly, or daily). Default is daily.}
 
 \item{parameter_file}{Optional file containing parameters to be included in analysis (e.g. RHESSysIOinR output x_parameter_sets.csv)}
 

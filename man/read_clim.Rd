@@ -4,17 +4,42 @@
 \alias{read_clim}
 \title{read_clim}
 \usage{
-read_clim(clim_in, dates_out = FALSE)
+read_clim(
+  clim_in,
+  clim_type = "station",
+  dates_out = FALSE,
+  grid_out = FALSE,
+  elevation_out = FALSE
+)
 }
 \arguments{
-\item{clim_in}{Climate file - prefix will return all matching data, including suffix returns just that time series
-(e.g. 'site.rain' only return the precipitation time series).}
+\item{clim_in}{Climate file - prefix will return all matching data, including
+suffix returns just that time series (e.g. 'site.rain' only return the
+precipitation time series).}
 
-\item{dates_out}{Should start and end dates be output?}
+\item{clim_type}{Specify the type of climate file to be read. Options are
+"station" (default) and "grid".}
+
+\item{dates_out}{Alternative output: Start and end dates of clim file.}
+
+\item{grid_out}{Alternative output: Vector of grid (basestation) IDs.}
+
+\item{elevation_out}{Alternative output: Vector of elevations associated with
+each grid ID.}
+}
+\value{
+Standard (non-alternative) output is a table containing all data from
+  the climate file. For a station-based climate file, a single data frame
+  with columns for each inputted clim variable type (e.g. rain, tmax, tmin)
+  is generated. For gridded data, output consists of a list of data frames
+  with each data frame containing a single variable type. A separate column
+  corresponding to each grid basestation ID is included in each data frame.
 }
 \description{
-Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA
+Read in rhessys-formatted station or gridded climate files to R - works for
+any daily input, can have mismatched dates, missing values will be filled by
+NA
 }
 \author{
-Will Burke
+Will Burke, Ryan Bart
 }
