@@ -46,9 +46,8 @@ existing output filter.}
 
 \item{combine_by_linking}{Option for combining 'rhessys', 'tec', 'hdr',
 and/or 'def' files by linking files with of the same number of inputs.
-(e.g. with 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios
-total). Currently joined by a cbind, so the order of each variable must
-match.}
+(e.g. 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios total).
+Currently joined by a cbind, so the order of each variable must match.}
 
 \item{combine_by_multiplicity}{Option for combining 'rhessys', 'tec', 'hdr',
 'def' and/or previous 'combine_by_linking' files by multiplicity, which
@@ -99,16 +98,15 @@ Runs multiple RHESSys simulations via for loop or in parallel
 
   The slurm option automatically enables processing with a slurm scheduler
   via the r package rslurm. (https://github.com/SESYNC-ci/rslurm). In order
-  to run rhessys via rslurm, two templates within the rslurm package need to
-  be modified. First, in the submission template
-  (rslurm/templates/submit_sh.txt), optional environment variables may need
-  to be added between the 'options' and 'rscript' line (e.g. module load
-  anaconda3; conda activate <env>). Second, the r template
-  (rslurm/templates/slurm_run_R.txt) requires a 'setwd(“..”)' before the
-  do.call line. This will correct the home directory to be consistent with
-  the 'simple' parallel approach.
+  to run rhessys via rslurm, one of the templates within the rslurm package
+  needa to be modified. the r template (rslurm/templates/slurm_run_R.txt)
+  requires a 'setwd(“..”)' before the do.call line. This will correct the
+  home directory to be consistent with the 'simple' parallel approach.
+  Additionally, if changes are needed to the slurm submission script, such
+  as specifying environmental variables, the submission template
+  (rslurm/templates/submit_sh.txt) may also be modified.
 }
 
 \author{
-Will Burke
+Will Burke, Ryan Bart
 }
