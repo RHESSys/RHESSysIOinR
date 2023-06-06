@@ -54,22 +54,12 @@ change_def_file <- function(def_file, par_sets, file_name_ext = NULL){
 
   def_table <- format(def_table, scientific = FALSE);
 
-  # ------------------------------ Output def file ------------------------------
-  path <- dirname(def_file)
-  name_no_ext <- tools::file_path_sans_ext(basename(def_file))
-  ext <- tools::file_ext(def_file)
-
-  # Create new directory
-  path_new <- file.path(path, name_no_ext)
-  if (dir.exists(path_new) == FALSE) {dir.create(path_new)}
-
-  if (!is.null(file_name_ext)) {
-    file_name_ext = paste0("_",file_name_ext)
-  }
-  # Write new file
-  file_name_out <- file.path(path_new, paste(name_no_ext,file_name_ext,".def",sep = ""))
   # if there are comments, this should remove extra NAs
   def_table[def_table == "NA"] = " "
+
+  # ------------------------------ Output def file ------------------------------
+
+  file_name_out <- RHESSysIOinR::add_runID_to_filename(filename = def_file, runID = file_name_ext)
   utils::write.table(def_table, file = file_name_out, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
 
   return(file_name_out)

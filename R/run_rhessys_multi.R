@@ -10,7 +10,7 @@
 #'
 #'   With the current code, All four options for combining ('rhessys', 'tec',
 #'   'hdr', and 'def') must be specified in either combine_by_linking or
-#'   combine_by_multiplicity. The default option is used when only def file
+#'   combine_by_multiplying. The default option is used when only def file
 #'   parameters are varied.
 #'
 #'   The slurm option automatically enables processing with a slurm scheduler
@@ -28,8 +28,8 @@
 #'   and/or 'def' files by linking files with of the same number of inputs.
 #'   (e.g. 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios total).
 #'   Currently joined by a cbind, so the order of each variable must match.
-#' @param combine_by_multiplicity Option for combining 'rhessys', 'tec', 'hdr',
-#'   'def' and/or previous 'combine_by_linking' files by multiplicity, which
+#' @param combine_by_multiplying Option for combining 'rhessys', 'tec', 'hdr',
+#'   'def' and/or previous 'combine_by_linking' files by multiplying, which
 #'   combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
 #'   tec file scenarios = 4 scenarios total).
 #' @param all_combinations_output_name Name for all-options csv dataframe that
@@ -58,7 +58,7 @@
 
 run_rhessys_multi = function(input_rhessys,
                              hdr_files,
-                             tec_data,
+                             tec_data = NULL,
                              def_pars = NULL,
                              clim_base = NULL,
                              output_filter = NULL,
@@ -66,7 +66,7 @@ run_rhessys_multi = function(input_rhessys,
                              return_cmd = FALSE,
 #                            write_cmd = NULL,
                              combine_by_linking = c("rhessys", "tec", "hdr"),
-                             combine_by_multiplicity = "def",
+                             combine_by_multiplying = "def",
                              all_combinations_output_name = "all_combinations_table",
                              parallel = TRUE,
                              parallel_method = "simple",
@@ -122,12 +122,14 @@ run_rhessys_multi = function(input_rhessys,
   }
 
   # ---------- tec events ----------
-  if(!is.data.frame(tec_data)){
-    tec_names <- names(tec_data)
-    tec_data_df <- as.data.frame(tec_names)
-    dfs <- c(dfs, tec = list(tec_data_df))
-  } else {
-    dfs <- c(dfs, tec = list(data.frame(tec = "tec")))
+  if (!is.null(tec_data)) {
+    if(!is.data.frame(tec_data)){
+      tec_names <- names(tec_data)
+      tec_data_df <- as.data.frame(tec_names)
+      dfs <- c(dfs, tec = list(tec_data_df))
+    } else {
+      dfs <- c(dfs, tec = list(data.frame(tec = "tec")))
+    }
   }
 
   # ---------- def pars ----------
@@ -149,16 +151,16 @@ run_rhessys_multi = function(input_rhessys,
     rownames(df) <- 1:nrow(df)
   }
 
-  # Combine by multiplicity (note that if tables are linked, they are automatically passed to combine_by_multiplicity)
-  if (!is.null(combine_by_multiplicity)){
-    if(is.null(df)){dfs_multiplicity <- c(dfs[names(dfs) %in% combine_by_multiplicity])}
-    if(!is.null(df)){dfs_multiplicity <- c(df = list(df), dfs[names(dfs) %in% combine_by_multiplicity])}
-    indexes <- lapply(dfs_multiplicity, function(x) 1:nrow(x))
+  # Combine by multiplying (note that if tables are linked, they are automatically passed to combine_by_multiplying)
+  if (!is.null(combine_by_multiplying)){
+    if(is.null(df)){dfs_multiplying <- c(dfs[names(dfs) %in% combine_by_multiplying])}
+    if(!is.null(df)){dfs_multiplying <- c(df = list(df), dfs[names(dfs) %in% combine_by_multiplying])}
+    indexes <- lapply(dfs_multiplying, function(x) 1:nrow(x))
 
-    # get all combinations - expand grid but with dfs_multiplicity, taken from reshape::expand.grid.df)
+    # get all combinations - expand grid but with dfs_multiplying, taken from reshape::expand.grid.df)
     grid <- do.call(expand.grid, indexes)
-    df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs_multiplicity, grid))
-    colnames(df) <- unlist(lapply(dfs_multiplicity, colnames))
+    df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs_multiplying, grid))
+    colnames(df) <- unlist(lapply(dfs_multiplying, colnames))
     rownames(df) <- 1:nrow(df)
   }
 
@@ -228,6 +230,8 @@ run_rhessys_multi = function(input_rhessys,
         def_pars = def_pars_i,
         clim_base = clim_base,
         output_filter = output_filter,
+        par_option = par_option,
+        return_cmd = return_cmd,
         runID = i
       )
     }

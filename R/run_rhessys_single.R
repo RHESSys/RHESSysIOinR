@@ -174,16 +174,22 @@ run_rhessys_single <- function(input_rhessys,
 
 
   # ------------------------------ Temporal event control (tec) file ------------------------------
+
   if (!is.null(tec_data) && is.data.frame(tec_data)) {
-    write.table(tec_data, file = input_rhessys$tec_file, col.names = FALSE, row.names = FALSE, quote = FALSE)
+    tec_name_out <- RHESSysIOinR::add_runID_to_filename(filename = input_rhessys$tec_file, runID = runID)
+    write.table(tec_data, file = tec_name_out, col.names = FALSE, row.names = FALSE, quote = FALSE)
     cat("===== Wrote tec file =====\n")
   } else if (!is.null(tec_data)) {
     if (!file.exists(tec_data)) {
       stop("Existing tec file was not found at path:", tec_data)
+    } else {
+      tec_name_out = tec_data
     }
   } else if (!is.null(input_rhessys$tec_file)) {
     if (!file.exists(input_rhessys$tec_file)) {
       stop("Existing tec file was not found at path:", input_rhessys$tec_file)
+    } else {
+      tec_name_out = input_rhessys$tec_file
     }
   }
 
@@ -213,7 +219,7 @@ run_rhessys_single <- function(input_rhessys,
     run_info_file = write_run_info(rhessys_version = input_rhessys$rhessys_version,
                                    world_file = input_rhessys$world_file,
                                    world_hdr_file = world_hdr_name_out,
-                                   tec_file = input_rhessys$tec_file,
+                                   tec_file = tec_name_out,
                                    flow_file = input_rhessys$flow_file,
                                    start_date = input_rhessys$start_date,
                                    end_date = input_rhessys$end_date,
@@ -236,7 +242,7 @@ run_rhessys_single <- function(input_rhessys,
   rh_cmd = rhessys_command(rhessys_version = input_rhessys$rhessys_version,
                   world_file = input_rhessys$world_file,
                   world_hdr_file = world_hdr_name_out,
-                  tec_file = input_rhessys$tec_file,
+                  tec_file = tec_name_out,
                   flow_file = input_rhessys$flow_file,
                   start_date = input_rhessys$start_date,
                   end_date = input_rhessys$end_date,

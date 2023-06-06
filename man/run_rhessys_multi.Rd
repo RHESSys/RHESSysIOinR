@@ -7,14 +7,14 @@
 run_rhessys_multi(
   input_rhessys,
   hdr_files,
-  tec_data,
+  tec_data = NULL,
   def_pars = NULL,
   clim_base = NULL,
   output_filter = NULL,
   par_option = TRUE,
   return_cmd = FALSE,
   combine_by_linking = c("rhessys", "tec", "hdr"),
-  combine_by_multiplicity = "def",
+  combine_by_multiplying = "def",
   all_combinations_output_name = "all_combinations_table",
   parallel = TRUE,
   parallel_method = "simple",
@@ -56,8 +56,8 @@ and/or 'def' files by linking files with of the same number of inputs.
 (e.g. 2 def_pars scenarios and 2 tec file scenarios = 2 scenarios total).
 Currently joined by a cbind, so the order of each variable must match.}
 
-\item{combine_by_multiplicity}{Option for combining 'rhessys', 'tec', 'hdr',
-'def' and/or previous 'combine_by_linking' files by multiplicity, which
+\item{combine_by_multiplying}{Option for combining 'rhessys', 'tec', 'hdr',
+'def' and/or previous 'combine_by_linking' files by multiplying, which
 combines all unique combinations of inputs (e.g. 2 def pars scenarios and 2
 tec file scenarios = 4 scenarios total).}
 
@@ -100,7 +100,7 @@ Runs multiple RHESSys simulations via for loop or in parallel
 
   With the current code, All four options for combining ('rhessys', 'tec',
   'hdr', and 'def') must be specified in either combine_by_linking or
-  combine_by_multiplicity. The default option is used when only def file
+  combine_by_multiplying. The default option is used when only def file
   parameters are varied.
 
   The slurm option automatically enables processing with a slurm scheduler
