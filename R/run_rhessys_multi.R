@@ -122,6 +122,7 @@ run_rhessys_multi = function(input_rhessys,
   }
 
   # ---------- tec events ----------
+  if (is.null(names(tec_data))){names(tec_data) <- paste0("tec", seq_along(tec_data))}
   if (!is.null(tec_data)) {
     if(!is.data.frame(tec_data)){
       tec_names <- names(tec_data)
