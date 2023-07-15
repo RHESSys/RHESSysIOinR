@@ -119,8 +119,8 @@ read_clim = function(clim_in, clim_type = "station", dates_out = FALSE, grid_out
     trimstart = sapply(strsplit(starts_in,"\\s+"), function(x) paste(x[1],x[2],x[3]))
     start_dates = as.POSIXct(trimstart,format = "%Y %m %d")
 
-    if (grid_out) {return(grid_ids[[1]])}
-    if (elevation_out) {return(grid_elev[[1]])}
+    if (grid_out) {return(unlist(strsplit(grid_ids[[1]], split = " ")))}
+    if (elevation_out) {return(unlist(strsplit(grid_elev[[1]], split = " ")))}
 
     datefun <- function(x, y) {
       seq.POSIXt(from = x, by = "DSTday", length.out = y - 4)
