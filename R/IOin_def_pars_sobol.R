@@ -10,7 +10,7 @@
 #' @export
 
 
-IOin_def_pars_sobol = function(..., nboot = 100, rm_dup) {
+IOin_def_pars_sobol = function(..., nboot = 100, rm_dup, sobolfunction=sensitivity::sobol2007, return_sobol=FALSE) {
 
   pars = list(...)
 
@@ -44,17 +44,21 @@ IOin_def_pars_sobol = function(..., nboot = 100, rm_dup) {
   # sobol requires two different evenly numbered samples so we will split in two
 
   npars = nrow(par_dists)
+  colnames(par_dists) = sapply(pars, "[[", 2)
   if ((npars %% 2) == 1)
       par_dists = par_dists[1:(npars-1),]
   npars = nrow(par_dists)
   x1 = par_dists[1:(npars/2),]
   x2 = par_dists[((npars/2)+1):npars,]
-  #colnames(par_dists) = sapply(pars, "[[", 2)
 
-  sobol_out = sensitivity::sobol2007(model = NULL, X1 = x1, X2 = x2, nboot = nboot)
+
+  sobol_out = sobolfunction(model = NULL, X1 = x1, X2 = x2, nboot = nboot)
 
   pars_out = mapply(function(x, y) {x[[3]] = y; return(x)}, x = pars, y = as.data.frame(sobol_out$X), SIMPLIFY = F)
 
+  if (return_sobol)
+  return(list(pars_out=pars_out, sobol_out=sobol_out))
+    else
   return(pars_out)
 
 }
