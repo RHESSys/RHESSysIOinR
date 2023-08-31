@@ -49,8 +49,8 @@ IOin_rhessys_input = function(version,
   rh_list$tec_file <- tec_file
 
   # ----- world file -----
-  if (!file.exists(world_file)) {
-    warning("RHESSys world file '",world_file ,"' not found.")
+  if (!all(file.exists(world_file))) {
+    warning("Some or all of the following RHESSys world file(s) '",world_file ,"' not found.")
   }
   rh_list$world_file <- world_file
 
@@ -59,8 +59,8 @@ IOin_rhessys_input = function(version,
   rh_list$world_hdr_prefix <- world_hdr_prefix
 
   # ----- flowtable -----
-  if (!file.exists(flowtable)) {
-    warning("RHESSys flowtable '",flowtable ,"' not found.")
+  if (!all(file.exists(flowtable))) {
+    warning("Some or all of the following RHESSys flowtable(s) '",flowtable ,"' not found.")
   }
   rh_list$flow_file <- flowtable
 
