@@ -45,7 +45,7 @@ IOin_hdr = function(basin,
   input_hdr_list$stratum_def <- stratum
   input_hdr_list$fire_def <- fire
   input_hdr_list$fire_grid_prefix <- fire_grid_prefix
-  input_hdr_list$spinup <- spinup
+  input_hdr_list$spinup_def <- spinup
   input_hdr_list$base_stations <- basestations
 
   return(input_hdr_list)

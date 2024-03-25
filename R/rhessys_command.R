@@ -71,11 +71,11 @@ rhessys_command <- function(rhessys_version,
   # check OS and run via system correctly - windows requires the linux subsystem
   # TODO add check for WSL installation
   if (.Platform$OS.type == "windows") {
-    tmp = noquote(paste("bash -c \"", tmp, "\"", sep = ""))
+    # tmp = noquote(paste("bash -c \"", tmp, "\"", sep = ""))
+    tmp = noquote(paste("wsl ", tmp, sep = ""))
   }
 
   cat("Command line echo:", tmp, "\n")
-  #print(paste("Command line echo:", tmp), quote = FALSE)
 
   if (return_cmd) {
     return(tmp)
