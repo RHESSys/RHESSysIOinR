@@ -36,7 +36,7 @@ IOin_rhessys_input = function(version,
 
   # ----- rhessys binary version -----
   # TODO this could be built on to automatically pull and compile rhessys
-  if (!file.exists(version)) {
+  if (!all(file.exists(version))) {
     warning("RHESSys binary version '",version,"' not found.")
   }
   rh_list$rhessys_version <- version
