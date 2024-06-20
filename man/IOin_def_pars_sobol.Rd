@@ -4,7 +4,13 @@
 \alias{IOin_def_pars_sobol}
 \title{IOin_def_pars_sobol}
 \usage{
-IOin_def_pars_sobol(..., nboot = 100, rm_dup)
+IOin_def_pars_sobol(
+  ...,
+  nboot = 100,
+  rm_dup,
+  sobolfunction = sensitivity::sobol2007,
+  return_sobol = FALSE
+)
 }
 \arguments{
 \item{...}{Any number of lists, each containing 3 elements in format: list("<def file>", "<parameter name>", <value>)}
