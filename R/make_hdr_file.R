@@ -12,7 +12,11 @@ make_hdr_file = function(input_rhessys,
                          runID) {
 
   # Create hdr output folder
-  world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix)
+  if (!is.null(input_rhessys$world_hdr_path)) {
+    world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_path)
+  } else {
+    world_hdr_path <- file.path(dirname(input_rhessys$world_file), input_rhessys$world_hdr_prefix)
+  }
   if (!dir.exists(world_hdr_path)) {dir.create(world_hdr_path)}
 
   # check the hdr items being used

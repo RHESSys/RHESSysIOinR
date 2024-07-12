@@ -15,6 +15,7 @@ IOin_rhessys_input(
   output_folder,
   output_prefix,
   commandline_options,
+  world_hdr_path = NULL,
   prefix_command = NULL
 )
 }
@@ -39,6 +40,9 @@ at the supplied path and name, with a new tec file within it. If not supplying a
 \item{output_prefix}{Prefix for output files.}
 
 \item{commandline_options}{Commandline options to be passed to RHESSys, e.x. '-g' or '-p'}
+
+\item{world_hdr_path}{Path to where worldfile header file should be created/located. If left NULL,
+will use world_hdr_prefix as both path and file name.}
 
 \item{prefix_command}{A shell command to be run previous to the RHESSys command line call.
 This can be used to source a shell script, which itself can run multiple commands if needed.}

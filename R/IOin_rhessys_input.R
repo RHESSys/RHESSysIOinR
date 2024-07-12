@@ -13,6 +13,8 @@
 #' @param output_folder Path to folder where simulation output will go.
 #' @param output_prefix Prefix for output files.
 #' @param commandline_options Commandline options to be passed to RHESSys, e.x. '-g' or '-p'
+#' @param world_hdr_path Path to where worldfile header file should be created/located. If left NULL,
+#' will use world_hdr_prefix as both path and file name.
 #' @param prefix_command A shell command to be run previous to the RHESSys command line call.
 #' This can be used to source a shell script, which itself can run multiple commands if needed.
 #'
@@ -30,6 +32,7 @@ IOin_rhessys_input = function(version,
                               output_folder,
                               output_prefix,
                               commandline_options,
+                              world_hdr_path = NULL,
                               prefix_command = NULL) {
 
   rh_list = list()
@@ -80,6 +83,8 @@ IOin_rhessys_input = function(version,
 
   # prefix command
   rh_list$prefix_command = prefix_command
+
+  rh_list$world_hdr_path <- world_hdr_path
 
   return(rh_list)
 

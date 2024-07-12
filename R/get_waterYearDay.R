@@ -5,7 +5,6 @@
 #' @importFrom lubridate leap_year
 #' @importFrom lubridate yday
 #' @export
-#' @examples
 #' @source https://rdrr.io/github/USGS-R/EflowStats/src/R/get_waterYearDay.R
 #' x <- seq(from=as.Date("2010-01-01"),to=as.Date("2016-01-01"),by="1 days")
 #' get_waterYearDay(x)

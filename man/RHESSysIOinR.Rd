@@ -2,6 +2,7 @@
 % Please edit documentation in R/RHESSysIOinR.R
 \docType{package}
 \name{RHESSysIOinR}
+\alias{-package}
 \alias{RHESSysIOinR}
 \alias{.datatable.aware}
 \title{RHESSysIOinR}
