@@ -1,6 +1,6 @@
 #' read_clim
 #'
-#' Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA. 
+#' Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA.
 #' Works for both standard and netcdf clim, if you specify a basestation.
 #' @param clim_in Climate file - prefix will return all matching data, including suffix returns just that time series
 #' (e.g. 'site.rain' only return the precipitation time series).
@@ -13,13 +13,13 @@
 #' @export
 
 read_clim = function(clim_in, dates_out = FALSE, return_base = FALSE) {
-  
+
   # ============================== functions and inputs ==============================
   options(scipen = 999)
   datefun = function(x, y) {
     seq.POSIXt(from = x, by = "DSTday", length.out = y - 1)
   }
-  isncdf = NA
+  isncdf = F
   opts = c(".rain", ".tmin", ".tmax", ".tavg", ".dayl", ".daytime_rain_duration",
   ".LAI_scalar", ".Ldown", ".Kdown_direct", ".Kdown_diffuse", ".ndep_NO3", ".ndep_NH4",
   ".PAR_direct", ".PAR_diffuse", ".relative_humidity", ".tday", ".tnightmax", ".tsoil",
@@ -76,12 +76,12 @@ read_clim = function(clim_in, dates_out = FALSE, return_base = FALSE) {
       files_in = fileopts[file.exists(fileopts)]
     }
   }
-  
+
   if (length(files_in) == 0) {
     warning("Could not find any clim files matching path and prefix/basestation: ", clim_in, ". Returning 'NULL'.")
     return(NULL)
   }
-  
+
   if (isncdf) {
     # ============================== read netcdf clim ==============================
     nc_in = lapply(files_in, ncdf4::nc_open)
@@ -95,7 +95,7 @@ read_clim = function(clim_in, dates_out = FALSE, return_base = FALSE) {
     # add dates while in wide
     days = ncdf4::ncvar_get(nc_in[[1]], "time")
     clim$date = as.Date("1900-01-01") + days
-    
+
   } else {
   # ============================== read standard clim ==============================
   read_in = lapply(files_in, readLines)
@@ -114,7 +114,7 @@ read_clim = function(clim_in, dates_out = FALSE, return_base = FALSE) {
   nm = stringr::str_remove(files_in, clim_in)
   nm = stringr::str_remove(nm,".")
   names(clim)[2:ncol(clim)] = nm
-  clim = subset(clim, !is.na(date)) 
+  clim = subset(clim, !is.na(date))
   }
 
   # ============================== dates out ==============================
