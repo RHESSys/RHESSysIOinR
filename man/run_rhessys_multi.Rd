@@ -14,7 +14,9 @@ run_rhessys_multi(
   return_cmd = FALSE,
   par_option = TRUE,
   parallel = TRUE,
-  n_cores = NULL
+  n_cores = NULL,
+  write_log = FALSE,
+  log_loc = "~/rhessys_run_log"
 )
 }
 \arguments{
@@ -46,6 +48,8 @@ Can also just set as a number to set specific par ID.}
 \item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
 
 \item{n_cores}{The number of cores to use in a parallelized cluster. If left NULL, will autodetect number of cores and use total - 1.}
+
+\item{write_log}{TRUE/FALSE Writes or appends a log to a specified file, by row}
 }
 \description{
 Runs RHESSys simulations.

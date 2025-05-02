@@ -20,7 +20,9 @@ run_rhessys_multi = function(input_rhessys,
                              par_option = TRUE,
 #                             write_cmd = NULL,
                              parallel = TRUE,
-                             n_cores = NULL) {
+                             n_cores = NULL,
+                             write_log = FALSE,
+                             log_loc = "~/rhessys_run_log.csv") {
 
   # NOTES ON ADDING TO THIS FUNCTION AND NEW SOURCES OF SCENARIO VARIATION
   # - if you're just adding a different means of varying def pars, that should be outside of the funciton,
@@ -189,6 +191,14 @@ run_rhessys_multi = function(input_rhessys,
     }
 
   }
-
+  
+  # ------------------------------ Write LOG multi run - new  ------------------------------
+  if (write_log) {
+    log_out = write_log(input_rhessys = input_rhessys,
+      output_filter = output_filter,
+      return_cmd = return_cmd,
+      run_ct = nrow(df),
+      log_loc = log_loc)
+  }
 
 }

@@ -15,7 +15,7 @@ read_clim(clim_in, dates_out = FALSE, return_base = FALSE)
 \item{return_base}{Should info from the basestation only be returned. If FALSE, data will be returned.}
 }
 \description{
-Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA. 
+Read in rhessys formatted climate to R - works for any daily input, can have mismatched dates, missing values will be filled by NA.
 Works for both standard and netcdf clim, if you specify a basestation.
 }
 \author{

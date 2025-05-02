@@ -15,6 +15,8 @@ run_rhessys_single(
   par_option = TRUE,
   return_cmd = FALSE,
   write_run_metadata = FALSE,
+  write_log = FALSE,
+  log_loc = "~/rhessys_run_log",
   runID = NULL
 )
 }
@@ -48,7 +50,11 @@ Can also just set as a number to set specific par ID.}
 
 \item{write_run_metadata}{TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.}
 
+\item{write_log}{TRUE/FALSE Writes or appends a log to a specified file, by row}
+
 \item{runID}{The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.}
+
+\item{log_log}{Location of the log to be written/appended}
 }
 \description{
 Writes files and assembles inputs to run a single instance of RHESSys.

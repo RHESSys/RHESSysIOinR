@@ -1,10 +1,7 @@
 #' write_run_info
 #'
 #' Write a text file containing metadata for each RHESSys run, including date and time, RHESSys binary used,
-#' input files used, and if output files were created and where they are located. Defaulting to write the file where
-#' your output is.
-#'
-#'
+#' input files used, and if output files were created and where they are located. Defaulting to write the file where your output is.
 
 write_run_info = function (rhessys_version,
                            world_file,
@@ -20,6 +17,8 @@ write_run_info = function (rhessys_version,
                            command_options,
                            prefix_command = NULL,
                            return_cmd = FALSE) {
+  
+  warning("Going to get rid of this unless people are using it, kind of replacing with a simpler log function, in case anyone is using this.")
 
   if (!is.null(output_filter)) {
     filter_data = read_output_filter(output_filter)

@@ -23,6 +23,5 @@ write_run_info(
 }
 \description{
 Write a text file containing metadata for each RHESSys run, including date and time, RHESSys binary used,
-input files used, and if output files were created and where they are located. Defaulting to write the file where
-your output is.
+input files used, and if output files were created and where they are located. Defaulting to write the file where your output is.
 }

@@ -21,6 +21,8 @@
 #' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
 # @param write_cmd Path to write the rhessys cmd call to. Will be appended with run # if needed.
 #' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
+#' @param write_log TRUE/FALSE Writes or appends a log to a specified file, by row
+#' @param log_log Location of the log to be written/appended
 #' @param runID The unique ID used to track input and output files if running multiple scenarios, and thus multiple instances of run_rhessys_core.
 #' @export
 
@@ -34,6 +36,8 @@ run_rhessys_single <- function(input_rhessys,
                                par_option = TRUE,
                                return_cmd = FALSE,
                                write_run_metadata = FALSE,
+                               write_log = FALSE,
+                               log_loc = "~/rhessys_run_log.csv",
                                runID = NULL) {
 
   if (is.null(runID)) {
@@ -208,6 +212,15 @@ run_rhessys_single <- function(input_rhessys,
   } else {
     run_info_file = NULL
   }
+
+    # ------------------------------ Write LOG single run - new  ------------------------------
+    if (write_log & is.null(runID)) {
+      log_out = write_log(input_rhessys = input_rhessys,
+        output_filter = output_filter,
+        return_cmd = return_cmd,
+        run_ct = 1,
+        log_loc = log_loc)
+    }
 
   cat("\n-------------------------------------------\n")
   cat("===== Finished RHESSysIO file writing =====\n")

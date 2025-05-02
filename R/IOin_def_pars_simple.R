@@ -74,11 +74,21 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
     # only vary the variables that are numbers
     values = unlist(lapply(pars, "[[", 3))
     values = suppressWarnings(as.numeric(values))
+
     #if (any(is.na(values))) {
       #cat() # idk guess doesn't matter
     #}
+  
+    parset_from_pctrange = function(x) {
+      if (x >= 0) {
+        stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x))
+      } else if (x < 0){
+        stats::runif(n = n, max = x - (pct_range * x), min = x + (pct_range * x))
+      }
+    } 
 
-    value_sets = lapply(values[!is.na(values)], function(x) stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x)))
+    value_sets = lapply(values[!is.na(values)], parset_from_pctrange)
+
     pars[!is.na(values)] = mapply(function(x, y) {x[[3]] = y; return(x)}, x = pars[!is.na(values)], y = value_sets, SIMPLIFY = F)
 
     if (any(is.na(values))) {
