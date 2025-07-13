@@ -16,7 +16,7 @@ run_rhessys_single(
   return_cmd = FALSE,
   write_run_metadata = FALSE,
   write_log = FALSE,
-  log_loc = "~/rhessys_run_log",
+  log_loc = "~/rhessys_run_log.csv",
   runID = NULL
 )
 }

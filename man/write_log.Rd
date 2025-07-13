@@ -9,7 +9,7 @@ write_log(
   output_filter,
   return_cmd,
   run_ct,
-  log_loc = "~/rhessys_run_log"
+  log_loc = "~/rhessys_run_log.csv"
 )
 }
 \description{

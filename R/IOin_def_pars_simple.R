@@ -63,10 +63,11 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
   # check for duplicate def_file + variable entries, if rm_dup is T, keep only the first
   file_var = paste0(sapply(pars, "[[",1), "--", sapply(pars, "[[",2))
   if (length(pars[duplicated(file_var)]) > 0) {
-    warning("There are duplicate def file + variable entries, these should be corrected before running RHESSys.")
     if (rm_dup) {
       pars[duplicated(file_var)] = NULL
       cat("Duplicate def file + variable entries have been removed.\n")
+    } else {
+      warning("There are duplicate def file + variable entries, these should be corrected before running RHESSys.")
     }
   }
 

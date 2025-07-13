@@ -16,7 +16,7 @@ run_rhessys_multi(
   parallel = TRUE,
   n_cores = NULL,
   write_log = FALSE,
-  log_loc = "~/rhessys_run_log"
+  log_loc = "~/rhessys_run_log.csv"
 )
 }
 \arguments{
