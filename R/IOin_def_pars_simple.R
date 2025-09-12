@@ -79,13 +79,17 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
     #if (any(is.na(values))) {
       #cat() # idk guess doesn't matter
     #}
+    if (any(values == 0)) {
+      cat("Some pars are 0, variation by pct won't work, setting to 0 anyways.\nPars with value == 0:\n")
+      cat(file_var[values == 0],sep="\n")
+    }
   
     parset_from_pctrange = function(x) {
       if (x >= 0) {
         stats::runif(n = n, min = x - (pct_range * x), max = x + (pct_range * x))
       } else if (x < 0){
         stats::runif(n = n, max = x - (pct_range * x), min = x + (pct_range * x))
-      }
+      } 
     } 
 
     value_sets = lapply(values[!is.na(values)], parset_from_pctrange)
