@@ -98,7 +98,7 @@ input_hdr = IOin_hdr(
   zone = "defs/zone.def",
   soil = "defs/soil_sandyloam.def",
   landuse = "defs/lu_undev.def",
-  stratum = "defs/veg_douglasfir.def",
+  stratum = c("defs/veg_douglasfir.def", "stat"),
   basestations = "clim/w8_base"
 )
 ```
@@ -135,7 +135,7 @@ filter3 = modify_output_filter(
 filter4 = IOin_output_filters(filter2, filter_in = "tecfiles/testing_filter.yml", file_name = "test_output_filters")
 
 # for just a single filter with named filter file
-output_filter = IOin_output_filters(filter2, file_name = "tecfiles/test_output_filter.yml")
+output_filter = IOin_output_filters(filter2,filter3, file_name = "tecfiles/test_output_filter.yml")
 
 ```
 
@@ -159,8 +159,9 @@ This function modifies def file parameters. This is done by creating modified de
 ```{r}
 input_def_pars = IOin_def_pars_simple(
   list("defs/soil_sandyloam.def", "m", 0.04269528),
-  list("defs/soil_sandyloam.def", "Ksat_0", 1954),
-  list("defs/soil_sandyloam.def", "m_z", 0.1423176),
+  list("defs/soil_sandyloam.def", "Ksat_0", 194),
+  list("defs/soil_sandyloam.def", "m_v", 0.1423176),
+  list("defs/soil_sandyloam.def", "Ksat_0_v", 194),
   list("defs/soil_sandyloam.def", "pore_size_index", 0.2337106),
   list("defs/soil_sandyloam.def", "psi_air_entry", 0.8651277),
   list("defs/soil_sandyloam.def", "sat_to_gw_coeff", 0),
