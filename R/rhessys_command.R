@@ -69,22 +69,27 @@ rhessys_command <- function(rhessys_version,
   }
 
   # check OS and run via system correctly - windows requires the linux subsystem
-  # TODO add check for WSL installation
   if (.Platform$OS.type == "windows") {
-    # tmp = noquote(paste("bash -c \"", tmp, "\"", sep = ""))
-    tmp = noquote(paste("wsl ", tmp, sep = ""))
+    wsl_loc = Sys.which("wsl")  # just to check if wsl is available
+    if (wsl_loc == "") {
+      stop("WSL not found on system - cannot run RHESSys command on Windows without WSL.")
+    }
+    # system2("wsl", c("bash", "-lc", shQuote(cmd)))
+    cmd = paste0("wsl bash -lc \"", tmp, "\"")
+  } else {
+    cmd = tmp
   }
 
-  cat("Command line echo:", tmp, "\n")
+  cat("Command line echo:", cmd, "\n")
 
   if (return_cmd) {
-    return(tmp)
+    return(cmd)
   } else {
     cat("\n----------------------------------------\n")
     cat("===== Beginning RHESSys Simulation =====\n")
     cat("----------------------------------------\n\n")
 
-    system(tmp)
+    system(cmd)
 
     return(NULL)
   }
