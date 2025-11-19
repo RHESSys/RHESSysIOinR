@@ -46,8 +46,15 @@ IOin_tec_std = function(start, end, output_state = TRUE) {
   input_tec_data[2, ] <- c(start_split[1:3], as.numeric(start_split[4])+1, "print_daily_growth_on")
 
   if (output_state) {
-    input_tec_data[3, ] <- c(end_split[1:3], as.numeric(end_split[4])-1, "output_current_state")
+    end_time = as.POSIXct(end_rh, format="%Y %m %d %H")
+    output_time = end_time - lubridate::hours(1)
+    if (format(output_time, "%H") == "00") {
+      output_time = output_time - lubridate::minutes(60)
+    }
+    output_split = unlist(strsplit(format(output_time, "%Y %m %d %H"), split = " "))
+    input_tec_data[3, ] <- c(output_split, "output_current_state")
+    
   }
-
+  
   return(input_tec_data)
 }
