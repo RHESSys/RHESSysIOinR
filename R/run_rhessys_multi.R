@@ -73,6 +73,36 @@ run_rhessys_multi = function(input_rhessys,
   colnames(df) <- unlist(lapply(dfs, colnames))
   rownames(df) <- 1:nrow(df)
 
+  # --------------------------------- Run RHESSys sims ---------------------------------
+  # if only single run
+  if (nrow(df) == 1) {
+    cat("Only a single run detected, running run_rhessys_single() instead of multi...\n")
+
+    rhout = run_rhessys_single(
+      input_rhessys = input_rhessys,
+      hdr_files = hdr_files,
+      tec_data = tec_data,
+      def_pars = def_pars,
+      clim_base = clim_base,
+      output_filter = output_filter,
+      return_cmd = return_cmd,
+      par_option = par_option,
+      runID = NULL
+    )
+
+    end = Sys.time()
+    difft = difftime(end,start)
+    cat("\nSimulation start:", as.character(start), "\n")
+    cat("Simulation end:", as.character(end), "\n")
+    cat("Total processing time: ",difft, units(difft),"\n")
+
+    if (return_cmd) {
+      return(rhout)
+    }
+    return(NULL)
+  }
+
+
   # ---------- dumb for loop ----------
   if (!parallel) {
     for (i in 1:nrow(df)) {
@@ -95,8 +125,6 @@ run_rhessys_multi = function(input_rhessys,
     }
   }
 
-
-
   # ---------- parallelized ----------
   if (parallel) {
 
@@ -104,6 +132,7 @@ run_rhessys_multi = function(input_rhessys,
       n_cores = parallel::detectCores() - 1
     }
 
+    # function to run in parallel
     run_parallel = function(i,
                             input_rhessys,
                             hdr_files ,
