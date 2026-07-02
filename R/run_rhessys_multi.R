@@ -4,6 +4,7 @@
 #' @inheritParams run_rhessys_single
 #' @param parallel Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.
 #' @param n_cores The number of cores to use in a parallelized cluster. If left NULL, will autodetect number of cores and use total - 1.
+#' @param runIDoffset An integer to offset the run IDs. Useful for continuing runs from a previous batch.
 #' @author Will Burke
 #'
 #' @export
@@ -17,8 +18,10 @@ run_rhessys_multi = function(input_rhessys,
                              clim_base = NULL,
                              output_filter = NULL,
                              return_cmd = FALSE,
+                             return_file_list = FALSE,
                              par_option = TRUE,
-#                             write_cmd = NULL,
+                             runIDoffset = 0,
+#                            write_cmd = NULL,
                              parallel = TRUE,
                              n_cores = NULL,
                              write_log = FALSE,
@@ -55,7 +58,6 @@ run_rhessys_multi = function(input_rhessys,
     def_pars_df = as.data.frame(lapply(def_pars, "[[", 3))
     def_names = sapply(def_pars, function(x) paste(x[[1]], x[[2]], sep = "::"))
     names(def_pars_df) = def_names
-
     dfs <- c(dfs, list(def_pars_df))
 
   }
@@ -64,18 +66,23 @@ run_rhessys_multi = function(input_rhessys,
   # add here when tec event scenarios/iterations get added
 
   # ---------- clim sequences ----------
+  # add here
 
-  # ---------- combine scenarios ----------
-  # get all combinations - expand grid but with dfs, taken from reshape::expand.grid.df
-  indexes <- lapply(dfs, function(x) 1:nrow(x))
-  grid <- do.call(expand.grid, indexes)
-  df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs, grid))
-  colnames(df) <- unlist(lapply(dfs, colnames))
-  rownames(df) <- 1:nrow(df)
+  if (!is.null(dfs)) {
+    # ---------- combine scenarios ----------
+    # get all combinations - expand grid but with dfs, taken from reshape::expand.grid.df
+    indexes <- lapply(dfs, function(x) 1:nrow(x))
+    grid <- do.call(expand.grid, indexes)
+    df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs, grid))
+    colnames(df) <- unlist(lapply(dfs, colnames))
+    rownames(df) <- 1:nrow(df)
+  } else {
+    df = NULL
+  }
 
   # --------------------------------- Run RHESSys sims ---------------------------------
   # if only single run
-  if (nrow(df) == 1) {
+  if (is.null(df) || (!is.null(df) && nrow(df) == 1)) {
     cat("Only a single run detected, running run_rhessys_single() instead of multi...\n")
 
     rhout = run_rhessys_single(
@@ -86,6 +93,7 @@ run_rhessys_multi = function(input_rhessys,
       clim_base = clim_base,
       output_filter = output_filter,
       return_cmd = return_cmd,
+      return_file_list = return_file_list,
       par_option = par_option,
       runID = NULL
     )
@@ -96,7 +104,7 @@ run_rhessys_multi = function(input_rhessys,
     cat("Simulation end:", as.character(end), "\n")
     cat("Total processing time: ",difft, units(difft),"\n")
 
-    if (return_cmd) {
+    if (return_cmd | return_file_list) {
       return(rhout)
     }
     return(NULL)
@@ -120,7 +128,10 @@ run_rhessys_multi = function(input_rhessys,
         tec_data = tec_data,
         def_pars = def_pars_i,
         output_filter = output_filter,
-        runID = i
+        return_file_list = return_file_list,
+        return_cmd = return_cmd,
+        par_option = par_option,
+        runID = (runIDoffset + i)
       )
     }
   }
@@ -142,7 +153,9 @@ run_rhessys_multi = function(input_rhessys,
                             clim_base,
                             output_filter,
                             par_option,
-                            return_cmd) {
+                            return_cmd,
+                            return_file_list,
+                            runIDoffset) {
 
       library(RHESSysIOinR)
 
@@ -151,6 +164,7 @@ run_rhessys_multi = function(input_rhessys,
       } else {
         def_pars_i = NULL
       }
+      runID = runIDoffset + i
 
       rhout = run_rhessys_single(
         input_rhessys = input_rhessys,
@@ -161,10 +175,11 @@ run_rhessys_multi = function(input_rhessys,
         output_filter = output_filter,
         par_option = par_option,
         return_cmd = return_cmd,
-        runID = i
+        return_file_list = return_file_list,
+        runID = runID
       )
 
-      if (return_cmd) {
+      if (return_cmd | return_file_list) {
         return(rhout)
       }
 
@@ -187,7 +202,9 @@ run_rhessys_multi = function(input_rhessys,
         "clim_base",
         "output_filter",
         "return_cmd",
-        "par_option"
+        "return_file_list",
+        "par_option",
+        "runIDoffset"
       ),
       envir = environment()
     )
@@ -204,7 +221,9 @@ run_rhessys_multi = function(input_rhessys,
       clim_base = clim_base,
       output_filter = output_filter,
       return_cmd = return_cmd,
-      par_option = par_option
+      return_file_list = return_file_list,
+      par_option = par_option,
+      runIDoffset = runIDoffset
     )
     # stop the cluster
     parallel::stopCluster(cl)

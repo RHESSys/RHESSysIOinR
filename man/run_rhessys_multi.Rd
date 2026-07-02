@@ -12,7 +12,9 @@ run_rhessys_multi(
   clim_base = NULL,
   output_filter = NULL,
   return_cmd = FALSE,
+  return_file_list = FALSE,
   par_option = TRUE,
+  runIDoffset = 0,
   parallel = TRUE,
   n_cores = NULL,
   write_log = FALSE,
@@ -42,8 +44,12 @@ existing output filter.}
 
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 
+\item{return_file_list}{TRUE/FALSE if run_rhessys_single should return a list of output files generated.}
+
 \item{par_option}{TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
 Can also just set as a number to set specific par ID.}
+
+\item{runIDoffset}{An integer to offset the run IDs. Useful for continuing runs from a previous batch.}
 
 \item{parallel}{Defaults to TRUE. Should the parallel package be used to parallelize the rhessys runs.}
 

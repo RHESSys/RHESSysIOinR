@@ -6,9 +6,6 @@
 \alias{RHESSysIOinR}
 \alias{.datatable.aware}
 \title{RHESSysIOinR}
-\format{
-An object of class \code{logical} of length 1.
-}
 \usage{
 .datatable.aware
 }
@@ -18,4 +15,3 @@ and processing output. The objective of this package is to clearly and efficient
 that can be used to setup RHESSys, conduct calibrations and simulations, and process output. This
 package supports a long(er)-term goal of having experiments involving RHESSys be reproducible.
 }
-\keyword{datasets}

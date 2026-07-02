@@ -14,6 +14,7 @@ run_rhessys_single(
   cmd_pars = NULL,
   par_option = TRUE,
   return_cmd = FALSE,
+  return_file_list = FALSE,
   write_run_metadata = FALSE,
   write_log = FALSE,
   log_loc = "~/rhessys_run_log.csv",
@@ -47,6 +48,8 @@ existing output filter.}
 Can also just set as a number to set specific par ID.}
 
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
+
+\item{return_file_list}{TRUE/FALSE if run_rhessys_single should return a list of output files generated.}
 
 \item{write_run_metadata}{TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.}
 

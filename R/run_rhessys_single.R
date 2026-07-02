@@ -19,6 +19,7 @@
 #' @param par_option TRUE/FALSE if the -par command line options should be used if running multiple runs and outputting current worldfile state.
 #' Can also just set as a number to set specific par ID.
 #' @param return_cmd TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.
+#' @param return_file_list TRUE/FALSE if run_rhessys_single should return a list of output files generated.
 # @param write_cmd Path to write the rhessys cmd call to. Will be appended with run # if needed.
 #' @param write_run_metadata TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.
 #' @param write_log TRUE/FALSE Writes or appends a log to a specified file, by row
@@ -35,6 +36,7 @@ run_rhessys_single <- function(input_rhessys,
                                cmd_pars = NULL,
                                par_option = TRUE,
                                return_cmd = FALSE,
+                               return_file_list = FALSE,
                                write_run_metadata = FALSE,
                                write_log = FALSE,
                                log_loc = "~/rhessys_run_log.csv",
@@ -62,6 +64,11 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(input_rhessys$output_folder) && !dir.exists(input_rhessys$output_folder)) {
     dir.create(input_rhessys$output_folder)
     cat("Created output folder: ", input_rhessys$output_folder)
+  }
+
+  # Start tracking files generated
+  if (return_file_list) {
+    generated_files = list()
   }
 
   # ------------------------------ Def file parameters ------------------------------
@@ -107,6 +114,9 @@ run_rhessys_single <- function(input_rhessys,
       names(def_par_subset) = def_pars_df[def_pars_df$X1 == f,2]
       new_file = change_def_file(def_file = f, par_sets = def_par_subset, file_name_ext = runID)
       def_files[def_files[,1] == f, 2] = new_file
+      if (return_file_list) {
+        generated_files$def_files = c(generated_files$def_files, new_file)
+      }
     }
     cat("===== Wrote def files =====\n")
   } else {
@@ -148,12 +158,18 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(clim_base)) {
     write.table(clim_base, file = hdr_files$base_stations, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
     cat("===== Wrote clim base station file =====\n")
+    if (return_file_list) {
+      generated_files$clim_base = hdr_files$base_stations
+    }
   }
 
   # ------------------------------ Header file ------------------------------
   # TODO add check for single path to existing hdr file
   if (is.list(hdr_files)) {
     world_hdr_name_out = make_hdr_file(input_rhessys, hdr_files, def_files, runID)
+    if (return_file_list) {
+      generated_files$hdr_file = world_hdr_name_out
+    }
   } else if (is.character(hdr_files)) {
     world_hdr_name_out = hdr_files
   }
@@ -162,6 +178,9 @@ run_rhessys_single <- function(input_rhessys,
   # ------------------------------ Temporal event control (tec) file ------------------------------
   if (!is.null(tec_data) && is.data.frame(tec_data)) {
     write.table(tec_data, file = input_rhessys$tec_file, col.names = FALSE, row.names = FALSE, quote = FALSE)
+    if (return_file_list) {
+      generated_files$tec_file = input_rhessys$tec_file
+    }
     cat("===== Wrote tec file =====\n")
   } else if (!is.null(tec_data)) {
     if (!file.exists(tec_data)) {
@@ -177,6 +196,9 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(output_filter)) {
     filter_path = write_output_filter(output_filter, runID)
     output_path = NULL
+    if (return_file_list) {
+      generated_files$output_filter = filter_path
+    }
   } else {
     output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
     if (!is.null(runID)) {
@@ -213,14 +235,14 @@ run_rhessys_single <- function(input_rhessys,
     run_info_file = NULL
   }
 
-    # ------------------------------ Write LOG single run - new  ------------------------------
-    if (write_log & is.null(runID)) {
-      log_out = write_log(input_rhessys = input_rhessys,
-        output_filter = output_filter,
-        return_cmd = return_cmd,
-        run_ct = 1,
-        log_loc = log_loc)
-    }
+  # ------------------------------ Write LOG single run - new  ------------------------------
+  if (write_log & is.null(runID)) {
+    log_out = write_log(input_rhessys = input_rhessys,
+      output_filter = output_filter,
+      return_cmd = return_cmd,
+      run_ct = 1,
+      log_loc = log_loc)
+  }
 
   cat("\n-------------------------------------------\n")
   cat("===== Finished RHESSysIO file writing =====\n")
@@ -242,6 +264,14 @@ run_rhessys_single <- function(input_rhessys,
                   command_options = input_rhessys$command_options,
                   prefix_command = input_rhessys$prefix_command,
                   return_cmd = return_cmd)
+  
+  if (return_cmd & return_file_list) {
+    return(list(command = rh_cmd, generated_files = generated_files))
+  } else if (return_cmd) {
+    return(rh_cmd)
+  } else if (return_file_list) {
+    return(generated_files)
+  }
 
   if (return_cmd) {
     return(rh_cmd)

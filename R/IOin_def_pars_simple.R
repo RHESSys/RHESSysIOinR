@@ -50,7 +50,7 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
 
   # some checks here, should get done regardless but mostly important for multiple param sets
   if (any(lapply(pars, length) != 3)) {
-    stop("Each input list must have 3 elements - 1) file path to def file 2) def file variable 3) value")
+    stop("Each input list must have 3 elements - 1) file path to def file 2) def file variable 3) value\n")
   }
 
   # name some things to be helpful
@@ -67,7 +67,9 @@ IOin_def_pars_simple = function(..., n = 1, pct_range = 0.25, rm_dup = F) {
       pars[duplicated(file_var)] = NULL
       cat("Duplicate def file + variable entries have been removed.\n")
     } else {
-      warning("There are duplicate def file + variable entries, these should be corrected before running RHESSys.")
+      warning("There are duplicate def file + variable entries, these should be corrected before running RHESSys.\n")
+      cat("Duplicate pars:\n")
+      print(pars[duplicated(file_var)])
     }
   }
 

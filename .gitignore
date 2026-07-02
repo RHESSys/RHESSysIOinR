@@ -53,3 +53,4 @@ README.html
 # ignore test stuff
 inst/extdata/out/w8*
 inst/extdata/rh_dev
+/.vscode

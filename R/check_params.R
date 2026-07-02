@@ -44,22 +44,40 @@ parse_rh_constr_func = function(rh_file) {
   paramdf = paramdf[,c("Name", "DefaultValue", "UseDefault")]
 
   # some custom checks for some stratum vars
- if ("epc.gxylem_max" %in% paramdf$Name) {
-  if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"] == "default_object_list[i].epc.gl_smax") {
-    paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"] = paramdf$DefaultValue[paramdf$Name == "epc.gl_smax"]
+  if ("epc.gxylem_max" %in% paramdf$Name) {
+    if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"] == "default_object_list[i].epc.gl_smax") {
+      paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"] = paramdf$DefaultValue[paramdf$Name == "epc.gl_smax"]
+    }
   }
- }
- if ("epc.gxylem_min_gs" %in% paramdf$Name) {
-  if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_min_gs"] == "default_object_list[i].epc.gl_c*10") {
-    paramdf$DefaultValue[paramdf$Name == "epc.gxylem_min_gs"] = as.numeric(paramdf$DefaultValue[paramdf$Name == "epc.gl_c"])*10
+  if ("epc.gxylem_min_gs" %in% paramdf$Name) {
+   if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_min_gs"] == "default_object_list[i].epc.gl_c*10") {
+      paramdf$DefaultValue[paramdf$Name == "epc.gxylem_min_gs"] = as.numeric(paramdf$DefaultValue[paramdf$Name == "epc.gl_c"])*10
+    }
   }
-}
-if ("epc.gxylem_recovery_rate" %in% paramdf$Name) {
-  if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_recovery_rate"] == "default_object_list[i].epc.gxylem_max*0.1") {
-    paramdf$DefaultValue[paramdf$Name == "epc.gxylem_recovery_rate"] = as.numeric(paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"])*0.1
+  if ("epc.gxylem_recovery_rate" %in% paramdf$Name) {
+    if (paramdf$DefaultValue[paramdf$Name == "epc.gxylem_recovery_rate"] == "default_object_list[i].epc.gxylem_max*0.1") {
+      paramdf$DefaultValue[paramdf$Name == "epc.gxylem_recovery_rate"] = as.numeric(paramdf$DefaultValue[paramdf$Name == "epc.gxylem_max"])*0.1
+    }
   }
-}
-
+  if ("epc.litter_moist_coef" %in% paramdf$Name) {
+    default_val <- paramdf$DefaultValue[paramdf$Name == "epc.litter_moist_coef"]
+    paramdf$DefaultValue[paramdf$Name == "epc.litter_moist_coef"] <- eval(parse(text = default_val))
+  }
+  if ("epc.litter_density" %in% paramdf$Name) {
+    default_val <- paramdf$DefaultValue[paramdf$Name == "epc.litter_density"]
+    paramdf$DefaultValue[paramdf$Name == "epc.litter_density"] <- eval(parse(text = default_val))
+  }
+  if ("interval_size" %in% paramdf$Name) {
+    paramdf$DefaultValue[paramdf$Name == "interval_size"] <- 0.001
+  }
+  
+  # check for any non-numeric default values that aren't in the text vars list
+  text_vars = c("epc.veg.type", "epc.fire.veg.type", "epc.phenology_flag", "epc.phenology.type", "epc.allocation_flag","snow_albedo_flag")
+  non_text_vars = paramdf$Name[!paramdf$Name %in% text_vars]
+  non_numeric_defaults = non_text_vars[is.na(suppressWarnings(as.numeric(paramdf$DefaultValue[paramdf$Name %in% non_text_vars])))]
+  if (length(non_numeric_defaults) > 0) {
+    warning("Non-numeric default values found for parameters: ", paste(non_numeric_defaults, collapse = ", "))
+  }
 
   return(paramdf)
 }
