@@ -42,17 +42,27 @@ export(watbal_patch)
 export(watbal_patch_mult)
 export(write_output_filter)
 export(write_sample_clim)
-importFrom(data.table,"%between%")
-importFrom(data.table,"%like%")
-importFrom(data.table,":=")
-importFrom(lubridate,leap_year)
-importFrom(lubridate,yday)
+importFrom(data.table,
+  "%between%",
+  "%like%",
+  ":="
+)
+importFrom(lubridate,
+  leap_year,
+  yday
+)
 importFrom(magrittr,"%>%")
-importFrom(ncdf4,nc_open)
-importFrom(ncdf4,ncvar_get)
-importFrom(stats,runif)
-importFrom(stats,weighted.mean)
+importFrom(ncdf4,
+  nc_open,
+  ncvar_get
+)
+importFrom(stats,
+  runif,
+  weighted.mean
+)
 importFrom(stringr,str_remove)
-importFrom(utils,read.csv)
-importFrom(utils,read.table)
-importFrom(utils,write.table)
+importFrom(utils,
+  read.csv,
+  read.table,
+  write.table
+)

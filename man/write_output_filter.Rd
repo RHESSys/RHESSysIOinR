@@ -4,7 +4,7 @@
 \alias{write_output_filter}
 \title{write_output_filter}
 \usage{
-write_output_filter(output_filter, runID = NULL)
+write_output_filter(output_filter, runID = NULL, return_timesteps = FALSE)
 }
 \arguments{
 \item{output_filter}{An output filter, either an R list with 1 to n number of filters read in/modified/generated via IOin_output_filter.R

@@ -6,7 +6,7 @@
 #' @author Will Burke
 #' @export
 
-write_output_filter = function(output_filter, runID = NULL) {
+write_output_filter = function(output_filter, runID = NULL, return_timesteps = FALSE) {
 
   # if it's just a path to an existing filter for a single run
   if (is.character(output_filter) && is.null(runID)) {
@@ -48,7 +48,7 @@ write_output_filter = function(output_filter, runID = NULL) {
   # creating the output string manually now
   indent = "  "
   format_filter = function(fb, indent) {
-    f =fb$filter
+    f = fb$filter
     if (is.null(f))
        { f = fb }
     level = names(f)[!names(f) %in% c("timestep", "output")]
@@ -66,17 +66,10 @@ write_output_filter = function(output_filter, runID = NULL) {
   filter_strings = lapply(output_filter, format_filter, indent)
   filter_string = paste0(filter_strings, collapse = "\n")
 
-  # write the output filter
-  #yaml::write_yaml(x = output_filter, file = file_name)
-
-  # workaround beacuse brians code assumes integers
-  # yaml_out = yaml::as.yaml(x = output_filter, line.sep = "\n" )
-  # yaml_out = gsub("\\.0", "", yaml_out)
-  # yaml_out = gsub("\'\"|\"\'", "\'", yaml_out)
-
-  # TODO remove all of this when formally fixed
-  # hacky solution but works
-  # yaml_out = gsub(",\\n\\s+",", ", yaml_out)
+if (return_timesteps) {
+  timesteps = sapply(output_filter, function(x) {return(x$timestep)}, USE.NAMES = FALSE)
+  return(timesteps)
+}
 
   file = file(file_name, "w", encoding = "UTF-8")
   cat(filter_string, file = file, sep = "")

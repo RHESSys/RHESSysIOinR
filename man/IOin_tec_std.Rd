@@ -4,7 +4,14 @@
 \alias{IOin_tec_std}
 \title{IOin_tec_std}
 \usage{
-IOin_tec_std(start, end, output_state = TRUE)
+IOin_tec_std(
+  start,
+  end,
+  output_state = TRUE,
+  daily = TRUE,
+  monthly = FALSE,
+  yearly = FALSE
+)
 }
 \arguments{
 \item{start}{start date of run}

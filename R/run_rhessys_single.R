@@ -199,6 +199,26 @@ run_rhessys_single <- function(input_rhessys,
     if (return_file_list) {
       generated_files$output_filter = filter_path
     }
+    # Check if the tec data contains print starts for the timesteps in the output filters
+    if (!is.null(tec_data) && is.data.frame(tec_data) && !is.null(tec_data$name)) {
+      filter_timesteps <- write_output_filter(output_filter, runID, return_timesteps = TRUE)
+      filter_timesteps <- unname(unique(filter_timesteps))
+      tec_print_list <- list(
+        daily = c("print_daily_on", "print_daily_growth_on"),
+        monthly = c("print_monthly_on"),
+        yearly = c("print_yearly_on", "print_yearly_growth_on")
+      )
+      filter_tec_names <- unlist(lapply(filter_timesteps, function(x) tec_print_list[[x]]))
+      missing_from_tec = filter_tec_names[!filter_tec_names %in% tec_data$name]
+      missing_from_filter = tec_data$name[!tec_data$name %in% filter_tec_names]
+      if (length(missing_from_tec) > 0) {
+        warning(paste0("The following output filter timesteps are not present in the tec file: ", paste(missing_from_tec, collapse = ", "), ". This may result in no output being generated for those timesteps."))
+      }
+      if (length(missing_from_filter) > 0) {
+        warning(paste0("The following tec print events are not present in the output filter: ", paste(missing_from_filter, collapse = ", "), ". This may result in no output being generated for those timesteps."))
+      }
+    }
+
   } else {
     output_path = file.path(input_rhessys$output_folder, input_rhessys$output_filename)
     if (!is.null(runID)) {

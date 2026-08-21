@@ -10,13 +10,15 @@
 #'
 #' @export
 
-IOin_tec_std = function(start, end, output_state = TRUE) {
+IOin_tec_std = function(start, end, output_state = TRUE, daily = TRUE, monthly = FALSE, yearly = FALSE) {
 
-  # if inputs are rhessys format
-  # if (grepl(pattern = "\\d{4} \\d{1,2} \\d{1,2} \\d{1,2}", x = start)) {
-  # }
-  options(stringsAsFactors = F)
-
+  inc_tec_date = function(tecdate) {
+    tecdate = as.POSIXct(paste0(tecdate[1:4], collapse = " "), format = "%Y %m %d %H")
+    tecdate = tecdate + lubridate::hours(1)
+    tecdate_split = unlist(strsplit(format(tecdate, "%Y %m %d %H"), split = " "))
+    return(tecdate_split)
+  }
+  
   if (class(start) == "Date") {
     start_rh = format.Date(x = start, "%Y %m %d")
     start_rh = paste0(start_rh, " 1")
@@ -30,9 +32,10 @@ IOin_tec_std = function(start, end, output_state = TRUE) {
   } else {
     end_rh = end
   }
-
-  start_split = unlist(strsplit(as.character(start_rh), split = " "))
-  end_split = unlist(strsplit(as.character(end_rh), split = " "))
+  
+  # consistent padding from this
+  start_split = unlist(strsplit(format(as.POSIXct(start_rh, format = "%Y %m %d %H"), "%Y %m %d %H"), split = " "))
+  end_split = unlist(strsplit(format(as.POSIXct(end_rh, format = "%Y %m %d %H"), "%Y %m %d %H"), split = " "))
 
   input_tec_data <- data.frame(
       year = integer(),
@@ -41,10 +44,23 @@ IOin_tec_std = function(start, end, output_state = TRUE) {
       hour = integer(),
       name = character()
     )
-
-  input_tec_data[1, ] <- c(start_split, "print_daily_on")
-  input_tec_data[2, ] <- c(start_split[1:3], as.numeric(start_split[4])+1, "print_daily_growth_on")
-
+  
+  if (daily) {
+    input_tec_data = rbind(input_tec_data, c(start_split, "print_daily_on"), deparse.level = 0)
+    start_split = inc_tec_date(start_split)
+    input_tec_data = rbind(input_tec_data, c(start_split, "print_daily_growth_on"))
+    start_split = inc_tec_date(start_split)
+  }
+  if (monthly) {
+    input_tec_data = rbind(input_tec_data, c(start_split, "print_monthly_on"))
+    start_split = inc_tec_date(start_split)
+  }
+  if (yearly) {
+    input_tec_data = rbind(input_tec_data, c(start_split, "print_yearly_on"))
+    start_split = inc_tec_date(start_split)
+      input_tec_data = rbind(input_tec_data, c(start_split, "print_yearly_growth_on"))
+      start_split = inc_tec_date(start_split)
+  }
   if (output_state) {
     end_time = as.POSIXct(end_rh, format="%Y %m %d %H")
     output_time = end_time - lubridate::hours(1)
@@ -52,9 +68,9 @@ IOin_tec_std = function(start, end, output_state = TRUE) {
       output_time = output_time - lubridate::minutes(60)
     }
     output_split = unlist(strsplit(format(output_time, "%Y %m %d %H"), split = " "))
-    input_tec_data[3, ] <- c(output_split, "output_current_state")
-    
+    input_tec_data = rbind(input_tec_data, c(output_split, "output_current_state"))    
   }
+  names(input_tec_data) = c("year", "month", "day", "hour", "name")
   
   return(input_tec_data)
 }
