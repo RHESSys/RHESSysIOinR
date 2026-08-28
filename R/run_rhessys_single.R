@@ -67,9 +67,15 @@ run_rhessys_single <- function(input_rhessys,
   }
 
   # Start tracking files generated
-  if (return_file_list) {
-    generated_files = list()
-  }
+if (return_file_list) {
+  generated_files = list(
+    def_files = character(),
+    hdr_files = character(),
+    tec_files = character(),
+    output_filters = character(),
+    clim_bases = character()
+  )
+}
 
   # ------------------------------ Def file parameters ------------------------------
   # if input hdr files are a data object
@@ -154,12 +160,16 @@ run_rhessys_single <- function(input_rhessys,
   }
 
   # ------------------------------ Climate ------------------------------
-  # TODO potentially add dated sequence functionality of some sort here
   if (!is.null(clim_base)) {
     write.table(clim_base, file = hdr_files$base_stations, row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "       ")
     cat("===== Wrote clim base station file =====\n")
     if (return_file_list) {
-      generated_files$clim_base = hdr_files$base_stations
+      generated_files$clim_bases = hdr_files$base_stations
+    }
+  } else if (return_file_list && !is.null(hdr_files) && is.list(hdr_files) && !is.null(hdr_files$base_stations)) {
+    # Capture basestation file even if not newly written
+    if (file.exists(hdr_files$base_stations)) {
+      generated_files$clim_bases = hdr_files$base_stations
     }
   }
 
@@ -168,7 +178,7 @@ run_rhessys_single <- function(input_rhessys,
   if (is.list(hdr_files)) {
     world_hdr_name_out = make_hdr_file(input_rhessys, hdr_files, def_files, runID)
     if (return_file_list) {
-      generated_files$hdr_file = world_hdr_name_out
+      generated_files$hdr_files = world_hdr_name_out
     }
   } else if (is.character(hdr_files)) {
     world_hdr_name_out = hdr_files
@@ -179,7 +189,7 @@ run_rhessys_single <- function(input_rhessys,
   if (!is.null(tec_data) && is.data.frame(tec_data)) {
     write.table(tec_data, file = input_rhessys$tec_file, col.names = FALSE, row.names = FALSE, quote = FALSE)
     if (return_file_list) {
-      generated_files$tec_file = input_rhessys$tec_file
+      generated_files$tec_files = input_rhessys$tec_file
     }
     cat("===== Wrote tec file =====\n")
   } else if (!is.null(tec_data)) {
@@ -197,7 +207,7 @@ run_rhessys_single <- function(input_rhessys,
     filter_path = write_output_filter(output_filter, runID)
     output_path = NULL
     if (return_file_list) {
-      generated_files$output_filter = filter_path
+      generated_files$output_filters = filter_path
     }
     # Check if the tec data contains print starts for the timesteps in the output filters
     if (!is.null(tec_data) && is.data.frame(tec_data) && !is.null(tec_data$name)) {
