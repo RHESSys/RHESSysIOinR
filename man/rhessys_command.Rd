@@ -18,11 +18,17 @@ rhessys_command(
   par_option_ID = NULL,
   command_options,
   prefix_command = NULL,
+  docker_image = NULL,
+  docker_host_dir = NULL,
+  docker_container_dir = NULL,
+  docker_run_options = NULL,
   return_cmd = FALSE
 )
 }
 \arguments{
-\item{rhessys_version}{Path and file name of compiled version of RHESSys.}
+\item{rhessys_version}{Path and file name of compiled version of RHESSys. When
+\code{docker_image} is used, this must be the path to the RHESSys binary *inside
+the image* (e.g. baked in at build time), not a path on the host.}
 
 \item{world_file}{Oath and file name of RHESSys world_file.}
 
@@ -46,8 +52,15 @@ rhessys_command(
 
 \item{prefix_command}{A shell command to be run previous to the RHESSys command line call.}
 
-\item{return_cmd}{true/false passed from run_rhessys_single
-This can be used to source a shell script, which itself can run multiple commands if needed.}
+\item{docker_image}{Name (and optionally tag) of a docker image containing RHESSys, e.g. \code{"rhessys:develop"}. If supplied, a fresh, disposable container is started for this single run via \code{docker run --rm} (no \code{--name} is set, so many calls can be launched in parallel without colliding). \code{docker_host_dir} is bind-mounted into the container so the relative file paths (world_file, tec_file, etc.) resolve correctly, and the container is removed automatically when the run finishes.}
+
+\item{docker_host_dir}{Path on the host machine to bind-mount into the container - this should (probably) be your project directory, the directory the relative file paths (world_file, tec_file, etc.) are written relative to. Defaults to the current working directory (\code{getwd()}) if NULL. Converted to an absolute path internally, since docker requires this for bind mounts.}
+
+\item{docker_container_dir}{Path inside the container to mount \code{docker_host_dir} to, and the working directory the RHESSys call is run from inside the container. Defaults to \code{"/mnt/rhessys_run"} if NULL.}
+
+\item{docker_run_options}{Optional additional flags appended to \code{docker run}, e.g. \code{"--cpus=2 --memory=4g"} to cap resources for a given parallel run.}
+
+\item{return_cmd}{true/false should the command be returned as a string instead of executed. This is useful for debugging or if you want to run the command outside of R.}
 }
 \description{
 \code{rhessys_command} Assembles command line RHESSys call, and runs it. See the RHESSys wiki:

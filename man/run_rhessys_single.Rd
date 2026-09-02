@@ -15,6 +15,10 @@ run_rhessys_single(
   par_option = TRUE,
   return_cmd = FALSE,
   return_file_list = FALSE,
+  docker_image = NULL,
+  docker_host_dir = NULL,
+  docker_container_dir = NULL,
+  docker_run_options = NULL,
   write_run_metadata = FALSE,
   write_log = FALSE,
   log_loc = "~/rhessys_run_log.csv",
@@ -50,6 +54,14 @@ Can also just set as a number to set specific par ID.}
 \item{return_cmd}{TRUE/FALSE if run_rhessys_single should return the command line call INSTEAD of running.}
 
 \item{return_file_list}{TRUE/FALSE if run_rhessys_single should return a list of output files generated.}
+
+\item{docker_image}{Name (and optionally tag) of a docker image containing RHESSys, e.g. \code{"rhessys:develop"}. If supplied, a fresh, disposable container is started for this single run via \code{docker run --rm} (no \code{--name} is set, so many calls can be launched in parallel without colliding). \code{docker_host_dir} is bind-mounted into the container so the relative file paths (world_file, tec_file, etc.) resolve correctly, and the container is removed automatically when the run finishes.}
+
+\item{docker_host_dir}{Path on the host machine to bind-mount into the container - this should (probably) be your project directory, the directory the relative file paths (world_file, tec_file, etc.) are written relative to. Defaults to the current working directory (\code{getwd()}) if NULL. Converted to an absolute path internally, since docker requires this for bind mounts.}
+
+\item{docker_container_dir}{Path inside the container to mount \code{docker_host_dir} to, and the working directory the RHESSys call is run from inside the container. Defaults to \code{"/mnt/rhessys_run"} if NULL.}
+
+\item{docker_run_options}{Optional additional flags appended to \code{docker run}, e.g. \code{"--cpus=2 --memory=4g"} to cap resources for a given parallel run.}
 
 \item{write_run_metadata}{TRUE/FALSE if a text file containing run metadata should be written to the same location as your output.}
 

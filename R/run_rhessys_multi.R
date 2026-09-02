@@ -10,23 +10,27 @@
 #' @export
 #'
 
-
-run_rhessys_multi = function(input_rhessys,
-                             hdr_files,
-                             tec_data,
-                             def_pars = NULL,
-                             clim_base = NULL,
-                             output_filter = NULL,
-                             return_cmd = FALSE,
-                             return_file_list = FALSE,
-                             par_option = TRUE,
-                             runIDoffset = 0,
-#                            write_cmd = NULL,
-                             parallel = TRUE,
-                             n_cores = NULL,
-                             write_log = FALSE,
-                             log_loc = "~/rhessys_run_log.csv") {
-
+run_rhessys_multi <- function(
+  input_rhessys,
+  hdr_files,
+  tec_data,
+  def_pars = NULL,
+  clim_base = NULL,
+  output_filter = NULL,
+  return_cmd = FALSE,
+  return_file_list = FALSE,
+  docker_image = NULL,
+  docker_host_dir = NULL,
+  docker_container_dir = NULL,
+  docker_run_options = NULL,
+  par_option = TRUE,
+  runIDoffset = 0,
+  parallel = TRUE,
+  n_cores = NULL,
+  write_log = FALSE,
+  log_loc = "~/rhessys_run_log.csv"
+) {
+  
   # NOTES ON ADDING TO THIS FUNCTION AND NEW SOURCES OF SCENARIO VARIATION
   # - if you're just adding a different means of varying def pars, that should be outside of the funciton,
   # and just come into this function as a single def_pars object
@@ -47,19 +51,18 @@ run_rhessys_multi = function(input_rhessys,
   # to run scenarios
 
   # simple timer
-  start = Sys.time()
+  start <- Sys.time()
 
   # list of data frames, each containing nrows where n is number of sims for each data object
-  dfs = NULL
+  dfs <- NULL
 
   # ---------- def pars ----------
   if (!is.null(def_pars)) {
     # transform into dataframe, both for convenience and storing, tho will need to go back to list form
-    def_pars_df = as.data.frame(lapply(def_pars, "[[", 3))
-    def_names = sapply(def_pars, function(x) paste(x[[1]], x[[2]], sep = "::"))
-    names(def_pars_df) = def_names
+    def_pars_df <- as.data.frame(lapply(def_pars, "[[", 3))
+    def_names <- sapply(def_pars, function(x) paste(x[[1]], x[[2]], sep = "::"))
+    names(def_pars_df) <- def_names
     dfs <- c(dfs, list(def_pars_df))
-
   }
 
   # ---------- tec events ----------
@@ -73,19 +76,24 @@ run_rhessys_multi = function(input_rhessys,
     # get all combinations - expand grid but with dfs, taken from reshape::expand.grid.df
     indexes <- lapply(dfs, function(x) 1:nrow(x))
     grid <- do.call(expand.grid, indexes)
-    df <- do.call(data.frame, mapply(function(df, index) df[index, , drop = FALSE], dfs, grid))
+    df <- do.call(
+      data.frame,
+      mapply(function(df, index) df[index, , drop = FALSE], dfs, grid)
+    )
     colnames(df) <- unlist(lapply(dfs, colnames))
     rownames(df) <- 1:nrow(df)
   } else {
-    df = NULL
+    df <- NULL
   }
 
   # --------------------------------- Run RHESSys sims ---------------------------------
   # if only single run
   if (is.null(df) || (!is.null(df) && nrow(df) == 1)) {
-    cat("Only a single run detected, running run_rhessys_single() instead of multi...\n")
+    cat(
+      "Only a single run detected, running run_rhessys_single() instead of multi...\n"
+    )
 
-    rhout = run_rhessys_single(
+    rhout <- run_rhessys_single(
       input_rhessys = input_rhessys,
       hdr_files = hdr_files,
       tec_data = tec_data,
@@ -94,15 +102,19 @@ run_rhessys_multi = function(input_rhessys,
       output_filter = output_filter,
       return_cmd = return_cmd,
       return_file_list = return_file_list,
+      docker_image = docker_image,
+      docker_host_dir = docker_host_dir,
+      docker_container_dir = docker_container_dir,
+      docker_run_options = docker_run_options,
       par_option = par_option,
       runID = NULL
     )
 
-    end = Sys.time()
-    difft = difftime(end,start)
+    end <- Sys.time()
+    difft <- difftime(end, start)
     cat("\nSimulation start:", as.character(start), "\n")
     cat("Simulation end:", as.character(end), "\n")
-    cat("Total processing time: ",difft, units(difft),"\n")
+    cat("Total processing time: ", difft, units(difft), "\n")
 
     if (return_cmd | return_file_list) {
       return(rhout)
@@ -110,16 +122,22 @@ run_rhessys_multi = function(input_rhessys,
     return(NULL)
   }
 
-
   # ---------- dumb for loop ----------
   if (!parallel) {
     for (i in 1:nrow(df)) {
-
       if (!is.null(def_pars)) {
-        def_pars_values = as.list(df[i, names(df) %in% def_names])
-        def_pars_i = mapply(function(x, y) {x[[3]] = y; return(x)}, def_pars, def_pars_values, SIMPLIFY = F)
+        def_pars_values <- as.list(df[i, names(df) %in% def_names])
+        def_pars_i <- mapply(
+          function(x, y) {
+            x[[3]] <- y
+            return(x)
+          },
+          def_pars,
+          def_pars_values,
+          SIMPLIFY = F
+        )
       } else {
-        def_pars_i = NULL
+        def_pars_i <- NULL
       }
 
       run_rhessys_single(
@@ -130,6 +148,10 @@ run_rhessys_multi = function(input_rhessys,
         output_filter = output_filter,
         return_file_list = return_file_list,
         return_cmd = return_cmd,
+        docker_image = docker_image,
+        docker_host_dir = docker_host_dir,
+        docker_container_dir = docker_container_dir,
+        docker_run_options = docker_run_options,
         par_option = par_option,
         runID = (runIDoffset + i)
       )
@@ -138,35 +160,47 @@ run_rhessys_multi = function(input_rhessys,
 
   # ---------- parallelized ----------
   if (parallel) {
-
     if (is.null(n_cores)) {
-      n_cores = parallel::detectCores() - 1
+      n_cores <- parallel::detectCores() - 1
     }
 
     # function to run in parallel
-    run_parallel = function(i,
-                            input_rhessys,
-                            hdr_files ,
-                            tec_data,
-                            df,
-                            def_pars,
-                            clim_base,
-                            output_filter,
-                            par_option,
-                            return_cmd,
-                            return_file_list,
-                            runIDoffset) {
-
+    run_parallel <- function(
+      i,
+      input_rhessys,
+      hdr_files,
+      tec_data,
+      df,
+      def_pars,
+      clim_base,
+      output_filter,
+      par_option,
+      return_cmd,
+      return_file_list,
+      docker_image,
+      docker_host_dir,
+      docker_container_dir,
+      docker_run_options,
+      runIDoffset
+    ) {
       library(RHESSysIOinR)
 
       if (!is.null(def_pars)) {
-        def_pars_i = mapply(function(x, y) {x[[3]] = y; return(x)}, def_pars, df[i, ], SIMPLIFY = F)
+        def_pars_i <- mapply(
+          function(x, y) {
+            x[[3]] <- y
+            return(x)
+          },
+          def_pars,
+          df[i, ],
+          SIMPLIFY = F
+        )
       } else {
-        def_pars_i = NULL
+        def_pars_i <- NULL
       }
-      runID = runIDoffset + i
+      runID <- runIDoffset + i
 
-      rhout = run_rhessys_single(
+      rhout <- run_rhessys_single(
         input_rhessys = input_rhessys,
         hdr_files = hdr_files,
         tec_data = tec_data,
@@ -176,17 +210,20 @@ run_rhessys_multi = function(input_rhessys,
         par_option = par_option,
         return_cmd = return_cmd,
         return_file_list = return_file_list,
+        docker_image = docker_image,
+        docker_host_dir = docker_host_dir,
+        docker_container_dir = docker_container_dir,
+        docker_run_options = docker_run_options,
         runID = runID
       )
 
       if (return_cmd | return_file_list) {
         return(rhout)
       }
-
     }
 
     # make a psock cluster
-    cl = parallel::makeCluster(n_cores)
+    cl <- parallel::makeCluster(n_cores)
 
     #parallel::clusterEvalQ(cl, print)
 
@@ -203,13 +240,17 @@ run_rhessys_multi = function(input_rhessys,
         "output_filter",
         "return_cmd",
         "return_file_list",
+        "docker_image",
+        "docker_host_dir",
+        "docker_container_dir",
+        "docker_run_options",
         "par_option",
         "runIDoffset"
       ),
       envir = environment()
     )
     # run run_parallel in function with parLapply
-    parout = parallel::parLapply(
+    parout <- parallel::parLapply(
       cl = cl,
       X = 1:nrow(df),
       fun = run_parallel,
@@ -222,31 +263,35 @@ run_rhessys_multi = function(input_rhessys,
       output_filter = output_filter,
       return_cmd = return_cmd,
       return_file_list = return_file_list,
+      docker_image = docker_image,
+      docker_host_dir = docker_host_dir,
+      docker_container_dir = docker_container_dir,
+      docker_run_options = docker_run_options,
       par_option = par_option,
       runIDoffset = runIDoffset
     )
     # stop the cluster
     parallel::stopCluster(cl)
 
-    end = Sys.time()
-    difft = difftime(end,start)
+    end <- Sys.time()
+    difft <- difftime(end, start)
     cat("\nSimulation start:", as.character(start), "\n")
     cat("Simulation end:", as.character(end), "\n")
-    cat("Total processing time: ",difft, units(difft),"\n")
+    cat("Total processing time: ", difft, units(difft), "\n")
 
     if (!is.null(parout)) {
       return(parout)
     }
-
   }
-  
+
   # ------------------------------ Write LOG multi run - new  ------------------------------
   if (write_log) {
-    log_out = write_log(input_rhessys = input_rhessys,
+    log_out <- write_log(
+      input_rhessys = input_rhessys,
       output_filter = output_filter,
       return_cmd = return_cmd,
       run_ct = nrow(df),
-      log_loc = log_loc)
+      log_loc = log_loc
+    )
   }
-
 }
