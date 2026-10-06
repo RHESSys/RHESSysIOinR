@@ -97,7 +97,9 @@ read_clim = function(clim_in, clim_type = "station", dates_out = FALSE, grid_out
     # old ver: Doesn't work when using a single clim_in that has a extension
     #nm = stringr::str_remove(files_in, clim_in)
     #nm = stringr::str_remove(nm,".")
-    nm = file_ext(files_in)
+    # name columns by the matching clim suffix (file_ext is not imported and drops names with underscores)
+    nm = vapply(files_in, function(f) opts[endsWith(f, opts)][1], character(1), USE.NAMES = FALSE)
+    nm = sub("^\\.", "", nm)
     names(clim)[2:ncol(clim)] = nm
 
     clim = subset(clim, !is.na(date))
